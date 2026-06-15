@@ -7,17 +7,10 @@ import {
   Users,
   BarChart3,
   SendHorizonal,
-  Target,
   Globe,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import {
-  Card,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 
 const features = [
@@ -26,29 +19,39 @@ const features = [
     title: "Market Research",
     description:
       "Scans Reddit, HN, Twitter, Product Hunt, and GitHub issues to surface your ideal users and their pain points.",
+    span: "lg:col-span-2",
+    stat: "12K+ conversations analyzed daily",
+    tags: ["Reddit", "HN", "Twitter", "Product Hunt", "GitHub"],
   },
   {
     icon: Users,
     title: "User Discovery",
     description:
-      "Identifies real people talking about the problems you solve. Name, context, sentiment — ready for outreach.",
+      "Identifies real people talking about the problems you solve — with name, context, and sentiment.",
+    span: "lg:col-span-1",
+    stat: "47 users identified / hour",
   },
   {
     icon: BarChart3,
     title: "SEO & Content",
     description:
-      "Automates keyword research, competitive analysis, and content strategy to get you found organically.",
+      "Keyword research, competitive analysis, and content strategy that gets you found organically.",
+    span: "lg:col-span-1",
+    stat: "Track your ranking daily",
   },
   {
     icon: SendHorizonal,
     title: "Outreach Engine",
     description:
-      "Crafts personalized messages across channels. Finds decision-makers and opens conversations at scale.",
+      "Crafts personalized multi-channel messages that open conversations with decision-makers at scale.",
+    span: "lg:col-span-2",
+    stat: "3 channels active",
+    tags: ["Email", "Twitter DM", "LinkedIn"],
   },
 ];
 
 const heroTerminalLines = [
-  { text: '> openco:research("AI note-taking app")', delay: 0.2 },
+  { text: '> openco:find-users("AI note-taking app", { depth: "deep" })', delay: 0.2 },
   { text: "  ✓ Scanning Reddit (r/productivity, r/Notion)...", delay: 0.8 },
   { text: "  ✓ Found 89 conversations about pain points", delay: 1.4 },
   { text: "  ✓ Analyzing sentiment and need patterns...", delay: 2.0 },
@@ -63,7 +66,7 @@ const heroTerminalLines = [
 ];
 
 const pipelineTerminalLines = [
-  { text: "> Pipeline: find-users (openco)", delay: 0.2 },
+  { text: "> openco:pipeline(\"find-users — cross-ref all sources\")", delay: 0.2 },
   { text: "  ├─ Source: Reddit — 47 leads found", delay: 0.7 },
   { text: "  ├─ Source: Hacker News — 23 leads found", delay: 1.2 },
   { text: "  ├─ Source: Twitter/X — 89 leads found", delay: 1.7 },
@@ -105,9 +108,11 @@ function Nav() {
 
 function Terminal({
   lines,
+  title = "openco",
   className,
 }: {
   lines: { text: string; delay: number }[];
+  title?: string;
   className?: string;
 }) {
   const lastDelay = lines.length > 0 ? lines[lines.length - 1].delay : 0;
@@ -122,7 +127,7 @@ function Terminal({
         <span className="size-2.5 rounded-full bg-red-500/80" />
         <span className="size-2.5 rounded-full bg-yellow-500/80" />
         <span className="size-2.5 rounded-full bg-green-500/80" />
-        <span className="ml-2 text-xs text-muted-foreground">openco</span>
+        <span className="ml-2 text-xs text-muted-foreground">{title}</span>
       </div>
       <div className="space-y-1 p-4">
         {lines.map((line, i) =>
@@ -159,7 +164,7 @@ export default function Page() {
       <Nav />
       <main className="flex-1">
         <section className="relative flex min-h-svh flex-col items-center justify-center overflow-hidden px-6 pt-20">
-          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top,oklch(0.72_0.14_195_/_0.08),transparent_60%)]" />
+          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top,oklch(0.72_0.15_75_/_0.08),transparent_60%)]" />
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -167,7 +172,7 @@ export default function Page() {
             className="relative z-10 mx-auto flex max-w-3xl flex-col items-center text-center"
           >
             <Badge variant="secondary" className="mb-6">
-              Your Autonomous AI Company
+              User Acquisition, Autonomous
             </Badge>
             <h1 className="font-heading text-4xl leading-tight tracking-tight sm:text-5xl md:text-6xl lg:text-7xl">
               Find Your Users
@@ -175,9 +180,9 @@ export default function Page() {
               While You Build
             </h1>
             <p className="mt-6 max-w-xl text-balance text-lg text-muted-foreground">
-              OpenCompany does market research, user discovery, SEO, and
-              outreach — autonomously. Tell it what you&apos;re building and
-              watch it find people who need it.
+              Tell OpenCompany what you&apos;re building. It researches your
+              market, finds the people who need your product, and hands you a
+              pipeline of users — completely autonomously.
             </p>
             <div className="mt-8 flex items-center gap-4">
               <Button size="lg">
@@ -208,18 +213,49 @@ export default function Page() {
               What It Does
             </h2>
             <p className="mt-4 text-muted-foreground">
-              You build. OpenCompany finds the people who need what you make.
+              You build. OpenCompany finds the people who need it.
             </p>
           </div>
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-            {features.map((feature, i) => (
-              <Card key={feature.title} className="h-full">
-                <CardHeader>
-                  <feature.icon className="size-5 text-brand" />
-                  <CardTitle>{feature.title}</CardTitle>
-                  <CardDescription>{feature.description}</CardDescription>
-                </CardHeader>
-              </Card>
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {features.map((feature) => (
+              <div
+                key={feature.title}
+                className={cn(
+                  "group relative overflow-hidden rounded-xl border p-6 transition-all hover:border-brand/30",
+                  feature.span
+                )}
+              >
+                <div className="pointer-events-none absolute -inset-px rounded-xl opacity-0 transition-opacity group-hover:opacity-100">
+                  <div className="absolute inset-0 rounded-xl bg-[radial-gradient(ellipse_at_top_right,oklch(0.72_0.15_75_/_0.06),transparent_60%)]" />
+                </div>
+                <div className="relative">
+                  <div className="flex items-start justify-between">
+                    <feature.icon className="size-5 text-brand" />
+                    {"tags" in feature && feature.tags && (
+                      <div className="hidden gap-1.5 sm:flex">
+                        {feature.tags.map((tag) => (
+                          <span
+                            key={tag}
+                            className="rounded-md border bg-muted/50 px-2 py-0.5 text-[11px] text-muted-foreground"
+                          >
+                            {tag}
+                          </span>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                  <h3 className="mt-4 font-heading text-xl tracking-tight">
+                    {feature.title}
+                  </h3>
+                  <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+                    {feature.description}
+                  </p>
+                  <div className="mt-4 flex items-center gap-1.5 text-xs text-brand">
+                    <span className="inline-block size-1.5 rounded-full bg-brand" />
+                    {feature.stat}
+                  </div>
+                </div>
+              </div>
             ))}
           </div>
         </section>
@@ -229,7 +265,7 @@ export default function Page() {
             <div className="grid items-center gap-12 lg:grid-cols-2">
               <div>
                 <Badge variant="secondary" className="mb-4">
-                  Multi-Source Pipeline
+                  Intent-Based Discovery
                 </Badge>
                 <h2 className="font-heading text-3xl tracking-tight sm:text-4xl">
                   Who Needs What You Build?
@@ -238,15 +274,11 @@ export default function Page() {
                   OpenCompany sweeps every corner of the internet — Reddit,
                   Twitter, HN, Product Hunt, GitHub issues — and cross-references
                   conversations to find users actively looking for a solution
-                  like yours.
+                  like yours. Ranked by intent, not keywords.
                 </p>
-                <div className="mt-6 flex items-center gap-2 text-sm text-muted-foreground">
-                  <Target className="size-4 text-brand" />
-                  <span>Ranked by intent and relevance, not just keywords</span>
-                </div>
               </div>
               <div>
-                <Terminal lines={pipelineTerminalLines} />
+                <Terminal lines={pipelineTerminalLines} title="openco pipeline" />
               </div>
             </div>
           </div>
@@ -258,7 +290,7 @@ export default function Page() {
               { value: "50+", label: "Sources Scanned" },
               { value: "10K+", label: "Users Identified" },
               { value: "100%", label: "Autonomous" },
-            ].map((stat, i) => (
+            ].map((stat) => (
               <div
                 key={stat.label}
                 className="flex flex-col items-center py-8"
@@ -275,15 +307,17 @@ export default function Page() {
         </section>
 
         <section className="relative overflow-hidden px-6 py-24">
-          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,oklch(0.72_0.14_195_/_0.08),transparent_60%)]" />
+          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,oklch(0.72_0.15_75_/_0.08),transparent_60%)]" />
           <div className="mx-auto flex max-w-2xl flex-col items-center text-center">
             <h2 className="font-heading text-3xl tracking-tight sm:text-4xl">
-              Stop Searching. Start Building.
+              Your users are out there.
+              <br />
+              OpenCompany finds them.
             </h2>
             <p className="mt-4 text-muted-foreground">
-              Tell OpenCompany what you&apos;re working on. It will scan the
-              internet, find your users, and hand you a pipeline of people
-              ready to try your product.
+              Tell it what you&apos;re building. It scours every source, finds
+              the people who need your product, and hands you a ready pipeline
+              of users — so you can focus on what you do best.
             </p>
             <div className="mt-8 flex items-center gap-4">
               <Button size="lg">
@@ -302,7 +336,7 @@ export default function Page() {
       <footer className="border-t border-border/50">
         <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-6 text-sm text-muted-foreground">
           <span className="font-heading">OpenCompany</span>
-          <span>Autonomous user acquisition</span>
+          <span>Built for builders who need users</span>
         </div>
       </footer>
     </>
