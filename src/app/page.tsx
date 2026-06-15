@@ -8,17 +8,59 @@ import {
   BarChart3,
   SendHorizonal,
   Globe,
+  Star,
+  Target,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
+
+function RedditIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M12 8c2.648 0 5.028.826 6.675 2.14a2.5 2.5 0 0 1 2.326 4.36c0 3.59-4.03 6.5-9 6.5-4.875 0-8.845-2.8-9-6.294l-1-.206a2.5 2.5 0 0 1 2.326-4.36c1.646-1.313 4.026-2.14 6.674-2.14z" />
+      <path d="M12 8l1-5 6 1" />
+      <path d="M18 4a1 1 0 1 0 2 0 1 1 0 1 0-2 0" />
+      <path d="M8.5 13a.5.5 0 1 0 1 0 .5.5 0 1 0-1 0" />
+      <path d="M14.5 13a.5.5 0 1 0 1 0 .5.5 0 1 0-1 0" />
+      <path d="M10 17c.667.333 1.333.5 2 .5s1.333-.167 2-.5" />
+    </svg>
+  );
+}
+
+function HNIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M4 6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6z" />
+      <path d="M8 7l4 6 4-6" />
+      <path d="M12 13v4" />
+    </svg>
+  );
+}
+
+function GitHubIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M9 19c-4.3 1.4-4.3-2.5-6-3m12 5v-3.5c0-1 .1-1.4-.5-2 2.8-.3 5.5-1.4 5.5-6a4.6 4.6 0 0 0-1.3-3.2 4.2 4.2 0 0 0-.1-3.2s-1.1-.3-3.5 1.3a12.3 12.3 0 0 0-6.2 0c-2.4-1.6-3.5-1.3-3.5-1.3a4.2 4.2 0 0 0-.1 3.2A4.6 4.6 0 0 0 4 10c0 4.6 2.7 5.7 5.5 6-.6.6-.6 1.2-.5 2v3.5" />
+    </svg>
+  );
+}
+
+function XIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M4 4l11.733 16h4.267L8.267 4H4z" />
+      <path d="M4 20l6.768-6.768m2.46-2.46L20 4" />
+    </svg>
+  );
+}
 
 const features = [
   {
     icon: Search,
     title: "Market Research",
     description:
-      "Scans Reddit, HN, Twitter, Product Hunt, and GitHub issues to surface your ideal users and their pain points.",
+      "Two discovery tracks — pain-point discovery (problem-first) and competitor discovery (tool-first, dissatisfaction signals). Scans Reddit, HN, Twitter, Product Hunt, and GitHub issues across both.",
     span: "lg:col-span-2",
     stat: "12K+ conversations analyzed daily",
     tags: ["Reddit", "HN", "Twitter", "Product Hunt", "GitHub"],
@@ -50,37 +92,7 @@ const features = [
   },
 ];
 
-const heroTerminalLines = [
-  { text: '> openco:find-users("AI note-taking app", { depth: "deep" })', delay: 0.2 },
-  { text: "  ✓ Scanning Reddit (r/productivity, r/Notion)...", delay: 0.8 },
-  { text: "  ✓ Found 89 conversations about pain points", delay: 1.4 },
-  { text: "  ✓ Analyzing sentiment and need patterns...", delay: 2.0 },
-  { text: "", delay: 2.4 },
-  { text: "  Top Pain Points (across 47 users):", delay: 2.6 },
-  { text: '    • "Offline sync is broken" — 23 mentions', delay: 3.0 },
-  { text: '    • "Can\'t organize by project" — 18 mentions', delay: 3.4 },
-  { text: '    • "Too expensive" — 15 mentions', delay: 3.8 },
-  { text: "", delay: 4.2 },
-  { text: "  ✓ 47 potential users identified — profiles saved", delay: 4.4 },
-  { text: "  ✓ Ready for outreach in 3 channels", delay: 5.0 },
-];
-
-const pipelineTerminalLines = [
-  { text: "> openco:pipeline(\"find-users — cross-ref all sources\")", delay: 0.2 },
-  { text: "  ├─ Source: Reddit — 47 leads found", delay: 0.7 },
-  { text: "  ├─ Source: Hacker News — 23 leads found", delay: 1.2 },
-  { text: "  ├─ Source: Twitter/X — 89 leads found", delay: 1.7 },
-  { text: "  ├─ Source: Product Hunt — 12 leads found", delay: 2.2 },
-  { text: "  └─ Source: GitHub Issues — 34 leads found", delay: 2.7 },
-  { text: "", delay: 3.1 },
-  { text: "  Top user segment identified:", delay: 3.3 },
-  { text: '    "Solo devs who switched from Notion to Obsidian"', delay: 3.7 },
-  { text: "    → 128 users — high intent, active on Twitter", delay: 4.1 },
-  { text: "", delay: 4.5 },
-  { text: "  ✓ Generating personalized outreach sequences...", delay: 4.7 },
-];
-
-function Nav() {
+ function Nav() {
   return (
     <header className="fixed top-0 z-50 w-full border-b border-border/50 bg-background/80 backdrop-blur-sm">
       <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-6">
@@ -95,9 +107,7 @@ function Nav() {
             className="text-muted-foreground transition-colors hover:text-foreground"
             aria-label="GitHub"
           >
-            <svg className="size-5" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z" />
-            </svg>
+            <GitHubIcon className="size-5" />
           </a>
           <Button size="sm">Get Early Access</Button>
         </div>
@@ -106,53 +116,122 @@ function Nav() {
   );
 }
 
-function Terminal({
-  lines,
-  title = "openco",
-  className,
-}: {
-  lines: { text: string; delay: number }[];
-  title?: string;
-  className?: string;
-}) {
-  const lastDelay = lines.length > 0 ? lines[lines.length - 1].delay : 0;
+function PipelineDiagram() {
+  const sources = [
+    { label: "Reddit", desc: "PRAW API", color: "border-orange-500/30 bg-orange-500/5", icon: <RedditIcon className="size-4 text-orange-500" /> },
+    { label: "HN", desc: "Algolia API", color: "border-orange-500/30 bg-orange-500/5", icon: <HNIcon className="size-4 text-orange-500" /> },
+    { label: "GitHub", desc: "Search API", color: "border-border/30 bg-muted/50", icon: <GitHubIcon className="size-4 text-foreground" /> },
+    { label: "Twitter", desc: "X API", color: "border-border/30 bg-muted/50", icon: <XIcon className="size-4 text-foreground" /> },
+  ];
+
   return (
-    <div
-      className={cn(
-        "overflow-hidden rounded-xl border bg-black/40 font-mono text-xs leading-relaxed backdrop-blur",
-        className
-      )}
-    >
-      <div className="flex items-center gap-1.5 border-b border-border/30 px-4 py-2.5">
-        <span className="size-2.5 rounded-full bg-red-500/80" />
-        <span className="size-2.5 rounded-full bg-yellow-500/80" />
-        <span className="size-2.5 rounded-full bg-green-500/80" />
-        <span className="ml-2 text-xs text-muted-foreground">{title}</span>
-      </div>
-      <div className="space-y-1 p-4">
-        {lines.map((line, i) =>
-          line.text === "" ? (
-            <div key={i} className="h-2" />
-          ) : (
-            <motion.p
-              key={i}
-              initial={{ opacity: 0, x: -8 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{
-                delay: line.delay,
-                duration: 0.25,
-                ease: "easeOut",
-              }}
-              className="text-muted-foreground/80 first:text-foreground"
-            >
-              {line.text}
-            </motion.p>
-          )
-        )}
-        <span
-          className="inline-block h-4 w-2 animate-blink bg-foreground/70"
-          style={{ animationDelay: `${lastDelay + 0.5}s` }}
+    <div className="overflow-hidden rounded-xl border bg-card p-6">
+      <div className="flex flex-col items-center gap-3 text-center">
+        <div className="flex flex-wrap justify-center gap-2">
+          {sources.map((s) => (
+            <div key={s.label} className={`rounded-lg border px-3 py-2 ${s.color}`}>
+              <div className="flex items-center gap-1.5">
+                {s.icon}
+                <span className="text-xs font-medium text-foreground">{s.label}</span>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <motion.div
+          initial={{ scaleY: 0 }} animate={{ scaleY: 1 }}
+          className="h-6 w-0.5 origin-top bg-border"
         />
+
+        <div className="flex flex-wrap justify-center gap-4">
+          <motion.div
+            initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}
+            className="flex-1 min-w-[180px] rounded-lg border border-brand/30 bg-brand/5 p-3"
+          >
+            <div className="flex items-center gap-2">
+              <Search className="size-4 text-brand" />
+              <span className="text-xs font-medium text-brand">Track 1 — Pain-Point Discovery</span>
+            </div>
+            <div className="mt-2 space-y-1 text-[11px] text-muted-foreground">
+              <div>&ldquo;is there a tool&rdquo; / &ldquo;frustrated with&rdquo;</div>
+              <div>&ldquo;how do I&rdquo; / &ldquo;manual process&rdquo;</div>
+            </div>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }}
+            className="flex-1 min-w-[180px] rounded-lg border border-purple-500/30 bg-purple-500/5 p-3"
+          >
+            <div className="flex items-center gap-2">
+              <Star className="size-4 text-purple-400" />
+              <span className="text-xs font-medium text-purple-400">Track 2 — Competitor Discovery</span>
+            </div>
+            <div className="mt-2 space-y-1 text-[11px] text-muted-foreground">
+              <div>&ldquo;alternative&rdquo; / &ldquo;switching from&rdquo;</div>
+              <div>&ldquo;too expensive&rdquo; / &ldquo;won&apos;t fix&rdquo;</div>
+            </div>
+          </motion.div>
+        </div>
+
+        <motion.div
+          initial={{ scaleY: 0 }} animate={{ scaleY: 1 }} transition={{ delay: 0.6 }}
+          className="h-6 w-0.5 origin-top bg-border"
+        />
+
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.8 }}
+          className="w-full rounded-lg border border-green-500/30 bg-green-500/5 p-3"
+        >
+          <div className="flex items-center justify-center gap-2">
+            <Target className="size-4 text-green-400" />
+            <span className="text-sm font-medium text-green-400">Scored Lead Pipeline</span>
+          </div>
+          <div className="mt-2 flex flex-wrap justify-center gap-4 text-xs text-muted-foreground">
+            <span>47 pain-point leads</span>
+            <span className="text-purple-400">16 competitor leads</span>
+            <span>tagged by intent</span>
+          </div>
+        </motion.div>
+      </div>
+    </div>
+  );
+}
+
+function InteractiveInput() {
+  return (
+    <div className="group relative rounded-2xl border border-border/60 bg-card/50 backdrop-blur-sm">
+      <div className="flex items-center gap-3 border-b border-border/40 px-5 py-4">
+        <Search className="size-5 shrink-0 text-muted-foreground" />
+        <input
+          type="text"
+          readOnly
+          value="AI coding agent for solo founders"
+          className="flex-1 bg-transparent text-sm text-foreground outline-none placeholder:text-muted-foreground/50"
+          placeholder="What are you building?"
+        />
+        <div className="flex items-center gap-1.5 text-xs text-brand">
+          <span className="size-1.5 rounded-full bg-brand" />
+          Scanning
+        </div>
+      </div>
+      <div className="space-y-1 p-5 pt-4">
+        {[
+          { icon: RedditIcon, text: "47 pain-point conversations on Reddit", color: "text-orange-500" },
+          { icon: GitHubIcon, text: "16 devs frustrated with existing tools on GitHub", color: "text-foreground" },
+          { icon: HNIcon, text: "12 posts on HN: \"looking for alternatives\"", color: "text-orange-500" },
+          { icon: Target, text: "All leads sorted by intent score", color: "text-green-400" },
+        ].map((item, i) => (
+          <motion.div
+            key={item.text}
+            initial={{ opacity: 0, x: -10 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.4, delay: 0.6 + i * 0.15 }}
+            className="flex items-center gap-3 py-1.5"
+          >
+            <item.icon className={`size-3.5 shrink-0 ${item.color}`} />
+            <span className="text-sm text-foreground/80">{item.text}</span>
+          </motion.div>
+        ))}
       </div>
     </div>
   );
@@ -190,20 +269,18 @@ export default function Page() {
                 <ArrowRight className="size-4" />
               </Button>
               <Button variant="outline" size="lg" className="w-full sm:w-auto">
-                <svg className="size-4" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z" />
-                </svg>
-                Star on GitHub
+                <Globe className="size-4" />
+                Watch Demo
               </Button>
             </div>
           </motion.div>
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
+            initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.3 }}
-            className="mt-16 w-full max-w-2xl"
+            transition={{ duration: 0.5, delay: 0.3 }}
+            className="mt-16 w-full max-w-lg"
           >
-            <Terminal lines={heroTerminalLines} />
+            <InteractiveInput />
           </motion.div>
         </section>
 
@@ -261,33 +338,30 @@ export default function Page() {
         </section>
 
         <section className="border-y border-border/50 bg-muted/30">
-          <div className="mx-auto max-w-6xl px-6 py-24">
-            <div className="grid items-center gap-12 lg:grid-cols-2">
-              <div>
-                <Badge variant="secondary" className="mb-4">
-                  Intent-Based Discovery
-                </Badge>
-                <h2 className="font-heading text-3xl tracking-tight sm:text-4xl">
-                  Who Needs What You Build?
-                </h2>
-                <p className="mt-4 text-muted-foreground">
-                  OpenCompany sweeps every corner of the internet — Reddit,
-                  Twitter, HN, Product Hunt, GitHub issues — and cross-references
-                  conversations to find users actively looking for a solution
-                  like yours. Ranked by intent, not keywords.
-                </p>
-              </div>
-              <div>
-                <Terminal lines={pipelineTerminalLines} title="openco pipeline" />
-              </div>
+          <div className="mx-auto max-w-4xl px-6 py-24">
+            <div className="mb-12 text-center">
+              <Badge variant="secondary" className="mb-4">
+                Dual-Track Pipeline
+              </Badge>
+              <h2 className="font-heading text-3xl tracking-tight sm:text-4xl">
+                Two Tracks. One Pipeline.
+              </h2>
+              <p className="mt-4 text-muted-foreground">
+                Track 1 finds people with the problem (pain-point discovery).
+                Track 2 finds people dissatisfied with competitors (intent
+                signals). Both sweep the same sources — Reddit, HN, GitHub,
+                Twitter, Product Hunt — but with different query strategies.
+                Leads merge into a single scored pipeline.
+              </p>
             </div>
+            <PipelineDiagram />
           </div>
         </section>
 
         <section className="mx-auto max-w-6xl px-6 py-24">
           <div className="grid divide-x divide-border/50 text-center sm:grid-cols-3">
             {[
-              { value: "50+", label: "Sources Scanned" },
+              { value: "2", label: "Discovery Tracks" },
               { value: "10K+", label: "Users Identified" },
               { value: "100%", label: "Autonomous" },
             ].map((stat) => (
@@ -305,6 +379,8 @@ export default function Page() {
             ))}
           </div>
         </section>
+
+
 
         <section className="relative overflow-hidden px-6 py-24">
           <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,oklch(0.72_0.15_75_/_0.08),transparent_60%)]" />
@@ -331,6 +407,7 @@ export default function Page() {
             </div>
           </div>
         </section>
+
       </main>
 
       <footer className="border-t border-border/50">
