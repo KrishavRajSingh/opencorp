@@ -97,7 +97,7 @@ const features = [
     <header className="fixed top-0 z-50 w-full border-b border-border/50 bg-background/80 backdrop-blur-sm">
       <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-6">
         <span className="font-heading text-lg tracking-tight">
-          OpenCompany
+          OpenCorp
         </span>
         <div className="flex items-center gap-3">
           <a
@@ -259,7 +259,7 @@ export default function Page() {
               While You Build
             </h1>
             <p className="mt-6 max-w-xl text-balance text-lg text-muted-foreground">
-              Tell OpenCompany what you&apos;re building. It researches your
+              Tell OpenCorp what you&apos;re building. It researches your
               market, finds the people who need your product, and hands you a
               pipeline of users — completely autonomously.
             </p>
@@ -290,7 +290,7 @@ export default function Page() {
               What It Does
             </h2>
             <p className="mt-4 text-muted-foreground">
-              You build. OpenCompany finds the people who need it.
+              You build. OpenCorp finds the people who need it.
             </p>
           </div>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -388,7 +388,7 @@ export default function Page() {
             <h2 className="font-heading text-3xl tracking-tight sm:text-4xl">
               Your users are out there.
               <br />
-              OpenCompany finds them.
+              OpenCorp finds them.
             </h2>
             <p className="mt-4 text-muted-foreground">
               Tell it what you&apos;re building. It scours every source, finds
@@ -412,7 +412,7 @@ export default function Page() {
 
       <footer className="border-t border-border/50">
         <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-6 text-sm text-muted-foreground">
-          <span className="font-heading">OpenCompany</span>
+          <span className="font-heading">OpenCorp</span>
           <span>Built for builders who need users</span>
         </div>
       </footer>

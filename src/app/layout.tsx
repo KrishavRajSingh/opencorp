@@ -16,9 +16,9 @@ const geistMono = Geist_Mono({
 const geistPixelSquare = GeistPixelSquare;
 
 export const metadata: Metadata = {
-  title: "OpenCompany — Find Your Users While You Build",
+  title: "OpenCorp — Find Your Users While You Build",
   description:
-    "Your autonomous AI company. OpenCompany does market research, user discovery, SEO, and outreach — so you can focus on building.",
+    "Your autonomous AI company. OpenCorp does market research, user discovery, SEO, and outreach — so you can focus on building.",
 };
 
 export default function RootLayout({
