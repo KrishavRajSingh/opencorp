@@ -11,9 +11,21 @@ importers:
       '@mastra/core':
         specifier: ^1.42.0
         version: 1.42.0(ai@6.0.204(zod@4.4.3))(express@5.2.1)(zod@4.4.3)
+      '@mastra/duckdb':
+        specifier: ^1.4.2
+        version: 1.4.2(@mastra/core@1.42.0(ai@6.0.204(zod@4.4.3))(express@5.2.1)(zod@4.4.3))
       '@mastra/libsql':
         specifier: ^1.13.0
         version: 1.13.0(@mastra/core@1.42.0(ai@6.0.204(zod@4.4.3))(express@5.2.1)(zod@4.4.3))
+      '@mastra/loggers':
+        specifier: ^1.1.2
+        version: 1.1.2(@mastra/core@1.42.0(ai@6.0.204(zod@4.4.3))(express@5.2.1)(zod@4.4.3))
+      '@mastra/memory':
+        specifier: ^1.20.3
+        version: 1.20.3(@mastra/core@1.42.0(ai@6.0.204(zod@4.4.3))(express@5.2.1)(zod@4.4.3))(zod@4.4.3)
+      '@mastra/observability':
+        specifier: ^1.14.1
+        version: 1.14.1(@mastra/core@1.42.0(ai@6.0.204(zod@4.4.3))(express@5.2.1)(zod@4.4.3))(zod@4.4.3)
       '@radix-ui/react-use-controllable-state':
         specifier: ^1.2.3
         version: 1.2.3(@types/react@19.2.17)(react@19.2.4)
@@ -338,6 +350,56 @@ packages:
   '@dotenvx/dotenvx@1.71.3':
     resolution: {integrity: sha512-WSmox5aD+XxJEUEOTk7gKLpd5+Iz9Nik89Zpbu5DijMln6LsFiv3xpNKBMc/b9sSkUlKvAblzrhik2TqKFE7NA==}
     hasBin: true
+
+  '@duckdb/node-api@1.5.2-r.2':
+    resolution: {integrity: sha512-IqFeTarPL9sImt8R6Y/NbNjTR95c7fksk9uFCpFLV0hxbIzbNCCF//xy2BgBqVJtU7/gk2eIpTJTvtE6FS2eog==}
+
+  '@duckdb/node-bindings-darwin-arm64@1.5.2-r.2':
+    resolution: {integrity: sha512-wA50u8kQxEXlf2ho1m/n8K4qdIWNNBUZ8xQ02x+9Vc12GAgabSlnXJOaZZFrby5Dj28y+mFBIfAEGftBeQKXaw==}
+    cpu: [arm64]
+    os: [darwin]
+
+  '@duckdb/node-bindings-darwin-x64@1.5.2-r.2':
+    resolution: {integrity: sha512-UJHIhxkHMpdzTnyXVqsGOZotG+TzwAqkX0POM20IkQVtWtFjPS52Kc9Q+qLrS8ZuabmnrFtX9AnlHNyPVqSqMA==}
+    cpu: [x64]
+    os: [darwin]
+
+  '@duckdb/node-bindings-linux-arm64-musl@1.5.2-r.2':
+    resolution: {integrity: sha512-PVC9feqV+bgsnzGfiCv1pe+9mNqoC8k15/3Qmwhp6+AUloTNtk1ln9wlsHMUzhRfNG2wb2fN8P9PJ5zY5t/J/w==}
+    cpu: [arm64]
+    os: [linux]
+    libc: [musl]
+
+  '@duckdb/node-bindings-linux-arm64@1.5.2-r.2':
+    resolution: {integrity: sha512-cAEALsSxYRzSfUgxAJCNbDZcmdlVQWvEKldd7r8lYWYZ7D2mxBjeLrF0WoL34vl+ZNEgqHAuqiv3I+wMU2dOXA==}
+    cpu: [arm64]
+    os: [linux]
+    libc: [glibc]
+
+  '@duckdb/node-bindings-linux-x64-musl@1.5.2-r.2':
+    resolution: {integrity: sha512-v2AUKCIHKq9+zFWmx+UdSWyxFLaT5wsWuTNID30pGBqGvwChxLGmm1szbHNxR7nNa00y2SGp9Gxoky0RS7YCwg==}
+    cpu: [x64]
+    os: [linux]
+    libc: [musl]
+
+  '@duckdb/node-bindings-linux-x64@1.5.2-r.2':
+    resolution: {integrity: sha512-9SgKECgVtkDK6+HLBbDKxW41ORj+BciQjSgERFfhnuPIDYhgx08wTPZcnaU7KxvNdOmndIn5OmjzKZ6Jrvwv0g==}
+    cpu: [x64]
+    os: [linux]
+    libc: [glibc]
+
+  '@duckdb/node-bindings-win32-arm64@1.5.2-r.2':
+    resolution: {integrity: sha512-g5ZWK07c0Qh7UFhJC37iC5y8oW8ZqxEgpNM2vTFD3ShM9Rn1NDXkxA7zjcheHRI+My5T1JpE9kNpCvhzItJrgw==}
+    cpu: [arm64]
+    os: [win32]
+
+  '@duckdb/node-bindings-win32-x64@1.5.2-r.2':
+    resolution: {integrity: sha512-VUMbdeXQHWKHEXVWtfVaOSu7Mb4jR9gT56Yzu9FHyLyP9ogY/D6wpeohY5gAHZS9PHQGGq24qRtCn5g6vUolqA==}
+    cpu: [x64]
+    os: [win32]
+
+  '@duckdb/node-bindings@1.5.2-r.2':
+    resolution: {integrity: sha512-A17A6pXB7SEBAm93POdmEG+f4vQWMSujUP8/hNUfDWjaqp4C5mUWFnyuBM4XiB4qyXXH3vbjis2TYsnxAN2xEQ==}
 
   '@ecies/ciphers@0.2.6':
     resolution: {integrity: sha512-patgsRPKGkhhoBjETV4XxD0En4ui5fbX0hzayqI3M8tvNMGUoUvmyYAIWwlxBc1KX5cturfqByYdj5bYGRpN9g==}
@@ -865,6 +927,12 @@ packages:
     peerDependencies:
       '@mastra/core': '>=1.34.0-0 <2.0.0-0'
 
+  '@mastra/duckdb@1.4.2':
+    resolution: {integrity: sha512-jIkFfHwodFGr8uFL1vq3/99U2jenlrE898fnkS1oDeyxHkOxk+eKmk+GIBdxkZSAfpBhaBm0X81ewsTqXGHTgQ==}
+    engines: {node: '>=22.13.0'}
+    peerDependencies:
+      '@mastra/core': '>=1.0.0-0 <2.0.0-0'
+
   '@mastra/libsql@1.13.0':
     resolution: {integrity: sha512-pmZND+vntUNVDJA4Vr47+QD96Bf+lMsjLOJUyyjIM7+xOYNIuarXJGiaOTkxbkhnRQpHUjlYPDm41O9oqScZjw==}
     engines: {node: '>=22.13.0'}
@@ -876,6 +944,19 @@ packages:
     engines: {node: '>=22.13.0'}
     peerDependencies:
       '@mastra/core': '>=1.0.0-0 <2.0.0-0'
+
+  '@mastra/memory@1.20.3':
+    resolution: {integrity: sha512-k/1UHJ1z2PgPRDUC7L4tDLJ5ypTm6RqPT6sE368owaPTsQRodDQroQRJIVqm9gKPV5QgFMdoCjFAxMqYYbSUog==}
+    engines: {node: '>=22.13.0'}
+    peerDependencies:
+      '@mastra/core': '>=1.4.1-0 <2.0.0-0'
+
+  '@mastra/observability@1.14.1':
+    resolution: {integrity: sha512-VKfn3mE1mNFOXgY9Pr9sy5L4q4xLnoLj501gFMOr0teNnRMvAiANVB+p4rnooDfM4i8nzLDG9icM80uMsgXTzQ==}
+    engines: {node: '>=22.13.0'}
+    peerDependencies:
+      '@mastra/core': '>=1.16.0-0 <2.0.0-0'
+      zod: ^3.25.0 || ^4.0.0
 
   '@mastra/schema-compat@1.2.11':
     resolution: {integrity: sha512-wN8eTy/g14Mg3kWukhoIjd5SpFtLQ8gOltbELe9nM2Ruzm4jK8tFr1ZZNZwvLYnpq7NJG5a8F0ZFCjXFOEwx0w==}
@@ -2652,6 +2733,9 @@ packages:
     resolution: {integrity: sha512-hsU18Ae8CDTR6Kgu9DYf0EbCr/a5iGL0rytQDobUcdpYOKokk8LEjVphnXkDkgpi0wYVsqrXuP0bZxJaTqdgoA==}
     engines: {node: '>= 0.4'}
 
+  async-mutex@0.5.0:
+    resolution: {integrity: sha512-1A94B18jkJ3DYq284ohPxoXbfTA5HsQ7/Mf4DEhcyLx3Bz27Rh59iScbB6EPiP+B+joue6YCxcMXSbFC1tZKwA==}
+
   async@3.2.6:
     resolution: {integrity: sha512-htCUDlxyyCLMgaM3xXg0C0LW2xqfuQ6p05pCEIsXuyQ+a1koYKTuBMzRNwmybfLgvJDMd0r1LTn4+E0Ti6C2AA==}
 
@@ -3955,6 +4039,10 @@ packages:
     resolution: {integrity: sha512-eKCa6bwnJhvxj14kZk5NCPc6Hb6BdsU9DZcOnmQKSnO1VKrfV0zCvtttPZUsBvjmNDn8rpcJfpwSYnHBjc95MQ==}
     engines: {node: '>=18.18.0'}
 
+  iconv-lite@0.4.24:
+    resolution: {integrity: sha512-v3MXnZAcvnywkTUEZomIActle7RXXeedOR31wwl7VlyoXO4Qi9arvSenNQWne1TcRwhCL1HwLI21bEqdpj8/rA==}
+    engines: {node: '>=0.10.0'}
+
   iconv-lite@0.6.3:
     resolution: {integrity: sha512-4fCk79wshMdzMp2rH06qWrJE4iolqLhCUH+OiuIgU++RB0+94NlDL81atO7GX55uUKueo0txHNtvEyI6D7WdMw==}
     engines: {node: '>=0.10.0'}
@@ -3973,6 +4061,11 @@ packages:
   ignore@7.0.5:
     resolution: {integrity: sha512-Hs59xBNfUIunMFgWAbGX5cq6893IbWg4KnrjbYwX3tx0ztorVgTDA6B2sxf8ejHJ4wz8BqGUMYlnzNBer5NvGg==}
     engines: {node: '>= 4'}
+
+  image-size@2.0.2:
+    resolution: {integrity: sha512-IRqXKlaXwgSMAMtpNzZa1ZAe8m+Sa1770Dhk8VkSsP9LS+iHD62Zd8FQKs8fbPiagBE7BzoFX23cxFnwshpV6w==}
+    engines: {node: '>=16.x'}
+    hasBin: true
 
   import-fresh@3.3.1:
     resolution: {integrity: sha512-TR3KfrTZTYLPB6jUjfx6MF9WcWrHL9su5TObK4ZkYgBdWKPOFoSoQIdEuTuR82pmtxH2spWG9h6etwfr1pLBqQ==}
@@ -4790,6 +4883,11 @@ packages:
   natural-compare@1.4.0:
     resolution: {integrity: sha512-OWND8ei3VtNC9h7V60qff3SVobHr996CTwgxubgyQYEpg290h9J0buyECNNJexkFm5sOajh5G116RYA1c8ZMSw==}
 
+  needle@2.9.1:
+    resolution: {integrity: sha512-6R9fqJ5Zcmf+uYaFgdIHmLwNldn5HbK8L5ybn7Uz+ylX/rnOsSp1AHcvQSrCaFN+qNM1wpymHqD7mVasEOlHGQ==}
+    engines: {node: '>= 4.4.x'}
+    hasBin: true
+
   negotiator@0.6.4:
     resolution: {integrity: sha512-myRT3DiWPHqho5PrJaIRyaMv2kgYf0mUVgBNOYMuCH5Ki1yEiQaf/ZJuQ62nvpc44wL5WDbTX7yGJi1Neevw8w==}
     engines: {node: '>= 0.6'}
@@ -5093,6 +5191,9 @@ packages:
   pretty-ms@9.3.0:
     resolution: {integrity: sha512-gjVS5hOP+M3wMm5nmNOucbIrqudzs9v/57bWRHQWLYklXqoXKrVfYW2W9+glfGsqtPgpiz5WwyEEB+ksXIx3gQ==}
     engines: {node: '>=18'}
+
+  probe-image-size@7.3.0:
+    resolution: {integrity: sha512-7CaDeBwiAbh6ohXsvLbAZhO7wzsZAmaevfxe39qvCwRh8LyaZfDlBGGLU1CCTgrTLtCOdwBBhjOrIHaIIimHfQ==}
 
   process-nextick-args@2.0.1:
     resolution: {integrity: sha512-3ouUOpQhtgrbOa17J7+uxOTpITYWaGP7/AhoR3+A+/1e9skrzelGi/dXzEYyvbxubEF6Wn2ypscTKiKJFFn1ag==}
@@ -5404,6 +5505,10 @@ packages:
   safer-buffer@2.1.2:
     resolution: {integrity: sha512-YZo3K82SD7Riyi0E1EQPojLz7kpepnSQI9IyPbHHg1XXXevb5dJI7tpyN2ADxGcQbHG7vcyRHk0cbwqcQriUtg==}
 
+  sax@1.6.0:
+    resolution: {integrity: sha512-6R3J5M4AcbtLUdZmRv2SygeVaM7IhrLXu9BmnOGmmACak8fiUtOsYNWUS4uK7upbmHIBbLBeFeI//477BKLBzA==}
+    engines: {node: '>=11.0.0'}
+
   scheduler@0.27.0:
     resolution: {integrity: sha512-eNv+WrVbKu1f3vbYJT/xtiF5syA5HPIMtf9IgY/nKg0sWqzAUEvqY/xm7OcZc/qafLx/iO9FgOmeSAp4v5ti/Q==}
 
@@ -5542,6 +5647,9 @@ packages:
   stop-iteration-iterator@1.1.0:
     resolution: {integrity: sha512-eLoXW/DHyl62zxY4SCaIgnRhuMr6ri4juEYARS8E6sCEqzKpOiE521Ucofdx+KnDZl5xmvGYaaKCk5FEOxJCoQ==}
     engines: {node: '>= 0.4'}
+
+  stream-parser@0.3.1:
+    resolution: {integrity: sha512-bJ/HgKq41nlKvlhccD5kaCr/P+Hu0wPNKPJOH7en+YrJu/9EgqUF+88w5Jb6KNcjOFMhfX4B2asfeAtIGuHObQ==}
 
   streamdown@2.5.0:
     resolution: {integrity: sha512-/tTnURfIOxZK/pqJAxsfCvETG/XCJHoWnk3jq9xLcuz6CSpnjjuxSRBTTL4PKGhxiZQf0lqPxGhImdpwcZ2XwA==}
@@ -6316,6 +6424,47 @@ snapshots:
       which: 4.0.0
       yocto-spinner: 1.2.0
 
+  '@duckdb/node-api@1.5.2-r.2':
+    dependencies:
+      '@duckdb/node-bindings': 1.5.2-r.2
+
+  '@duckdb/node-bindings-darwin-arm64@1.5.2-r.2':
+    optional: true
+
+  '@duckdb/node-bindings-darwin-x64@1.5.2-r.2':
+    optional: true
+
+  '@duckdb/node-bindings-linux-arm64-musl@1.5.2-r.2':
+    optional: true
+
+  '@duckdb/node-bindings-linux-arm64@1.5.2-r.2':
+    optional: true
+
+  '@duckdb/node-bindings-linux-x64-musl@1.5.2-r.2':
+    optional: true
+
+  '@duckdb/node-bindings-linux-x64@1.5.2-r.2':
+    optional: true
+
+  '@duckdb/node-bindings-win32-arm64@1.5.2-r.2':
+    optional: true
+
+  '@duckdb/node-bindings-win32-x64@1.5.2-r.2':
+    optional: true
+
+  '@duckdb/node-bindings@1.5.2-r.2':
+    dependencies:
+      detect-libc: 2.1.2
+    optionalDependencies:
+      '@duckdb/node-bindings-darwin-arm64': 1.5.2-r.2
+      '@duckdb/node-bindings-darwin-x64': 1.5.2-r.2
+      '@duckdb/node-bindings-linux-arm64': 1.5.2-r.2
+      '@duckdb/node-bindings-linux-arm64-musl': 1.5.2-r.2
+      '@duckdb/node-bindings-linux-x64': 1.5.2-r.2
+      '@duckdb/node-bindings-linux-x64-musl': 1.5.2-r.2
+      '@duckdb/node-bindings-win32-arm64': 1.5.2-r.2
+      '@duckdb/node-bindings-win32-x64': 1.5.2-r.2
+
   '@ecies/ciphers@0.2.6(@noble/ciphers@1.3.0)':
     dependencies:
       '@noble/ciphers': 1.3.0
@@ -6799,6 +6948,11 @@ snapshots:
       - utf-8-validate
       - zod
 
+  '@mastra/duckdb@1.4.2(@mastra/core@1.42.0(ai@6.0.204(zod@4.4.3))(express@5.2.1)(zod@4.4.3))':
+    dependencies:
+      '@duckdb/node-api': 1.5.2-r.2
+      '@mastra/core': 1.42.0(ai@6.0.204(zod@4.4.3))(express@5.2.1)(zod@4.4.3)
+
   '@mastra/libsql@1.13.0(@mastra/core@1.42.0(ai@6.0.204(zod@4.4.3))(express@5.2.1)(zod@4.4.3))':
     dependencies:
       '@libsql/client': 0.17.3
@@ -6812,6 +6966,27 @@ snapshots:
       '@mastra/core': 1.42.0(ai@6.0.204(zod@4.4.3))(express@5.2.1)(zod@4.4.3)
       pino: 10.3.1
       pino-pretty: 13.1.3
+
+  '@mastra/memory@1.20.3(@mastra/core@1.42.0(ai@6.0.204(zod@4.4.3))(express@5.2.1)(zod@4.4.3))(zod@4.4.3)':
+    dependencies:
+      '@mastra/core': 1.42.0(ai@6.0.204(zod@4.4.3))(express@5.2.1)(zod@4.4.3)
+      '@mastra/schema-compat': 1.2.11(zod@4.4.3)
+      async-mutex: 0.5.0
+      diff: 8.0.4
+      image-size: 2.0.2
+      json-schema: 0.4.0
+      lru-cache: 11.5.1
+      probe-image-size: 7.3.0
+      tokenx: 1.3.0
+      xxhash-wasm: 1.1.0
+    transitivePeerDependencies:
+      - supports-color
+      - zod
+
+  '@mastra/observability@1.14.1(@mastra/core@1.42.0(ai@6.0.204(zod@4.4.3))(express@5.2.1)(zod@4.4.3))(zod@4.4.3)':
+    dependencies:
+      '@mastra/core': 1.42.0(ai@6.0.204(zod@4.4.3))(express@5.2.1)(zod@4.4.3)
+      zod: 4.4.3
 
   '@mastra/schema-compat@1.2.11(zod@4.4.3)':
     dependencies:
@@ -8636,6 +8811,10 @@ snapshots:
 
   async-function@1.0.0: {}
 
+  async-mutex@0.5.0:
+    dependencies:
+      tslib: 2.8.1
+
   async@3.2.6: {}
 
   atomic-sleep@1.0.0: {}
@@ -10180,6 +10359,10 @@ snapshots:
 
   human-signals@8.0.1: {}
 
+  iconv-lite@0.4.24:
+    dependencies:
+      safer-buffer: 2.1.2
+
   iconv-lite@0.6.3:
     dependencies:
       safer-buffer: 2.1.2
@@ -10193,6 +10376,8 @@ snapshots:
   ignore@5.3.2: {}
 
   ignore@7.0.5: {}
+
+  image-size@2.0.2: {}
 
   import-fresh@3.3.1:
     dependencies:
@@ -11185,6 +11370,14 @@ snapshots:
 
   natural-compare@1.4.0: {}
 
+  needle@2.9.1:
+    dependencies:
+      debug: 3.2.7
+      iconv-lite: 0.4.24
+      sax: 1.6.0
+    transitivePeerDependencies:
+      - supports-color
+
   negotiator@0.6.4: {}
 
   negotiator@1.0.0: {}
@@ -11521,6 +11714,14 @@ snapshots:
   pretty-ms@9.3.0:
     dependencies:
       parse-ms: 4.0.0
+
+  probe-image-size@7.3.0:
+    dependencies:
+      lodash.merge: 4.6.2
+      needle: 2.9.1
+      stream-parser: 0.3.1
+    transitivePeerDependencies:
+      - supports-color
 
   process-nextick-args@2.0.1: {}
 
@@ -11982,6 +12183,8 @@ snapshots:
 
   safer-buffer@2.1.2: {}
 
+  sax@1.6.0: {}
+
   scheduler@0.27.0: {}
 
   section-matter@1.0.0:
@@ -12231,6 +12434,12 @@ snapshots:
     dependencies:
       es-errors: 1.3.0
       internal-slot: 1.1.0
+
+  stream-parser@0.3.1:
+    dependencies:
+      debug: 2.6.9
+    transitivePeerDependencies:
+      - supports-color
 
   streamdown@2.5.0(react-dom@19.2.4(react@19.2.4))(react@19.2.4):
     dependencies:
