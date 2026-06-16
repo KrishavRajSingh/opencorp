@@ -23,7 +23,7 @@ pnpm is the only package manager in use.
 
 ## Mastra
 
-- Uses `openai/gpt-5-mini` model routed through **OpenRouter** (requires `OPENROUTER_API_KEY` in `.env`; also set `OPENAI_BASE_URL=https://openrouter.ai/api/v1`).
+- Uses `minimax/minimax-m2.7` model routed through **OpenRouter** (requires `OPENROUTER_API_KEY` in `.env`; also set `OPENAI_BASE_URL=https://openrouter.ai/api/v1`).
 - Storage: LibSQL (default) + DuckDB (observability domain).
 - Agents, tools, and workflows live in `src/mastra/agents/`, `src/mastra/tools/`, `src/mastra/workflows/`.
 
