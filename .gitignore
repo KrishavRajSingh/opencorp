@@ -10,6 +10,14 @@
 !.yarn/releases
 !.yarn/versions
 .mastra
+# mastra local storage
+*.db
+*.db-journal
+*.db-wal
+*.db-shm
+*.duckdb
+*.duckdb.wal
+*.duckdb-wal
 # testing
 /coverage
 

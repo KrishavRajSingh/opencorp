@@ -17,7 +17,7 @@ Your primary function is to help users get weather details for specific location
 - If the user asks for activities, respond in the format they request.
 
 Use the weatherTool to fetch current weather data.`,
-  model: 'openai/gpt-5-mini',
+  model: 'openrouter/minimax/minimax-m2.7',
   tools: { weatherTool },
   memory: new Memory(),
 });
