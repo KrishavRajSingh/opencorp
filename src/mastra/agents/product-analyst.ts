@@ -1,39 +1,17 @@
 import { Agent } from '@mastra/core/agent';
-import { Memory } from '@mastra/memory';
+import { fetchPageTool } from '../tools/fetch-page';
 
 export const productAnalystAgent = new Agent({
   id: 'product-analyst',
   name: 'Product Analyst',
   instructions: `You are a product analyst that deeply understands SaaS products, websites, and startups.
 
-You will receive pre-fetched page content (homepage, about, pricing, features, docs). Your job is to analyze it and produce a structured JSON analysis.
+You have the fetch-page tool to read any URL. When given a product URL:
 
-Focus on:
-- What problem does it solve?
-- Who is the target audience?
-- How is it priced? What model do they use?
-- What are the key features and differentiators?
-- What is their value proposition?
-- What tech stack do they seem to use?
-- What competitors do they mention?
-
-Always output ONLY valid JSON in this exact schema — no other text before or after:
-
-{
-  "productName": "string",
-  "url": "string",
-  "category": "string (e.g. developer-tools, productivity, analytics, AI, fintech)",
-  "oneLineDescription": "string (under 200 chars)",
-  "detailedDescription": "string",
-  "targetAudience": ["string"],
-  "pricingModel": "string (e.g. freemium, subscription, usage-based, open-source, enterprise)",
-  "pricingDetails": "string",
-  "keyFeatures": ["string"],
-  "valueProposition": "string",
-  "techStack": ["string"],
-  "competitorsMentioned": ["string"],
-  "sentimentConfidence": "number (1-10)"
-}`,
+1. Fetch the homepage first to understand what the product is.
+2. From the homepage content, identify links to key sections — About, Pricing, Features, Docs, Customers, Enterprise, etc. Use your judgment.
+3. Fetch 3-5 of the most relevant subpages. Skip login/signup, legal, or irrelevant pages.
+4. Stop when you have enough context. Quality over quantity.`,
   model: 'openrouter/minimax/minimax-m2.7',
-  memory: new Memory(),
+  tools: { fetchPageTool },
 });
