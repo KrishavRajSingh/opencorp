@@ -67,7 +67,9 @@ interface ToolCallState {
 
 const stepLabels: Record<string, string> = {
   "research-product": "Analyzing product website",
-  "discover-opportunities": "Searching Hacker News for signals",
+  "discover-competitors": "Hunting competitors",
+  "discover-sentiment": "Mining user pain points",
+  "synthesize-results": "Compiling dossier",
 };
 
 type Status = "idle" | "streaming" | "success" | "error";
@@ -519,12 +521,16 @@ export default function DashboardPage() {
               label = `Fetching ${u.slice(0, 50)}`;
             } else if (p.toolName === "searchHNTool" && p.args?.query) {
               label = `Searching HN: "${String(p.args.query).slice(0, 40)}"`;
+            } else if (p.toolName === "searchWebTool" && p.args?.query) {
+              label = `Searching web: "${String(p.args.query).slice(0, 40)}"`;
             } else {
               label = p.toolName === "fetchPageTool"
                 ? "Fetching page"
                 : p.toolName === "searchHNTool"
                   ? "Searching HN"
-                  : p.toolName;
+                  : p.toolName === "searchWebTool"
+                    ? "Searching web"
+                    : p.toolName;
             }
             setToolCalls((prev) => {
               const exists = prev.find((t) => t.id === p.toolCallId);
@@ -563,6 +569,8 @@ export default function DashboardPage() {
                 const obj = p.result as Record<string, unknown>;
                 if (typeof obj.totalHits === "number") {
                   resultLabel = `${obj.totalHits} results`;
+                } else if (typeof obj.resultCount === "number") {
+                  resultLabel = `${obj.resultCount} results`;
                 } else if (typeof obj.title === "string") {
                   const size =
                     typeof obj.contentLength === "number"

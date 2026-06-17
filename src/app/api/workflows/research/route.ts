@@ -1,8 +1,6 @@
 import { mastra } from "@/mastra";
 import { researchEvents } from "@/mastra/research-events";
 
-const RESEARCH_TIMEOUT = 120_000;
-
 export async function POST(request: Request) {
   let url: string;
   try {
@@ -67,13 +65,6 @@ export async function POST(request: Request) {
         enqueue(event.type, event.data);
       });
 
-      const timeout = setTimeout(() => {
-        enqueue("error", { error: "Research timed out" });
-        closed = true;
-        unsubscribe();
-        try { controller.close(); } catch { /* ok */ }
-      }, RESEARCH_TIMEOUT);
-
       const heartbeat = setInterval(() => {
         if (closed) return;
         try {
@@ -98,7 +89,6 @@ export async function POST(request: Request) {
           }
 
           const result = await output.result;
-          clearTimeout(timeout);
           clearInterval(heartbeat);
           unsubscribe();
           if (closed) return;
@@ -113,7 +103,6 @@ export async function POST(request: Request) {
             enqueue("result", result.result);
           }
         } catch (error) {
-          clearTimeout(timeout);
           clearInterval(heartbeat);
           unsubscribe();
           if (!closed) {
