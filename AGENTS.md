@@ -39,3 +39,4 @@ pnpm is the only package manager in use.
 - `@/components/ui/` components use `cva` (class-variance-authority) for variants.
 - Prefer `motion/react` (framer-motion v12+) for animations (already used in `page.tsx`).
 - All components are `"use client"` unless server-rendered.
+- **When making frontend UI changes, load the `frontend-design` skill first** for intentional, distinctive visual design.
