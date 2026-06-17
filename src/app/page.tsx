@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "motion/react";
+import Link from "next/link";
 import {
   ArrowRight,
   Search,
@@ -109,7 +110,9 @@ const features = [
           >
             <GitHubIcon className="size-5" />
           </a>
-          <Button size="sm">Get Early Access</Button>
+          <Button size="sm" asChild>
+            <Link href="/dashboard">Dashboard</Link>
+          </Button>
         </div>
       </div>
     </header>
@@ -264,9 +267,11 @@ export default function Page() {
               pipeline of users — completely autonomously.
             </p>
             <div className="mt-8 flex flex-col items-center gap-4 sm:flex-row">
-              <Button size="lg" className="w-full sm:w-auto">
-                Get Early Access
-                <ArrowRight className="size-4" />
+              <Button size="lg" className="w-full sm:w-auto" asChild>
+                <Link href="/dashboard">
+                  Open Dashboard
+                  <ArrowRight className="size-4" />
+                </Link>
               </Button>
               <Button variant="outline" size="lg" className="w-full sm:w-auto">
                 <Globe className="size-4" />
@@ -396,9 +401,11 @@ export default function Page() {
               of users — so you can focus on what you do best.
             </p>
             <div className="mt-8 flex flex-col items-center gap-4 sm:flex-row">
-              <Button size="lg" className="w-full sm:w-auto">
-                Get Early Access
-                <ArrowRight className="size-4" />
+              <Button size="lg" className="w-full sm:w-auto" asChild>
+                <Link href="/dashboard">
+                  Open Dashboard
+                  <ArrowRight className="size-4" />
+                </Link>
               </Button>
               <Button variant="outline" size="lg" className="w-full sm:w-auto">
                 <Globe className="size-4" />
