@@ -386,8 +386,10 @@ export default function DashboardPage() {
   }, [status]);
 
   const handleSubmit = useCallback(async () => {
-    const trimmed = url.trim();
+    let trimmed = url.trim();
     if (!trimmed) return;
+
+    trimmed = /^https?:\/\//i.test(trimmed) ? trimmed : `https://${trimmed}`;
 
     try {
       new URL(trimmed);
@@ -673,16 +675,17 @@ export default function DashboardPage() {
                         setError(null);
                       }}
                       onKeyDown={handleKeyDown}
-                      placeholder="https://yourproduct.com"
-                      className="flex-1 bg-transparent text-sm text-foreground outline-none placeholder:text-muted-foreground/40"
+                      placeholder="yourproduct.com"
+                      className="min-w-0 flex-1 bg-transparent text-sm text-foreground outline-none placeholder:text-muted-foreground/40"
                       autoFocus
                     />
                     <Button
                       size="sm"
                       onClick={handleSubmit}
                       disabled={!url.trim()}
+                      className="shrink-0"
                     >
-                      Research
+                      <span className="hidden sm:inline">Research</span>
                       <ArrowRight className="size-3.5" />
                     </Button>
                   </div>

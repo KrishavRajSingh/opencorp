@@ -20,6 +20,10 @@ export async function POST(request: Request) {
     });
   }
 
+  if (!/^https?:\/\//i.test(url)) {
+    url = `https://${url}`;
+  }
+
   try {
     new URL(url);
   } catch {
