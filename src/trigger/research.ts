@@ -13,7 +13,7 @@ async function runWithRetry(
   agent: Agent,
   prompt: string,
   opts: StreamOptions,
-  onToolCall: (step: { toolCalls?: Array<{ payload: { toolCallId: string; toolName: string; args: unknown } }> }) => void,
+  onToolCall: (step: { toolCalls?: Array<{ payload: { toolCallId: string; toolName: string; args?: unknown } }> }) => void,
 ): Promise<Record<string, unknown>> {
   // First attempt — stream tool calls
   let result = await agent.stream(prompt, { ...opts, onStepFinish: onToolCall });
