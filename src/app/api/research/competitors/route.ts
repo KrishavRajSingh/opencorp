@@ -64,13 +64,13 @@ Find every competitor, alternative, and substitute product. Search the web for c
     const streamResult = await agent.stream(prompt, {
       structuredOutput: { schema: competitorSchema, model: 'openrouter/owl-alpha' },
       maxSteps: 15,
-      onStepFinish: (step: { toolCalls?: Array<{ toolCallId: string; toolName: string; args: unknown }> }) => {
+      onStepFinish: (step) => {
           const toolCalls = step.toolCalls ?? [];
           for (const tc of toolCalls) {
           ctrl.enqueue("tool-call", {
-            toolCallId: tc.toolCallId ?? crypto.randomUUID(),
-            toolName: tc.toolName ?? tc.toolCallName ?? "unknown",
-            args: tc.args ?? {},
+            toolCallId: tc.payload.toolCallId ?? crypto.randomUUID(),
+            toolName: tc.payload.toolName ?? "unknown",
+            args: tc.payload.args ?? {},
           });
         }
       },

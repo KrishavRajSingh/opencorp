@@ -58,14 +58,13 @@ export async function POST(request: Request) {
       {
         structuredOutput: { schema: productSchema, model: 'openrouter/owl-alpha' },
         maxSteps: 10,
-        onStepFinish: (step: { toolCalls?: Array<{ toolCallId: string; toolName: string; args: unknown }> }) => {
+        onStepFinish: (step) => {
           const toolCalls = step.toolCalls ?? [];
           for (const tc of toolCalls) {
-            const toolName = tc.toolName ?? tc.toolCallName ?? "unknown";
             ctrl.enqueue("tool-call", {
-              toolCallId: tc.toolCallId ?? crypto.randomUUID(),
-              toolName,
-              args: tc.args ?? {},
+              toolCallId: tc.payload.toolCallId ?? crypto.randomUUID(),
+              toolName: tc.payload.toolName ?? "unknown",
+              args: tc.payload.args ?? {},
             });
           }
         },

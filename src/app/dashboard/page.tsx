@@ -270,7 +270,7 @@ export default function DashboardPage() {
             const d = data as { toolName: string; args?: { url?: string } };
             setToolCalls((prev) => {
               const label = d.args?.url
-                ? `Reading ${new URL(d.args.url).hostname}...`
+                ? `Reading ${d.args.url}...`
                 : d.toolName;
               return [...prev, label];
             });
@@ -335,7 +335,7 @@ export default function DashboardPage() {
             const d = data as { toolName: string; args?: { url?: string } };
             setToolCalls((prev) => {
               const label = d.args?.url
-                ? `Reading ${new URL(d.args.url).hostname}...`
+                ? `Reading ${d.args.url}...`
                 : d.toolName;
               return [...prev, label];
             });
@@ -401,7 +401,7 @@ export default function DashboardPage() {
             const d = data as { toolName: string; args?: { url?: string } };
             setToolCalls((prev) => {
               const label = d.args?.url
-                ? `Reading ${new URL(d.args.url).hostname}...`
+                ? `Reading ${d.args.url}...`
                 : d.toolName;
               return [...prev, label];
             });

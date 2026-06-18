@@ -64,13 +64,13 @@ Find what users hate, what they wish existed, and who these users are. Search th
     const streamResult = await agent.stream(prompt, {
       structuredOutput: { schema: sentimentSchema, model: 'openrouter/owl-alpha' },
       maxSteps: 15,
-      onStepFinish: (step: { toolCalls?: Array<{ toolCallId: string; toolName: string; args: unknown }> }) => {
+      onStepFinish: (step) => {
           const toolCalls = step.toolCalls ?? [];
           for (const tc of toolCalls) {
           ctrl.enqueue("tool-call", {
-            toolCallId: tc.toolCallId ?? crypto.randomUUID(),
-            toolName: tc.toolName ?? tc.toolCallName ?? "unknown",
-            args: tc.args ?? {},
+            toolCallId: tc.payload.toolCallId ?? crypto.randomUUID(),
+            toolName: tc.payload.toolName ?? "unknown",
+            args: tc.payload.args ?? {},
           });
         }
       },
