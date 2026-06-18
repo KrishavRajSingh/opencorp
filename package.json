@@ -21,6 +21,8 @@
     "@streamdown/code": "^1.1.1",
     "@streamdown/math": "^1.0.2",
     "@streamdown/mermaid": "^1.0.2",
+    "@trigger.dev/react-hooks": "^4.4.6",
+    "@trigger.dev/sdk": "4.4.6",
     "@vercel/analytics": "^2.0.1",
     "@xyflow/react": "^12.11.0",
     "ai": "^6.0.204",
@@ -51,6 +53,7 @@
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
+    "@trigger.dev/build": "4.4.6",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",

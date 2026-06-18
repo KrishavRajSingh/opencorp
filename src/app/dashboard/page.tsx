@@ -69,51 +69,71 @@ const severityColors: Record<Severity, string> = {
   low: "text-muted-foreground bg-muted/50 border-border",
 };
 
-function parseSSEStream(body: ReadableStream<Uint8Array> | null) {
-  if (!body) return null;
-  const reader = body.getReader();
-  const decoder = new TextDecoder();
-  let buffer = "";
+type ToolCallChunk = {
+  toolCallId: string;
+  toolName: string;
+  args?: { url?: string };
+};
 
-  return new ReadableStream({
-    async pull(controller) {
+function readSSEStream(
+  runId: string,
+  streamKey: string,
+  accessToken: string,
+  onData: (data: string) => void,
+  onError: (err: string) => void,
+  signal: AbortSignal,
+) {
+  const url = `https://api.trigger.dev/realtime/v1/streams/${runId}/${streamKey}`;
+  fetch(url, {
+    headers: {
+      Accept: "text/event-stream",
+      Authorization: `Bearer ${accessToken}`,
+      "Timeout-Seconds": "600",
+    },
+    signal,
+  })
+    .then(async (res) => {
+      if (!res.ok) {
+        const text = await res.text().catch(() => "");
+        throw new Error(`HTTP ${res.status}: ${text.slice(0, 200)}`);
+      }
+      const reader = res.body?.getReader();
+      if (!reader) throw new Error("No response body");
+      const decoder = new TextDecoder();
+      let buf = "";
       while (true) {
         const { done, value } = await reader.read();
-        if (value) buffer += decoder.decode(value, { stream: !done });
-
-        const parts = buffer.split("\n\n");
-        buffer = parts.pop() ?? "";
-
+        if (value) {
+          buf += decoder.decode(value, { stream: !done });
+        }
+        const parts = buf.split("\n\n");
+        buf = parts.pop() ?? "";
         for (const part of parts) {
           if (!part.trim()) continue;
-          let eventType = "message";
+          let eventType = "";
           let data = "";
-
           for (const line of part.split("\n")) {
-            if (line.startsWith("event: ")) {
-              eventType = line.slice(7);
-            } else if (line.startsWith("data: ")) {
-              data = line.slice(6);
-            }
+            if (line.startsWith("event: ")) eventType = line.slice(7);
+            else if (line.startsWith("data: ")) data = line.slice(6);
           }
-
-          if (data) {
-            try {
-              const parsed = JSON.parse(data);
-              controller.enqueue({ event: eventType, data: parsed });
-            } catch {
-              // skip unparseable events
+          if (!data) continue;
+          try {
+            const obj = JSON.parse(data);
+            if (eventType === "batch" && obj.records) {
+              for (const r of obj.records) {
+                const body = JSON.parse(r.body);
+                onData(body.data);
+              }
             }
-          }
+          } catch { /* skip */ }
         }
-
-        if (done) {
-          controller.close();
-          return;
-        }
+        if (done) break;
       }
-    },
-  });
+    })
+    .catch((err) => {
+      if (err instanceof DOMException && err.name === "AbortError") return;
+      onError(err.message ?? String(err));
+    });
 }
 
 function ProductResultCard({ result }: { result: ProductResult }) {
@@ -177,7 +197,7 @@ function Field({ label, value }: { label: string; value: string }) {
       <span className="font-mono text-[10px] uppercase text-muted-foreground/60">
         {label}
       </span>
-      <p className="text-xs text-foreground/75">{value || "—"}</p>
+      <p className="text-xs text-foreground/75">{value || "\u2014"}</p>
     </div>
   );
 }
@@ -193,16 +213,22 @@ export default function DashboardPage() {
   const [loadingCompetitors, setLoadingCompetitors] = useState(false);
   const [loadingSentiment, setLoadingSentiment] = useState(false);
   const [elapsed, setElapsed] = useState(0);
-  const abortRef = useRef<AbortController | null>(null);
+  const [streamStatus, setStreamStatus] = useState<string | null>(null);
+  const [streamError, setStreamError] = useState<string | null>(null);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  const [productRunId, setProductRunId] = useState<string | null>(null);
+  const [productToken, setProductToken] = useState<string | null>(null);
+  const [competitorsRunId, setCompetitorsRunId] = useState<string | null>(null);
+  const [competitorsToken, setCompetitorsToken] = useState<string | null>(null);
+  const [sentimentRunId, setSentimentRunId] = useState<string | null>(null);
+  const [sentimentToken, setSentimentToken] = useState<string | null>(null);
 
   const isRunning = status === "streaming" || loadingCompetitors || loadingSentiment;
 
   useEffect(() => {
     if (isRunning) {
-      timerRef.current = setInterval(() => {
-        setElapsed((e) => e + 1);
-      }, 1000);
+      timerRef.current = setInterval(() => setElapsed((e) => e + 1), 1000);
     } else {
       if (timerRef.current) {
         clearInterval(timerRef.current);
@@ -216,6 +242,131 @@ export default function DashboardPage() {
       }
     };
   }, [isRunning]);
+
+  // ---- Stream subscribers (single "research" stream per run) ----
+
+  useEffect(() => {
+    if (!productRunId || !productToken) return;
+    const controller = new AbortController();
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setStreamStatus("Connecting...");
+
+    readSSEStream(productRunId, "research", productToken, (data) => {
+      try {
+        const event = JSON.parse(data) as { type: string } & Record<string, unknown>;
+        switch (event.type) {
+          case "tool-call": {
+            const chunk = event as unknown as ToolCallChunk;
+            const label = chunk.args?.url
+              ? `Reading ${chunk.args.url}...`
+              : chunk.toolName;
+            setToolCalls((prev) => [...prev, label]);
+            setStreamStatus(label);
+            break;
+          }
+          case "result": {
+            controller.abort();
+            setProductResult(event as unknown as ProductResult);
+            setStatus("success");
+            setStreamStatus("Done");
+            break;
+          }
+          case "error": {
+            controller.abort();
+            setError((event as { error: string }).error);
+            setStatus("error");
+            break;
+          }
+        }
+      } catch (e) {
+        setStreamError(`Parse: ${String(e).slice(0, 80)}`);
+      }
+    }, (err) => setStreamError(`Stream: ${err}`), controller.signal);
+
+    return () => controller.abort();
+  }, [productRunId, productToken]);
+
+  useEffect(() => {
+    if (!competitorsRunId || !competitorsToken) return;
+    const controller = new AbortController();
+    const done = { current: false };
+
+    readSSEStream(competitorsRunId, "research", competitorsToken, (data) => {
+      try {
+        const event = JSON.parse(data) as { type: string } & Record<string, unknown>;
+        switch (event.type) {
+          case "tool-call": {
+            const chunk = event as unknown as ToolCallChunk;
+            const label = chunk.args?.url
+              ? `Reading ${chunk.args.url}...`
+              : chunk.toolName;
+            setToolCalls((prev) => [...prev, label]);
+            setStreamStatus(label);
+            break;
+          }
+          case "result": {
+            controller.abort();
+            if (done.current) break;
+            done.current = true;
+            setCompetitors((event as unknown as { competitors: Competitor[] }).competitors);
+            setLoadingCompetitors(false);
+            setStreamStatus("Competitors done");
+            break;
+          }
+          case "error": {
+            controller.abort();
+            setError((event as { error: string }).error);
+            setLoadingCompetitors(false);
+            break;
+          }
+        }
+      } catch { /* skip */ }
+    }, (err) => setStreamError(`Competitors: ${err}`), controller.signal);
+
+    return () => controller.abort();
+  }, [competitorsRunId, competitorsToken]);
+
+  useEffect(() => {
+    if (!sentimentRunId || !sentimentToken) return;
+    const controller = new AbortController();
+    const done = { current: false };
+
+    readSSEStream(sentimentRunId, "research", sentimentToken, (data) => {
+      try {
+        const event = JSON.parse(data) as { type: string } & Record<string, unknown>;
+        switch (event.type) {
+          case "tool-call": {
+            const chunk = event as unknown as ToolCallChunk;
+            const label = chunk.args?.url
+              ? `Reading ${chunk.args.url}...`
+              : chunk.toolName;
+            setToolCalls((prev) => [...prev, label]);
+            setStreamStatus(label);
+            break;
+          }
+          case "result": {
+            controller.abort();
+            if (done.current) break;
+            done.current = true;
+            setFindings((event as unknown as { findings: Finding[] }).findings);
+            setLoadingSentiment(false);
+            setStreamStatus("Pain points done");
+            break;
+          }
+          case "error": {
+            controller.abort();
+            setError((event as { error: string }).error);
+            setLoadingSentiment(false);
+            break;
+          }
+        }
+      } catch { /* skip */ }
+    }, (err) => setStreamError(`Sentiment: ${err}`), controller.signal);
+
+    return () => controller.abort();
+  }, [sentimentRunId, sentimentToken]);
+
+  // ---- Handlers ----
 
   const handleSubmit = useCallback(async () => {
     let trimmed = url.trim();
@@ -232,67 +383,30 @@ export default function DashboardPage() {
 
     setStatus("streaming");
     setError(null);
+    setStreamStatus(null);
+    setStreamError(null);
     setProductResult(null);
     setCompetitors(null);
     setFindings(null);
     setToolCalls([]);
     setElapsed(0);
 
-    const controller = new AbortController();
-    abortRef.current = controller;
-
     try {
       const res = await fetch("/api/research", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ url: trimmed }),
-        signal: controller.signal,
       });
 
+      const body = await res.json();
+
       if (!res.ok) {
-        const body = await res.json().catch(() => null);
-        throw new Error(body?.error ?? `Request failed (${res.status})`);
+        throw new Error(body.error ?? `Request failed (${res.status})`);
       }
 
-      const eventStream = parseSSEStream(res.body);
-      if (!eventStream) throw new Error("No response stream");
-
-      const reader = eventStream.getReader();
-
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-
-        const { event, data } = value as { event: string; data: unknown };
-
-        switch (event) {
-          case "tool-call": {
-            const d = data as { toolName: string; args?: { url?: string } };
-            setToolCalls((prev) => {
-              const label = d.args?.url
-                ? `Reading ${d.args.url}...`
-                : d.toolName;
-              return [...prev, label];
-            });
-            break;
-          }
-
-          case "result": {
-            setProductResult(data as ProductResult);
-            setStatus("success");
-            break;
-          }
-
-          case "error": {
-            const d = data as { error: string };
-            setError(d.error);
-            setStatus("error");
-            break;
-          }
-        }
-      }
+      setProductRunId(body.runId);
+      setProductToken(body.publicAccessToken);
     } catch (err) {
-      if (err instanceof DOMException && err.name === "AbortError") return;
       setError(err instanceof Error ? err.message : "Something went wrong");
       setStatus("error");
     }
@@ -302,63 +416,25 @@ export default function DashboardPage() {
     if (!productResult) return;
     setLoadingCompetitors(true);
     setError(null);
-
-    const controller = new AbortController();
-    abortRef.current = controller;
+    setCompetitorsRunId(null);
+    setCompetitorsToken(null);
 
     try {
       const res = await fetch("/api/research/competitors", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(productResult),
-        signal: controller.signal,
       });
 
+      const body = await res.json();
+
       if (!res.ok) {
-        const body = await res.json().catch(() => null);
-        throw new Error(body?.error ?? `Request failed (${res.status})`);
+        throw new Error(body.error ?? `Request failed (${res.status})`);
       }
 
-      const eventStream = parseSSEStream(res.body);
-      if (!eventStream) throw new Error("No response stream");
-
-      const reader = eventStream.getReader();
-
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-
-        const { event, data } = value as { event: string; data: unknown };
-
-        switch (event) {
-          case "tool-call": {
-            const d = data as { toolName: string; args?: { url?: string } };
-            setToolCalls((prev) => {
-              const label = d.args?.url
-                ? `Reading ${d.args.url}...`
-                : d.toolName;
-              return [...prev, label];
-            });
-            break;
-          }
-
-          case "result": {
-            const d = data as { competitors: Competitor[] };
-            setCompetitors(d.competitors);
-            setLoadingCompetitors(false);
-            break;
-          }
-
-          case "error": {
-            const d = data as { error: string };
-            setError(d.error);
-            setLoadingCompetitors(false);
-            break;
-          }
-        }
-      }
+      setCompetitorsRunId(body.runId);
+      setCompetitorsToken(body.publicAccessToken);
     } catch (err) {
-      if (err instanceof DOMException && err.name === "AbortError") return;
       setError(err instanceof Error ? err.message : "Something went wrong");
       setLoadingCompetitors(false);
     }
@@ -368,63 +444,25 @@ export default function DashboardPage() {
     if (!productResult) return;
     setLoadingSentiment(true);
     setError(null);
-
-    const controller = new AbortController();
-    abortRef.current = controller;
+    setSentimentRunId(null);
+    setSentimentToken(null);
 
     try {
       const res = await fetch("/api/research/sentiment", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(productResult),
-        signal: controller.signal,
       });
 
+      const body = await res.json();
+
       if (!res.ok) {
-        const body = await res.json().catch(() => null);
-        throw new Error(body?.error ?? `Request failed (${res.status})`);
+        throw new Error(body.error ?? `Request failed (${res.status})`);
       }
 
-      const eventStream = parseSSEStream(res.body);
-      if (!eventStream) throw new Error("No response stream");
-
-      const reader = eventStream.getReader();
-
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-
-        const { event, data } = value as { event: string; data: unknown };
-
-        switch (event) {
-          case "tool-call": {
-            const d = data as { toolName: string; args?: { url?: string } };
-            setToolCalls((prev) => {
-              const label = d.args?.url
-                ? `Reading ${d.args.url}...`
-                : d.toolName;
-              return [...prev, label];
-            });
-            break;
-          }
-
-          case "result": {
-            const d = data as { findings: Finding[] };
-            setFindings(d.findings);
-            setLoadingSentiment(false);
-            break;
-          }
-
-          case "error": {
-            const d = data as { error: string };
-            setError(d.error);
-            setLoadingSentiment(false);
-            break;
-          }
-        }
-      }
+      setSentimentRunId(body.runId);
+      setSentimentToken(body.publicAccessToken);
     } catch (err) {
-      if (err instanceof DOMException && err.name === "AbortError") return;
       setError(err instanceof Error ? err.message : "Something went wrong");
       setLoadingSentiment(false);
     }
@@ -438,7 +476,12 @@ export default function DashboardPage() {
   );
 
   const handleCancel = useCallback(() => {
-    abortRef.current?.abort();
+    setProductRunId(null);
+    setProductToken(null);
+    setCompetitorsRunId(null);
+    setCompetitorsToken(null);
+    setSentimentRunId(null);
+    setSentimentToken(null);
     setStatus("idle");
     setLoadingCompetitors(false);
     setLoadingSentiment(false);
@@ -452,6 +495,12 @@ export default function DashboardPage() {
     setError(null);
     setToolCalls([]);
     setElapsed(0);
+    setProductRunId(null);
+    setProductToken(null);
+    setCompetitorsRunId(null);
+    setCompetitorsToken(null);
+    setSentimentRunId(null);
+    setSentimentToken(null);
   }, []);
 
   const elapsedDisplay =
@@ -563,6 +612,17 @@ export default function DashboardPage() {
                   <span>Analyzing product</span>
                   <span>{elapsedDisplay}</span>
                 </div>
+
+                {streamStatus && (
+                  <div className="mt-2 text-xs text-brand/70 font-mono">
+                    {streamStatus}
+                  </div>
+                )}
+                {streamError && (
+                  <div className="mt-1 text-xs text-red-400 font-mono">
+                    {streamError}
+                  </div>
+                )}
 
                 {toolCalls.length > 0 && (
                   <div className="mt-4 space-y-1.5">
