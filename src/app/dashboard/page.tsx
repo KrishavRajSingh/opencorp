@@ -19,36 +19,41 @@ type Severity = "high" | "medium" | "low";
 interface Competitor {
   name: string;
   url: string;
-  mentions: number;
-  notes: string;
+  description: string;
+  featureSet: string;
+  pricingModel: string;
+  targetAudience: string;
+  strengths: string;
+  weaknesses: string;
+  mentionSources: string[];
 }
 
-interface PainPoint {
-  description: string;
-  source: string;
-  frequency: string;
+interface Finding {
+  painPoint: string;
   severity: string;
-}
-
-interface Opportunity {
-  description: string;
-  channel: string;
-  url: string;
-  action: string;
-}
-
-interface Discovery {
-  competitors: Competitor[];
-  painPoints: PainPoint[];
-  opportunities: Opportunity[];
-  discussionThemes: string[];
-  searchQueriesUsed: string[];
+  frequency: string;
+  verbatimQuote: string;
+  quoteSource: string;
+  userRole: string;
+  companyType: string;
+  toolStack: string;
+  wishlist: string;
 }
 
 interface ResearchResult {
   url: string;
+  productName: string;
+  description: string;
+  keyFeatures: string[];
+  targetAudience: string;
+  pricingModel: string;
+  techStack: string;
+  marketPosition: string;
   researchSummary: string;
-  discovery: Discovery | null;
+  competitors: Competitor[];
+  findings: Finding[];
+  competitorQueries: string[];
+  sentimentQueries: string[];
 }
 
 interface StepState {
@@ -69,7 +74,7 @@ const stepLabels: Record<string, string> = {
   "research-product": "Analyzing product website",
   "discover-competitors": "Hunting competitors",
   "discover-sentiment": "Mining user pain points",
-  "synthesize-results": "Compiling dossier",
+  "collect-results": "Collecting results",
 };
 
 type Status = "idle" | "streaming" | "success" | "error";
@@ -170,11 +175,7 @@ function StatCard({
 }
 
 function Dossier({ result }: { result: ResearchResult }) {
-  const { discovery } = result;
-  const competitors = discovery?.competitors ?? [];
-  const painPoints = discovery?.painPoints ?? [];
-  const opportunities = discovery?.opportunities ?? [];
-  const queries = discovery?.searchQueriesUsed ?? [];
+  const { competitors, findings, competitorQueries, sentimentQueries } = result;
 
   return (
     <motion.div
@@ -192,22 +193,55 @@ function Dossier({ result }: { result: ResearchResult }) {
         </span>
       </div>
 
-      <div className="grid gap-3 sm:grid-cols-3">
+      <div className="grid gap-3 sm:grid-cols-2">
         <StatCard label="Competitors" count={competitors.length} color="purple" />
-        <StatCard label="Pain Points" count={painPoints.length} color="brand" />
-        <StatCard
-          label="Opportunities"
-          count={opportunities.length}
-          color="green"
-        />
+        <StatCard label="Findings" count={findings.length} color="brand" />
       </div>
 
       <section className="rounded-xl border bg-card p-6">
         <h3 className="font-heading text-xs tracking-widest uppercase text-muted-foreground">
-          Summary
+          Product
         </h3>
-        <div className="mt-4 whitespace-pre-wrap text-sm leading-relaxed text-foreground/85">
-          {result.researchSummary}
+        <div className="mt-4 space-y-4">
+          <div>
+            <span className="text-lg font-semibold text-foreground">
+              {result.productName}
+            </span>
+            {result.description && (
+              <p className="mt-1 text-sm text-foreground/75">{result.description}</p>
+            )}
+          </div>
+          <div className="grid gap-3 sm:grid-cols-2">
+            {result.targetAudience && (
+              <Field label="Target Audience" value={result.targetAudience} />
+            )}
+            {result.pricingModel && (
+              <Field label="Pricing Model" value={result.pricingModel} />
+            )}
+            {result.techStack && (
+              <Field label="Tech Stack" value={result.techStack} />
+            )}
+            {result.marketPosition && (
+              <Field label="Market Position" value={result.marketPosition} />
+            )}
+          </div>
+          {result.keyFeatures.length > 0 && (
+            <div>
+              <span className="font-mono text-[10px] uppercase text-muted-foreground/60">
+                Key Features
+              </span>
+              <div className="mt-1.5 flex flex-wrap gap-1.5">
+                {result.keyFeatures.map((f) => (
+                  <span
+                    key={f}
+                    className="rounded-md border border-border/50 bg-muted/30 px-2.5 py-1 font-mono text-xs text-muted-foreground"
+                  >
+                    {f}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       </section>
 
@@ -216,75 +250,112 @@ function Dossier({ result }: { result: ResearchResult }) {
           <h3 className="font-heading text-xs tracking-widest uppercase text-purple-400">
             Competitors
           </h3>
-          <div className="mt-4 space-y-3">
+          <div className="mt-4 space-y-4">
             {competitors.map((c) => (
               <div
                 key={c.name}
-                className="flex items-start gap-4 rounded-lg border border-border/50 p-3"
+                className="rounded-lg border border-border/50 p-4"
               >
-                <span className="mt-0.5 font-mono text-xs tabular-nums text-purple-400/70">
-                  {c.mentions}
-                </span>
-                <div className="min-w-0 flex-1">
-                  <div className="flex items-center gap-2">
-                    <span className="text-sm font-medium text-foreground">
-                      {c.name}
-                    </span>
-                    {c.url && (
-                      <a
-                        href={c.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="shrink-0 text-muted-foreground transition-colors hover:text-foreground"
-                      >
-                        <ExternalLink className="size-3" />
-                      </a>
-                    )}
-                  </div>
-                  {c.notes && (
-                    <p className="mt-1 text-xs text-muted-foreground">
-                      {c.notes}
-                    </p>
+                <div className="flex items-center gap-2">
+                  <span className="text-sm font-medium text-foreground">
+                    {c.name}
+                  </span>
+                  {c.url && (
+                    <a
+                      href={c.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="shrink-0 text-muted-foreground transition-colors hover:text-foreground"
+                    >
+                      <ExternalLink className="size-3" />
+                    </a>
                   )}
                 </div>
+                <p className="mt-2 text-sm text-foreground/85">{c.description}</p>
+                <div className="mt-3 grid gap-2 sm:grid-cols-2">
+                  {c.featureSet && (
+                    <Field label="Features" value={c.featureSet} />
+                  )}
+                  {c.pricingModel && (
+                    <Field label="Pricing" value={c.pricingModel} />
+                  )}
+                  {c.targetAudience && (
+                    <Field label="Audience" value={c.targetAudience} />
+                  )}
+                  {c.strengths && (
+                    <Field label="Strengths" value={c.strengths} />
+                  )}
+                  {c.weaknesses && (
+                    <Field label="Weaknesses" value={c.weaknesses} />
+                  )}
+                </div>
+                {c.mentionSources.length > 0 && (
+                  <div className="mt-3 flex flex-wrap gap-1.5">
+                    {c.mentionSources.map((s, i) => (
+                      <a
+                        key={i}
+                        href={s}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="rounded bg-muted/50 px-2 py-0.5 font-mono text-[10px] text-muted-foreground transition-colors hover:text-foreground"
+                      >
+                        {s.replace(/^https?:\/\//, "").slice(0, 45)}
+                      </a>
+                    ))}
+                  </div>
+                )}
               </div>
             ))}
           </div>
         </section>
       )}
 
-      {painPoints.length > 0 && (
+      {findings.length > 0 && (
         <section className="rounded-xl border bg-card p-6">
           <h3 className="font-heading text-xs tracking-widest uppercase text-brand">
-            Pain Points
+            Findings
           </h3>
-          <div className="mt-4 space-y-2">
-            {painPoints.map((p, i) => {
-              const sev = mapSeverity(p.severity);
+          <div className="mt-4 space-y-3">
+            {findings.map((f, i) => {
+              const sev = mapSeverity(f.severity);
               return (
                 <div
                   key={i}
-                  className="flex items-start gap-3 rounded-lg border border-border/50 p-3"
+                  className="rounded-lg border border-border/50 p-4"
                 >
-                  <span
-                    className={cn(
-                      "shrink-0 rounded border px-1.5 py-0.5 font-mono text-[10px] uppercase",
-                      severityColors[sev],
-                    )}
-                  >
-                    {sev}
-                  </span>
-                  <div className="min-w-0 flex-1">
-                    <p className="text-sm text-foreground/85">
-                      {p.description}
-                    </p>
-                    <div className="mt-1 flex items-center gap-2 text-xs text-muted-foreground">
-                      <span>{p.source}</span>
-                      {p.frequency && (
-                        <>
-                          <span className="text-border">|</span>
-                          <span>{p.frequency}</span>
-                        </>
+                  <div className="flex items-start gap-3">
+                    <span
+                      className={cn(
+                        "shrink-0 rounded border px-1.5 py-0.5 font-mono text-[10px] uppercase",
+                        severityColors[sev],
+                      )}
+                    >
+                      {sev}
+                    </span>
+                    <div className="min-w-0 flex-1">
+                      <p className="text-sm font-medium text-foreground/90">
+                        {f.painPoint}
+                      </p>
+                      <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground">
+                        {f.userRole && <span>Role: {f.userRole}</span>}
+                        {f.companyType && <span>Company: {f.companyType}</span>}
+                        {f.toolStack && <span>Stack: {f.toolStack}</span>}
+                        {f.frequency && <span>Frequency: {f.frequency}</span>}
+                      </div>
+                      {f.verbatimQuote && (
+                        <blockquote className="mt-3 border-l-2 border-brand/30 pl-3 text-xs text-muted-foreground italic">
+                          &ldquo;{f.verbatimQuote}&rdquo;
+                          {f.quoteSource && (
+                            <cite className="mt-1 block not-italic text-muted-foreground/60">
+                              &mdash; {f.quoteSource}
+                            </cite>
+                          )}
+                        </blockquote>
+                      )}
+                      {f.wishlist && (
+                        <p className="mt-2 text-xs text-green-400/80">
+                          Wants: {f.wishlist}
+                        </p>
                       )}
                     </div>
                   </div>
@@ -295,63 +366,57 @@ function Dossier({ result }: { result: ResearchResult }) {
         </section>
       )}
 
-      {opportunities.length > 0 && (
-        <section className="rounded-xl border bg-card p-6">
-          <h3 className="font-heading text-xs tracking-widest uppercase text-green-400">
-            Opportunities
-          </h3>
-          <div className="mt-4 space-y-3">
-            {opportunities.map((o, i) => (
-              <div
-                key={i}
-                className="rounded-lg border border-border/50 border-l-[oklch(0.62_0.15_150)] p-3"
-              >
-                <p className="text-sm text-foreground/85">{o.description}</p>
-                <div className="mt-2 flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
-                  <span className="rounded bg-muted px-1.5 py-0.5 font-mono">
-                    {o.channel}
-                  </span>
-                  {o.url && (
-                    <a
-                      href={o.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1 text-brand transition-colors hover:text-brand/80"
-                    >
-                      {o.url.replace(/^https?:\/\//, "").slice(0, 40)}
-                      <ExternalLink className="size-3" />
-                    </a>
-                  )}
-                  {o.action && (
-                    <span className="text-muted-foreground/70">
-                      &rarr; {o.action}
-                    </span>
-                  )}
-                </div>
-              </div>
-            ))}
-          </div>
-        </section>
-      )}
-
-      {queries.length > 0 && (
+      {(competitorQueries.length > 0 || sentimentQueries.length > 0) && (
         <section className="rounded-xl border bg-card p-6">
           <h3 className="font-heading text-xs tracking-widest uppercase text-muted-foreground">
-            Queries Used
+            Search Queries
           </h3>
-          <div className="mt-4 flex flex-wrap gap-2">
-            {queries.map((q) => (
-              <span
-                key={q}
-                className="rounded-md border border-border/50 bg-muted/30 px-2.5 py-1 font-mono text-xs text-muted-foreground"
-              >
-                {q}
-              </span>
-            ))}
+          <div className="mt-4 space-y-3">
+            {competitorQueries.length > 0 && (
+              <div>
+                <span className="text-xs text-purple-400/70">Competitor</span>
+                <div className="mt-1.5 flex flex-wrap gap-2">
+                  {competitorQueries.map((q) => (
+                    <span
+                      key={q}
+                      className="rounded-md border border-border/50 bg-muted/30 px-2.5 py-1 font-mono text-xs text-muted-foreground"
+                    >
+                      {q}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
+            {sentimentQueries.length > 0 && (
+              <div>
+                <span className="text-xs text-brand/70">Sentiment</span>
+                <div className="mt-1.5 flex flex-wrap gap-2">
+                  {sentimentQueries.map((q) => (
+                    <span
+                      key={q}
+                      className="rounded-md border border-border/50 bg-muted/30 px-2.5 py-1 font-mono text-xs text-muted-foreground"
+                    >
+                      {q}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         </section>
       )}
     </motion.div>
+  );
+}
+
+function Field({ label, value }: { label: string; value: string }) {
+  return (
+    <div>
+      <span className="font-mono text-[10px] uppercase text-muted-foreground/60">
+        {label}
+      </span>
+      <p className="text-xs text-foreground/75">{value}</p>
+    </div>
   );
 }
 

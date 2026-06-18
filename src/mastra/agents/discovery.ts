@@ -18,6 +18,6 @@ RESEARCH APPROACH:
 - When you discover a competitor or interesting page, fetch it to understand it deeply.
 - Base all findings on direct evidence from your searches. Never invent.
 - If a query returns nothing useful, acknowledge it and try a different angle.`,
-  model: 'openrouter/minimax/minimax-m2.7',
+  model: 'openrouter/owl-alpha',
   tools: { searchWebTool, searchHNTool, fetchPageTool },
 });
