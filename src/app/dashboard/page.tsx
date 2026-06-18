@@ -273,7 +273,7 @@ export default function DashboardPage() {
           }
           case "error": {
             controller.abort();
-            setError((event as { error: string }).error);
+            setError((event as unknown as { error: string }).error);
             setStatus("error");
             break;
           }
@@ -315,7 +315,7 @@ export default function DashboardPage() {
           }
           case "error": {
             controller.abort();
-            setError((event as { error: string }).error);
+            setError((event as unknown as { error: string }).error);
             setLoadingCompetitors(false);
             break;
           }
@@ -355,7 +355,7 @@ export default function DashboardPage() {
           }
           case "error": {
             controller.abort();
-            setError((event as { error: string }).error);
+            setError((event as unknown as { error: string }).error);
             setLoadingSentiment(false);
             break;
           }
