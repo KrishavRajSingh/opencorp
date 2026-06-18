@@ -1,6 +1,5 @@
 import { Mastra } from '@mastra/core/mastra';
 import { PinoLogger } from '@mastra/loggers';
-import { LibSQLStore } from '@mastra/libsql';
 import { weatherWorkflow } from './workflows/weather-workflow';
 import { productResearchWorkflow } from './workflows/product-research';
 import { weatherAgent } from './agents/weather-agent';
@@ -11,10 +10,6 @@ import { discoveryAgent } from './agents/discovery';
 export const mastra = new Mastra({
   workflows: { weatherWorkflow, productResearchWorkflow },
   agents: { weatherAgent, productAnalystAgent, discoveryAgent },
-  storage: new LibSQLStore({
-    id: "mastra-storage",
-    url: "file:./mastra.db",
-  }),
   logger: new PinoLogger({
     name: 'Mastra',
     level: process.env.NODE_ENV === 'development' ? 'debug' : 'info',
