@@ -10,6 +10,8 @@ import {
   AlertTriangle,
   ExternalLink,
   Check,
+  Users,
+  MessageSquare,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -40,7 +42,7 @@ interface Finding {
   wishlist: string;
 }
 
-interface ResearchResult {
+interface ProductResult {
   url: string;
   productName: string;
   description: string;
@@ -50,32 +52,7 @@ interface ResearchResult {
   techStack: string;
   marketPosition: string;
   researchSummary: string;
-  competitors: Competitor[];
-  findings: Finding[];
-  competitorQueries: string[];
-  sentimentQueries: string[];
 }
-
-interface StepState {
-  id: string;
-  label: string;
-  status: "pending" | "running" | "done";
-}
-
-interface ToolCallState {
-  id: string;
-  toolName: string;
-  label: string;
-  status: "running" | "done";
-  resultLabel?: string;
-}
-
-const stepLabels: Record<string, string> = {
-  "research-product": "Analyzing product website",
-  "discover-competitors": "Hunting competitors",
-  "discover-sentiment": "Mining user pain points",
-  "collect-results": "Collecting results",
-};
 
 type Status = "idle" | "streaming" | "success" | "error";
 
@@ -139,273 +116,58 @@ function parseSSEStream(body: ReadableStream<Uint8Array> | null) {
   });
 }
 
-function StatCard({
-  label,
-  count,
-  color,
-}: {
-  label: string;
-  count: number;
-  color: string;
-}) {
+function ProductResultCard({ result }: { result: ProductResult }) {
   return (
-    <div
-      className={cn(
-        "rounded-lg border bg-card p-4",
-        color === "purple" && "border-purple-500/20",
-        color === "brand" && "border-brand/20",
-        color === "green" && "border-green-500/20",
-      )}
-    >
-      <span
-        className={cn(
-          "font-heading text-xs tracking-widest uppercase",
-          color === "purple" && "text-purple-400",
-          color === "brand" && "text-brand",
-          color === "green" && "text-green-400",
-        )}
-      >
-        {label}
-      </span>
-      <span className="mt-1 block font-mono text-3xl tabular-nums text-foreground">
-        {count}
-      </span>
-    </div>
-  );
-}
-
-function Dossier({ result }: { result: ResearchResult }) {
-  const { competitors, findings, competitorQueries, sentimentQueries } = result;
-
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5 }}
-      className="mx-auto w-full max-w-4xl space-y-8"
-    >
-      <div className="flex items-center gap-2">
-        <span className="font-heading text-lg tracking-tight text-foreground">
-          DOSSIER
-        </span>
-        <span className="font-mono text-sm text-muted-foreground">
-          {result.url}
-        </span>
-      </div>
-
-      <div className="grid gap-3 sm:grid-cols-2">
-        <StatCard label="Competitors" count={competitors.length} color="purple" />
-        <StatCard label="Findings" count={findings.length} color="brand" />
-      </div>
-
-      <section className="rounded-xl border bg-card p-6">
-        <h3 className="font-heading text-xs tracking-widest uppercase text-muted-foreground">
-          Product
-        </h3>
-        <div className="mt-4 space-y-4">
+    <div className="mt-8 w-full space-y-6">
+      <div className="space-y-4">
+        <div className="flex items-start justify-between gap-4">
           <div>
-            <span className="text-lg font-semibold text-foreground">
+            <h2 className="font-heading text-lg tracking-tight text-foreground">
               {result.productName}
-            </span>
-            {result.description && (
-              <p className="mt-1 text-sm text-foreground/75">{result.description}</p>
-            )}
+            </h2>
+            <a
+              href={result.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-1 inline-flex items-center gap-1.5 text-xs text-brand/70 hover:text-brand transition-colors"
+            >
+              {result.url}
+              <ExternalLink className="size-3" />
+            </a>
           </div>
-          <div className="grid gap-3 sm:grid-cols-2">
-            {result.targetAudience && (
-              <Field label="Target Audience" value={result.targetAudience} />
-            )}
-            {result.pricingModel && (
-              <Field label="Pricing Model" value={result.pricingModel} />
-            )}
-            {result.techStack && (
-              <Field label="Tech Stack" value={result.techStack} />
-            )}
-            {result.marketPosition && (
-              <Field label="Market Position" value={result.marketPosition} />
-            )}
-          </div>
-          {result.keyFeatures.length > 0 && (
-            <div>
-              <span className="font-mono text-[10px] uppercase text-muted-foreground/60">
-                Key Features
-              </span>
-              <div className="mt-1.5 flex flex-wrap gap-1.5">
-                {result.keyFeatures.map((f) => (
-                  <span
-                    key={f}
-                    className="rounded-md border border-border/50 bg-muted/30 px-2.5 py-1 font-mono text-xs text-muted-foreground"
-                  >
-                    {f}
-                  </span>
-                ))}
-              </div>
-            </div>
-          )}
         </div>
-      </section>
+        {result.description && (
+          <p className="text-sm text-foreground/75 leading-relaxed">
+            {result.description}
+          </p>
+        )}
+      </div>
 
-      {competitors.length > 0 && (
-        <section className="rounded-xl border bg-card p-6">
-          <h3 className="font-heading text-xs tracking-widest uppercase text-purple-400">
-            Competitors
-          </h3>
-          <div className="mt-4 space-y-4">
-            {competitors.map((c) => (
-              <div
-                key={c.name}
-                className="rounded-lg border border-border/50 p-4"
+      {result.keyFeatures.length > 0 && (
+        <div className="space-y-2">
+          <span className="font-heading text-[10px] tracking-widest uppercase text-muted-foreground/60">
+            Key Features
+          </span>
+          <div className="flex flex-wrap gap-1.5">
+            {result.keyFeatures.map((f, i) => (
+              <span
+                key={i}
+                className="inline-flex rounded-md border border-border/60 bg-card/40 px-2.5 py-1 text-xs text-foreground/70"
               >
-                <div className="flex items-center gap-2">
-                  <span className="text-sm font-medium text-foreground">
-                    {c.name}
-                  </span>
-                  {c.url && (
-                    <a
-                      href={c.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="shrink-0 text-muted-foreground transition-colors hover:text-foreground"
-                    >
-                      <ExternalLink className="size-3" />
-                    </a>
-                  )}
-                </div>
-                <p className="mt-2 text-sm text-foreground/85">{c.description}</p>
-                <div className="mt-3 grid gap-2 sm:grid-cols-2">
-                  {c.featureSet && (
-                    <Field label="Features" value={c.featureSet} />
-                  )}
-                  {c.pricingModel && (
-                    <Field label="Pricing" value={c.pricingModel} />
-                  )}
-                  {c.targetAudience && (
-                    <Field label="Audience" value={c.targetAudience} />
-                  )}
-                  {c.strengths && (
-                    <Field label="Strengths" value={c.strengths} />
-                  )}
-                  {c.weaknesses && (
-                    <Field label="Weaknesses" value={c.weaknesses} />
-                  )}
-                </div>
-                {c.mentionSources.length > 0 && (
-                  <div className="mt-3 flex flex-wrap gap-1.5">
-                    {c.mentionSources.map((s, i) => (
-                      <a
-                        key={i}
-                        href={s}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="rounded bg-muted/50 px-2 py-0.5 font-mono text-[10px] text-muted-foreground transition-colors hover:text-foreground"
-                      >
-                        {s.replace(/^https?:\/\//, "").slice(0, 45)}
-                      </a>
-                    ))}
-                  </div>
-                )}
-              </div>
+                {f}
+              </span>
             ))}
           </div>
-        </section>
+        </div>
       )}
 
-      {findings.length > 0 && (
-        <section className="rounded-xl border bg-card p-6">
-          <h3 className="font-heading text-xs tracking-widest uppercase text-brand">
-            Findings
-          </h3>
-          <div className="mt-4 space-y-3">
-            {findings.map((f, i) => {
-              const sev = mapSeverity(f.severity);
-              return (
-                <div
-                  key={i}
-                  className="rounded-lg border border-border/50 p-4"
-                >
-                  <div className="flex items-start gap-3">
-                    <span
-                      className={cn(
-                        "shrink-0 rounded border px-1.5 py-0.5 font-mono text-[10px] uppercase",
-                        severityColors[sev],
-                      )}
-                    >
-                      {sev}
-                    </span>
-                    <div className="min-w-0 flex-1">
-                      <p className="text-sm font-medium text-foreground/90">
-                        {f.painPoint}
-                      </p>
-                      <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground">
-                        {f.userRole && <span>Role: {f.userRole}</span>}
-                        {f.companyType && <span>Company: {f.companyType}</span>}
-                        {f.toolStack && <span>Stack: {f.toolStack}</span>}
-                        {f.frequency && <span>Frequency: {f.frequency}</span>}
-                      </div>
-                      {f.verbatimQuote && (
-                        <blockquote className="mt-3 border-l-2 border-brand/30 pl-3 text-xs text-muted-foreground italic">
-                          &ldquo;{f.verbatimQuote}&rdquo;
-                          {f.quoteSource && (
-                            <cite className="mt-1 block not-italic text-muted-foreground/60">
-                              &mdash; {f.quoteSource}
-                            </cite>
-                          )}
-                        </blockquote>
-                      )}
-                      {f.wishlist && (
-                        <p className="mt-2 text-xs text-green-400/80">
-                          Wants: {f.wishlist}
-                        </p>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </section>
-      )}
-
-      {(competitorQueries.length > 0 || sentimentQueries.length > 0) && (
-        <section className="rounded-xl border bg-card p-6">
-          <h3 className="font-heading text-xs tracking-widest uppercase text-muted-foreground">
-            Search Queries
-          </h3>
-          <div className="mt-4 space-y-3">
-            {competitorQueries.length > 0 && (
-              <div>
-                <span className="text-xs text-purple-400/70">Competitor</span>
-                <div className="mt-1.5 flex flex-wrap gap-2">
-                  {competitorQueries.map((q) => (
-                    <span
-                      key={q}
-                      className="rounded-md border border-border/50 bg-muted/30 px-2.5 py-1 font-mono text-xs text-muted-foreground"
-                    >
-                      {q}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            )}
-            {sentimentQueries.length > 0 && (
-              <div>
-                <span className="text-xs text-brand/70">Sentiment</span>
-                <div className="mt-1.5 flex flex-wrap gap-2">
-                  {sentimentQueries.map((q) => (
-                    <span
-                      key={q}
-                      className="rounded-md border border-border/50 bg-muted/30 px-2.5 py-1 font-mono text-xs text-muted-foreground"
-                    >
-                      {q}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            )}
-          </div>
-        </section>
-      )}
-    </motion.div>
+      <div className="grid grid-cols-2 gap-3">
+        <Field label="Pricing" value={result.pricingModel} />
+        <Field label="Target Audience" value={result.targetAudience} />
+        <Field label="Tech Stack" value={result.techStack} />
+        <Field label="Market Position" value={result.marketPosition} />
+      </div>
+    </div>
   );
 }
 
@@ -415,7 +177,7 @@ function Field({ label, value }: { label: string; value: string }) {
       <span className="font-mono text-[10px] uppercase text-muted-foreground/60">
         {label}
       </span>
-      <p className="text-xs text-foreground/75">{value}</p>
+      <p className="text-xs text-foreground/75">{value || "—"}</p>
     </div>
   );
 }
@@ -423,16 +185,21 @@ function Field({ label, value }: { label: string; value: string }) {
 export default function DashboardPage() {
   const [status, setStatus] = useState<Status>("idle");
   const [url, setUrl] = useState("");
-  const [result, setResult] = useState<ResearchResult | null>(null);
+  const [productResult, setProductResult] = useState<ProductResult | null>(null);
+  const [competitors, setCompetitors] = useState<Competitor[] | null>(null);
+  const [findings, setFindings] = useState<Finding[] | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [steps, setSteps] = useState<StepState[]>([]);
-  const [toolCalls, setToolCalls] = useState<ToolCallState[]>([]);
+  const [toolCalls, setToolCalls] = useState<string[]>([]);
+  const [loadingCompetitors, setLoadingCompetitors] = useState(false);
+  const [loadingSentiment, setLoadingSentiment] = useState(false);
   const [elapsed, setElapsed] = useState(0);
   const abortRef = useRef<AbortController | null>(null);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
+  const isRunning = status === "streaming" || loadingCompetitors || loadingSentiment;
+
   useEffect(() => {
-    if (status === "streaming") {
+    if (isRunning) {
       timerRef.current = setInterval(() => {
         setElapsed((e) => e + 1);
       }, 1000);
@@ -448,7 +215,7 @@ export default function DashboardPage() {
         timerRef.current = null;
       }
     };
-  }, [status]);
+  }, [isRunning]);
 
   const handleSubmit = useCallback(async () => {
     let trimmed = url.trim();
@@ -465,8 +232,9 @@ export default function DashboardPage() {
 
     setStatus("streaming");
     setError(null);
-    setResult(null);
-    setSteps([]);
+    setProductResult(null);
+    setCompetitors(null);
+    setFindings(null);
     setToolCalls([]);
     setElapsed(0);
 
@@ -474,7 +242,7 @@ export default function DashboardPage() {
     abortRef.current = controller;
 
     try {
-      const res = await fetch("/api/workflows/research", {
+      const res = await fetch("/api/research", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ url: trimmed }),
@@ -498,172 +266,26 @@ export default function DashboardPage() {
         const { event, data } = value as { event: string; data: unknown };
 
         switch (event) {
-          case "connected": {
-            setSteps([{
-              id: "_connected",
-              label: "Connected to research engine",
-              status: "done",
-            }]);
-            break;
-          }
-
-          case "workflow-step-start": {
-            const d = data as { payload: { id: string; stepName: string } };
-            const stepId = d.payload?.id ?? "unknown";
-            const stepLabel = stepLabels[stepId] ?? d.payload?.stepName ?? stepId;
-            setSteps((prev) => {
-              const filtered = prev.filter((s) => s.id !== "_connected");
-              const exists = filtered.find((s) => s.id === stepId);
-              if (exists) {
-                return filtered.map((s) =>
-                  s.id === stepId ? { ...s, status: "running" as const } : s,
-                );
-              }
-              return [
-                ...filtered,
-                { id: stepId, label: stepLabel, status: "running" as const },
-              ];
-            });
-            break;
-          }
-
-          case "workflow-step-finish": {
-            const d = data as { payload: { id: string } };
-            const stepId = d.payload?.id ?? "unknown";
-            setSteps((prev) =>
-              prev.map((s) =>
-                s.id === stepId ? { ...s, status: "done" as const } : s,
-              ),
-            );
-            break;
-          }
-
-          case "workflow-step-result": {
-            const d = data as {
-              payload: {
-                id: string;
-                stepName: string;
-                status: string;
-              };
-            };
-            const stepId = d.payload?.id ?? "unknown";
-            const stepLabel = stepLabels[stepId] ?? d.payload?.stepName ?? stepId;
-            setSteps((prev) => {
-              const filtered = prev.filter((s) => s.id !== "_connected");
-              const exists = filtered.find((s) => s.id === stepId);
-              if (exists) {
-                return filtered.map((s) =>
-                  s.id === stepId
-                    ? { ...s, status: "done" as const, label: stepLabel }
-                    : s,
-                );
-              }
-              return [
-                ...filtered,
-                { id: stepId, label: stepLabel, status: "done" as const },
-              ];
+          case "tool-call": {
+            const d = data as { toolName: string; args?: { url?: string } };
+            setToolCalls((prev) => {
+              const label = d.args?.url
+                ? `Reading ${new URL(d.args.url).hostname}...`
+                : d.toolName;
+              return [...prev, label];
             });
             break;
           }
 
           case "result": {
-            setResult(data as ResearchResult);
+            setProductResult(data as ProductResult);
             setStatus("success");
-            break;
-          }
-
-          case "tool-call-input-streaming-start":
-          case "tool-call": {
-            const d = data as {
-              payload: {
-                toolCallId: string;
-                toolName: string;
-                args?: Record<string, unknown>;
-              };
-            };
-            const p = d.payload;
-            let label: string;
-            if (p.toolName === "fetchPageTool" && p.args?.url) {
-              const u = String(p.args.url).replace(/^https?:\/\//, "");
-              label = `Fetching ${u.slice(0, 50)}`;
-            } else if (p.toolName === "searchHNTool" && p.args?.query) {
-              label = `Searching HN: "${String(p.args.query).slice(0, 40)}"`;
-            } else if (p.toolName === "searchWebTool" && p.args?.query) {
-              label = `Searching web: "${String(p.args.query).slice(0, 40)}"`;
-            } else {
-              label = p.toolName === "fetchPageTool"
-                ? "Fetching page"
-                : p.toolName === "searchHNTool"
-                  ? "Searching HN"
-                  : p.toolName === "searchWebTool"
-                    ? "Searching web"
-                    : p.toolName;
-            }
-            setToolCalls((prev) => {
-              const exists = prev.find((t) => t.id === p.toolCallId);
-              if (exists) {
-                return prev.map((t) =>
-                  t.id === p.toolCallId ? { ...t, label } : t,
-                );
-              }
-              return [
-                ...prev,
-                {
-                  id: p.toolCallId,
-                  toolName: p.toolName,
-                  label,
-                  status: "running",
-                },
-              ];
-            });
-            break;
-          }
-
-          case "tool-result": {
-            const d = data as {
-              payload: {
-                toolCallId: string;
-                toolName: string;
-                result?: unknown;
-              };
-            };
-            const p = d.payload;
-            let resultLabel: string | undefined;
-            if (p.result != null) {
-              if (typeof p.result === "string") {
-                resultLabel = p.result.slice(0, 80);
-              } else if (typeof p.result === "object" && p.result !== null) {
-                const obj = p.result as Record<string, unknown>;
-                if (typeof obj.totalHits === "number") {
-                  resultLabel = `${obj.totalHits} results`;
-                } else if (typeof obj.resultCount === "number") {
-                  resultLabel = `${obj.resultCount} results`;
-                } else if (typeof obj.title === "string") {
-                  const size =
-                    typeof obj.contentLength === "number"
-                      ? ` (${obj.contentLength}B)`
-                      : "";
-                  resultLabel = `${obj.title}${size}`;
-                } else {
-                  resultLabel = "Done";
-                }
-              } else {
-                resultLabel = "Done";
-              }
-            }
-            setToolCalls((prev) =>
-              prev.map((t) =>
-                t.id === p.toolCallId
-                  ? { ...t, status: "done" as const, resultLabel }
-                  : t,
-              ),
-            );
             break;
           }
 
           case "error": {
             const d = data as { error: string };
-            setError(d.error ?? "Research failed");
+            setError(d.error);
             setStatus("error");
             break;
           }
@@ -676,6 +298,138 @@ export default function DashboardPage() {
     }
   }, [url]);
 
+  const runCompetitors = useCallback(async () => {
+    if (!productResult) return;
+    setLoadingCompetitors(true);
+    setError(null);
+
+    const controller = new AbortController();
+    abortRef.current = controller;
+
+    try {
+      const res = await fetch("/api/research/competitors", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(productResult),
+        signal: controller.signal,
+      });
+
+      if (!res.ok) {
+        const body = await res.json().catch(() => null);
+        throw new Error(body?.error ?? `Request failed (${res.status})`);
+      }
+
+      const eventStream = parseSSEStream(res.body);
+      if (!eventStream) throw new Error("No response stream");
+
+      const reader = eventStream.getReader();
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+
+        const { event, data } = value as { event: string; data: unknown };
+
+        switch (event) {
+          case "tool-call": {
+            const d = data as { toolName: string; args?: { url?: string } };
+            setToolCalls((prev) => {
+              const label = d.args?.url
+                ? `Reading ${new URL(d.args.url).hostname}...`
+                : d.toolName;
+              return [...prev, label];
+            });
+            break;
+          }
+
+          case "result": {
+            const d = data as { competitors: Competitor[] };
+            setCompetitors(d.competitors);
+            setLoadingCompetitors(false);
+            break;
+          }
+
+          case "error": {
+            const d = data as { error: string };
+            setError(d.error);
+            setLoadingCompetitors(false);
+            break;
+          }
+        }
+      }
+    } catch (err) {
+      if (err instanceof DOMException && err.name === "AbortError") return;
+      setError(err instanceof Error ? err.message : "Something went wrong");
+      setLoadingCompetitors(false);
+    }
+  }, [productResult]);
+
+  const runSentiment = useCallback(async () => {
+    if (!productResult) return;
+    setLoadingSentiment(true);
+    setError(null);
+
+    const controller = new AbortController();
+    abortRef.current = controller;
+
+    try {
+      const res = await fetch("/api/research/sentiment", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(productResult),
+        signal: controller.signal,
+      });
+
+      if (!res.ok) {
+        const body = await res.json().catch(() => null);
+        throw new Error(body?.error ?? `Request failed (${res.status})`);
+      }
+
+      const eventStream = parseSSEStream(res.body);
+      if (!eventStream) throw new Error("No response stream");
+
+      const reader = eventStream.getReader();
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+
+        const { event, data } = value as { event: string; data: unknown };
+
+        switch (event) {
+          case "tool-call": {
+            const d = data as { toolName: string; args?: { url?: string } };
+            setToolCalls((prev) => {
+              const label = d.args?.url
+                ? `Reading ${new URL(d.args.url).hostname}...`
+                : d.toolName;
+              return [...prev, label];
+            });
+            break;
+          }
+
+          case "result": {
+            const d = data as { findings: Finding[] };
+            setFindings(d.findings);
+            setLoadingSentiment(false);
+            break;
+          }
+
+          case "error": {
+            const d = data as { error: string };
+            setError(d.error);
+            setLoadingSentiment(false);
+            break;
+          }
+        }
+      }
+    } catch (err) {
+      if (err instanceof DOMException && err.name === "AbortError") return;
+      setError(err instanceof Error ? err.message : "Something went wrong");
+      setLoadingSentiment(false);
+    }
+  }, [productResult]);
+
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent) => {
       if (e.key === "Enter") handleSubmit();
@@ -686,15 +440,22 @@ export default function DashboardPage() {
   const handleCancel = useCallback(() => {
     abortRef.current?.abort();
     setStatus("idle");
+    setLoadingCompetitors(false);
+    setLoadingSentiment(false);
   }, []);
 
   const handleReset = useCallback(() => {
     setStatus("idle");
-    setResult(null);
+    setProductResult(null);
+    setCompetitors(null);
+    setFindings(null);
     setError(null);
-    setSteps([]);
     setToolCalls([]);
+    setElapsed(0);
   }, []);
+
+  const elapsedDisplay =
+    elapsed < 60 ? `${elapsed}s` : `${Math.floor(elapsed / 60)}m ${elapsed % 60}s`;
 
   return (
     <div className="flex min-h-svh flex-col">
@@ -724,8 +485,8 @@ export default function DashboardPage() {
                 What are you building?
               </h1>
               <p className="mt-3 text-sm text-muted-foreground">
-                Enter your product URL. OpenCorp researches it, finds
-                competitors, user pain points, and distribution opportunities.
+                Enter a product URL. We&apos;ll research it, then you can drill
+                into competitors or user pain points.
               </p>
 
               <div className="mt-8 w-full">
@@ -797,154 +558,249 @@ export default function DashboardPage() {
                     </button>
                   </div>
                 </div>
-              </div>
 
-              <div className="mt-8 w-full space-y-3">
-                <div className="flex items-center justify-between px-1">
-                  <span className="font-mono text-xs tabular-nums text-muted-foreground">
-                    {Math.floor(elapsed / 60)}:{String(elapsed % 60).padStart(2, "0")}
-                  </span>
-                  <span className="text-xs text-muted-foreground/60">
-                    {steps.length === 0 ? "connecting" : steps.some((s) => s.status === "running") ? "active" : "done"}
-                  </span>
+                <div className="mt-4 flex items-center justify-between text-xs text-muted-foreground">
+                  <span>Analyzing product</span>
+                  <span>{elapsedDisplay}</span>
                 </div>
-                {steps.map((step, i) => (
-                  <motion.div
-                    key={step.id}
-                    initial={{ opacity: 0, x: -8 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: i * 0.1 }}
-                    className="flex items-center gap-3 rounded-lg border border-border/40 bg-card/40 px-4 py-3"
-                  >
-                    {step.status === "running" ? (
-                      <Loader2 className="size-4 shrink-0 animate-spin text-brand" />
-                    ) : step.status === "done" ? (
-                      <Check className="size-4 shrink-0 text-green-400" />
-                    ) : (
-                      <div className="size-4 shrink-0 rounded-full border border-border" />
-                    )}
-                    <span
-                      className={cn(
-                        "text-sm",
-                        step.status === "done"
-                          ? "text-muted-foreground"
-                          : "text-foreground",
-                      )}
-                    >
-                      {step.label}
-                    </span>
-                  </motion.div>
-                ))}
-                {steps.length === 0 && (
-                  <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ delay: 0.3 }}
-                    className="flex items-center justify-center gap-2 py-2"
-                  >
-                    <span className="size-1.5 rounded-full bg-muted-foreground/30" />
-                    <span className="text-sm text-muted-foreground">
-                      Waiting for workflow to start
-                    </span>
-                  </motion.div>
-                )}
-              </div>
 
-              {toolCalls.length > 0 && (
-                <div className="mt-6 w-full space-y-1.5">
-                  <span className="font-heading text-[10px] tracking-widest uppercase text-muted-foreground/60">
-                    Activity
-                  </span>
-                  <div className="max-h-60 overflow-y-auto space-y-1">
-                    {toolCalls.map((tc) => (
+                {toolCalls.length > 0 && (
+                  <div className="mt-4 space-y-1.5">
+                    {toolCalls.map((label, i) => (
                       <motion.div
-                        key={tc.id}
+                        key={i}
                         initial={{ opacity: 0, x: -6 }}
                         animate={{ opacity: 1, x: 0 }}
-                        className="flex items-start gap-2 rounded-md px-3 py-1.5"
+                        className="flex items-center gap-2 rounded-md px-3 py-1.5 text-xs text-muted-foreground"
                       >
-                        {tc.status === "running" ? (
-                          <Loader2 className="mt-0.5 size-3 shrink-0 animate-spin text-brand" />
-                        ) : (
-                          <Check className="mt-0.5 size-3 shrink-0 text-green-400" />
-                        )}
-                        <div className="min-w-0">
-                          <span
-                            className={cn(
-                              "text-xs",
-                              tc.status === "done"
-                                ? "text-muted-foreground"
-                                : "text-foreground/80",
-                            )}
-                          >
-                            {tc.label}
-                          </span>
-                          {tc.resultLabel && (
-                            <span className="ml-2 text-[10px] text-muted-foreground/60">
-                              {tc.resultLabel}
-                            </span>
-                          )}
-                        </div>
+                        <Loader2 className="size-3 shrink-0 animate-spin text-brand" />
+                        {label}
                       </motion.div>
                     ))}
                   </div>
-                </div>
-              )}
-            </motion.div>
-          )}
-
-          {status === "success" && result && (
-            <motion.div
-              key="success"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="space-y-8"
-            >
-              <div className="mx-auto max-w-xl">
-                <div className="rounded-xl border border-border/40 bg-card/30 px-4 py-2.5">
-                  <div className="flex items-center gap-2.5">
-                    <Search className="size-4 shrink-0 text-muted-foreground" />
-                    <span className="flex-1 truncate font-mono text-xs text-foreground/70">
-                      {result.url}
-                    </span>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={handleReset}
-                      className="h-7 px-2 text-xs"
-                    >
-                      New
-                    </Button>
-                  </div>
-                </div>
+                )}
               </div>
-
-              <Dossier result={result} />
             </motion.div>
           )}
 
-          {status === "error" && (
+          {status === "error" && !productResult && (
             <motion.div
               key="error"
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -8 }}
               className="mx-auto flex max-w-xl flex-col items-center pt-24"
             >
-              <div className="flex size-12 items-center justify-center rounded-full border border-red-500/20 bg-red-500/5">
-                <AlertTriangle className="size-5 text-red-400" />
-              </div>
-              <h2 className="mt-4 font-heading text-lg tracking-tight text-foreground">
-                Research Failed
-              </h2>
-              <p className="mt-2 text-center text-sm text-muted-foreground">
-                {error ?? "An unexpected error occurred. Please try again."}
-              </p>
-              <div className="mt-6 flex gap-3">
-                <Button variant="outline" onClick={handleReset}>
-                  Try Again
+              <div className="flex flex-col items-center gap-4 text-center">
+                <AlertTriangle className="size-8 text-red-400" />
+                <p className="text-sm text-red-400">{error}</p>
+                <Button size="sm" onClick={handleReset} variant="outline">
+                  Try again
                 </Button>
-                <Button onClick={handleSubmit}>Retry</Button>
               </div>
+            </motion.div>
+          )}
+
+          {(status === "success" || (status === "error" && productResult)) && productResult && (
+            <motion.div
+              key="result"
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="mx-auto max-w-xl"
+            >
+              <ProductResultCard result={productResult} />
+
+              {/* Action buttons */}
+              <div className="mt-8 flex flex-col items-center gap-3">
+                <p className="text-xs text-muted-foreground">
+                  Want to dig deeper?
+                </p>
+                <div className="flex gap-3">
+                  <button
+                    onClick={runCompetitors}
+                    disabled={loadingCompetitors || loadingSentiment}
+                    className={cn(
+                      "inline-flex items-center gap-2 rounded-xl border px-4 py-2.5 text-sm transition-all",
+                      competitors
+                        ? "border-green-500/30 bg-green-500/5 text-green-400"
+                        : loadingCompetitors
+                          ? "border-brand/30 bg-brand/5 text-brand"
+                          : "border-border/60 bg-card/40 text-foreground/70 hover:border-brand/30 hover:text-foreground",
+                    )}
+                  >
+                    {loadingCompetitors ? (
+                      <Loader2 className="size-4 animate-spin" />
+                    ) : competitors ? (
+                      <Check className="size-4" />
+                    ) : (
+                      <Users className="size-4" />
+                    )}
+                    {competitors ? "Competitors found" : "Find competitors"}
+                  </button>
+                  <button
+                    onClick={runSentiment}
+                    disabled={loadingCompetitors || loadingSentiment}
+                    className={cn(
+                      "inline-flex items-center gap-2 rounded-xl border px-4 py-2.5 text-sm transition-all",
+                      findings
+                        ? "border-green-500/30 bg-green-500/5 text-green-400"
+                        : loadingSentiment
+                          ? "border-brand/30 bg-brand/5 text-brand"
+                          : "border-border/60 bg-card/40 text-foreground/70 hover:border-brand/30 hover:text-foreground",
+                    )}
+                  >
+                    {loadingSentiment ? (
+                      <Loader2 className="size-4 animate-spin" />
+                    ) : findings ? (
+                      <Check className="size-4" />
+                    ) : (
+                      <MessageSquare className="size-4" />
+                    )}
+                    {findings ? "Pain points found" : "Find user pain points"}
+                  </button>
+                </div>
+              </div>
+
+              {/* Loading for sub-research */}
+              {(loadingCompetitors || loadingSentiment) && (
+                <div className="mt-4 space-y-1.5">
+                  {toolCalls.slice(productResult ? -10 : 0).map((label, i) => (
+                    <motion.div
+                      key={`sub-${i}`}
+                      initial={{ opacity: 0, x: -6 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      className="flex items-center gap-2 rounded-md px-3 py-1.5 text-xs text-muted-foreground"
+                    >
+                      <Loader2 className="size-3 shrink-0 animate-spin text-brand" />
+                      {label}
+                    </motion.div>
+                  ))}
+                </div>
+              )}
+
+              {/* Competitors result */}
+              {competitors && competitors.length > 0 && (
+                <motion.div
+                  initial={{ opacity: 0, y: 12 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="mt-8 space-y-4"
+                >
+                  <h3 className="font-heading text-sm tracking-tight text-foreground">
+                    Competitors
+                  </h3>
+                  <div className="space-y-3">
+                    {competitors.map((c, i) => (
+                      <div
+                        key={i}
+                        className="rounded-xl border border-border/60 bg-card/40 p-4 space-y-3"
+                      >
+                        <div>
+                          <a
+                            href={c.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-1.5 text-sm font-medium text-foreground hover:text-brand transition-colors"
+                          >
+                            {c.name}
+                            <ExternalLink className="size-3" />
+                          </a>
+                          <p className="mt-1 text-xs text-foreground/65">
+                            {c.description}
+                          </p>
+                        </div>
+                        <div className="grid grid-cols-2 gap-2">
+                          <Field label="Features" value={c.featureSet} />
+                          <Field label="Pricing" value={c.pricingModel} />
+                          <Field label="Audience" value={c.targetAudience} />
+                          <Field label="Strengths" value={c.strengths} />
+                        </div>
+                        {c.weaknesses && (
+                          <div className="rounded-lg border border-red-500/10 bg-red-500/5 px-3 py-2">
+                            <span className="text-[10px] uppercase text-red-400/70">
+                              Weakness
+                            </span>
+                            <p className="mt-0.5 text-xs text-red-300/80">
+                              {c.weaknesses}
+                            </p>
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </motion.div>
+              )}
+
+              {/* Findings result */}
+              {findings && findings.length > 0 && (
+                <motion.div
+                  initial={{ opacity: 0, y: 12 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="mt-8 space-y-4"
+                >
+                  <h3 className="font-heading text-sm tracking-tight text-foreground">
+                    User Pain Points
+                  </h3>
+                  <div className="space-y-3">
+                    {findings.map((f, i) => {
+                      const sev = mapSeverity(f.severity);
+                      return (
+                        <div
+                          key={i}
+                          className="rounded-xl border border-border/60 bg-card/40 p-4 space-y-2.5"
+                        >
+                          <div className="flex items-start justify-between gap-3">
+                            <p className="text-sm text-foreground/85 font-medium">
+                              {f.painPoint}
+                            </p>
+                            <span
+                              className={cn(
+                                "shrink-0 rounded-full border px-2 py-0.5 text-[10px] font-medium uppercase",
+                                severityColors[sev],
+                              )}
+                            >
+                              {f.severity}
+                            </span>
+                          </div>
+                          {f.verbatimQuote && (
+                            <blockquote className="border-l-2 border-brand/30 pl-3 text-xs text-foreground/55 italic">
+                              &ldquo;{f.verbatimQuote}&rdquo;
+                              {f.quoteSource && (
+                                <span className="ml-1.5 text-[10px] not-italic text-muted-foreground">
+                                  — {f.quoteSource}
+                                </span>
+                              )}
+                            </blockquote>
+                          )}
+                          <div className="grid grid-cols-2 gap-2">
+                            <Field label="User Role" value={f.userRole} />
+                            <Field label="Company Type" value={f.companyType} />
+                            <Field label="Tool Stack" value={f.toolStack} />
+                            <Field label="Frequency" value={f.frequency} />
+                          </div>
+                          {f.wishlist && (
+                            <div className="rounded-lg border border-brand/10 bg-brand/5 px-3 py-2">
+                              <span className="text-[10px] uppercase text-brand/70">
+                                Wishlist
+                              </span>
+                              <p className="mt-0.5 text-xs text-foreground/70">
+                                {f.wishlist}
+                              </p>
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                </motion.div>
+              )}
+
+              {/* Error during sub-research */}
+              {error && status === "success" && (
+                <div className="mt-6 flex items-center gap-2 rounded-lg border border-red-500/20 bg-red-500/5 px-4 py-3 text-xs text-red-400">
+                  <AlertTriangle className="size-3.5 shrink-0" />
+                  {error}
+                </div>
+              )}
             </motion.div>
           )}
         </AnimatePresence>
