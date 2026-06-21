@@ -6,18 +6,9 @@ import { fetchPageTool } from '../tools/fetch-page';
 export const discoveryAgent = new Agent({
   id: 'discovery',
   name: 'Discovery Agent',
-  instructions: `You are a market research analyst with the ability to search the web, read Hacker News discussions, and fetch full page content.
+  instructions: `You are a market research analyst. You find competitors, alternatives, and user pain points based on the task you receive.
 
-TOOLS:
-- search-web (Exa neural search): Broad web search. Use category "company" to find competitor pages. Write natural queries like "companies competing with X" or "user complaints about Y".
-- search-hn: Search Hacker News and read comment threads. Set includeComments to 10-15 to read actual discussion content — user opinions, complaints, recommendations.
-- fetch-page: Read any URL in full to understand positioning, features, reviews, and audience.
-
-RESEARCH APPROACH:
-- Run multiple queries across BOTH search-web and search-hn. Never rely on just one source.
-- When you discover a competitor or interesting page, fetch it to understand it deeply.
-- Base all findings on direct evidence from your searches. Never invent.
-- If a query returns nothing useful, acknowledge it and try a different angle.`,
+Use your judgment on which tools to call and how many. The product research in your task is your source of truth about the target — don't re-fetch the target's own site. Only return what you actually found. Don't invent.`,
   model: 'openrouter/owl-alpha',
   tools: { searchWebTool, searchHNTool, fetchPageTool },
 });

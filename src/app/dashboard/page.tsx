@@ -14,6 +14,11 @@ import {
   MessageSquare,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import {
+  ActivityFeed,
+  type ActivityItem,
+  type ActivityTrack,
+} from "@/components/ai-elements/activity-feed";
 import { cn } from "@/lib/utils";
 
 type Severity = "high" | "medium" | "low";
@@ -22,11 +27,6 @@ interface Competitor {
   name: string;
   url: string;
   description: string;
-  featureSet: string;
-  pricingModel: string;
-  targetAudience: string;
-  strengths: string;
-  weaknesses: string;
   mentionSources: string[];
 }
 
@@ -72,7 +72,11 @@ const severityColors: Record<Severity, string> = {
 type ToolCallChunk = {
   toolCallId: string;
   toolName: string;
-  args?: { url?: string };
+  args?: { url?: string; query?: string };
+  url?: string;
+  query?: string;
+  title?: string;
+  snippet?: string;
 };
 
 function readSSEStream(
@@ -209,7 +213,7 @@ export default function DashboardPage() {
   const [competitors, setCompetitors] = useState<Competitor[] | null>(null);
   const [findings, setFindings] = useState<Finding[] | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [toolCalls, setToolCalls] = useState<string[]>([]);
+  const [activity, setActivity] = useState<ActivityItem[]>([]);
   const [loadingCompetitors, setLoadingCompetitors] = useState(false);
   const [loadingSentiment, setLoadingSentiment] = useState(false);
   const [elapsed, setElapsed] = useState(0);
@@ -257,15 +261,45 @@ export default function DashboardPage() {
         switch (event.type) {
           case "tool-call": {
             const chunk = event as unknown as ToolCallChunk;
-            const label = chunk.args?.url
-              ? `Reading ${chunk.args.url}...`
-              : chunk.toolName;
-            setToolCalls((prev) => [...prev, label]);
+            const label = chunk.title
+              ? `Read: ${chunk.title}`
+              : chunk.query
+                ? `Searching "${chunk.query}"`
+                : chunk.url
+                  ? `Reading ${chunk.url}...`
+                  : chunk.toolName;
             setStreamStatus(label);
+            if (chunk.toolCallId) {
+              const id = chunk.toolCallId;
+              setActivity((prev) => {
+                if (prev.some((c) => c.id === id)) return prev;
+                return [
+                  ...prev.map((c) =>
+                    c.status === "in-flight" ? { ...c, status: "done" as const } : c,
+                  ),
+                  {
+                    id,
+                    track: "product",
+                    toolName: chunk.toolName,
+                    url: chunk.url ?? chunk.args?.url,
+                    query: chunk.query ?? chunk.args?.query,
+                    title: chunk.title,
+                    snippet: chunk.snippet,
+                    status: "in-flight",
+                    arrivedAt: Date.now(),
+                  },
+                ];
+              });
+            }
             break;
           }
           case "result": {
             controller.abort();
+            setActivity((prev) =>
+              prev.map((c) =>
+                c.status === "in-flight" ? { ...c, status: "done" as const } : c,
+              ),
+            );
             setProductResult(event as unknown as ProductResult);
             setStatus("success");
             setStreamStatus("Done");
@@ -273,6 +307,11 @@ export default function DashboardPage() {
           }
           case "error": {
             controller.abort();
+            setActivity((prev) =>
+              prev.map((c) =>
+                c.status === "in-flight" ? { ...c, status: "error" as const } : c,
+              ),
+            );
             setError((event as unknown as { error: string }).error);
             setStatus("error");
             break;
@@ -297,17 +336,47 @@ export default function DashboardPage() {
         switch (event.type) {
           case "tool-call": {
             const chunk = event as unknown as ToolCallChunk;
-            const label = chunk.args?.url
-              ? `Reading ${chunk.args.url}...`
-              : chunk.toolName;
-            setToolCalls((prev) => [...prev, label]);
+            const label = chunk.title
+              ? `Read: ${chunk.title}`
+              : chunk.query
+                ? `Searching "${chunk.query}"`
+                : chunk.url
+                  ? `Reading ${chunk.url}...`
+                  : chunk.toolName;
             setStreamStatus(label);
+            if (chunk.toolCallId) {
+              const id = chunk.toolCallId;
+              setActivity((prev) => {
+                if (prev.some((c) => c.id === id)) return prev;
+                return [
+                  ...prev.map((c) =>
+                    c.status === "in-flight" ? { ...c, status: "done" as const } : c,
+                  ),
+                  {
+                    id,
+                    track: "competitor",
+                    toolName: chunk.toolName,
+                    url: chunk.url ?? chunk.args?.url,
+                    query: chunk.query ?? chunk.args?.query,
+                    title: chunk.title,
+                    snippet: chunk.snippet,
+                    status: "in-flight",
+                    arrivedAt: Date.now(),
+                  },
+                ];
+              });
+            }
             break;
           }
           case "result": {
             controller.abort();
             if (done.current) break;
             done.current = true;
+            setActivity((prev) =>
+              prev.map((c) =>
+                c.status === "in-flight" ? { ...c, status: "done" as const } : c,
+              ),
+            );
             setCompetitors((event as unknown as { competitors: Competitor[] }).competitors);
             setLoadingCompetitors(false);
             setStreamStatus("Competitors done");
@@ -337,17 +406,47 @@ export default function DashboardPage() {
         switch (event.type) {
           case "tool-call": {
             const chunk = event as unknown as ToolCallChunk;
-            const label = chunk.args?.url
-              ? `Reading ${chunk.args.url}...`
-              : chunk.toolName;
-            setToolCalls((prev) => [...prev, label]);
+            const label = chunk.title
+              ? `Read: ${chunk.title}`
+              : chunk.query
+                ? `Searching "${chunk.query}"`
+                : chunk.url
+                  ? `Reading ${chunk.url}...`
+                  : chunk.toolName;
             setStreamStatus(label);
+            if (chunk.toolCallId) {
+              const id = chunk.toolCallId;
+              setActivity((prev) => {
+                if (prev.some((c) => c.id === id)) return prev;
+                return [
+                  ...prev.map((c) =>
+                    c.status === "in-flight" ? { ...c, status: "done" as const } : c,
+                  ),
+                  {
+                    id,
+                    track: "sentiment",
+                    toolName: chunk.toolName,
+                    url: chunk.url ?? chunk.args?.url,
+                    query: chunk.query ?? chunk.args?.query,
+                    title: chunk.title,
+                    snippet: chunk.snippet,
+                    status: "in-flight",
+                    arrivedAt: Date.now(),
+                  },
+                ];
+              });
+            }
             break;
           }
           case "result": {
             controller.abort();
             if (done.current) break;
             done.current = true;
+            setActivity((prev) =>
+              prev.map((c) =>
+                c.status === "in-flight" ? { ...c, status: "done" as const } : c,
+              ),
+            );
             setFindings((event as unknown as { findings: Finding[] }).findings);
             setLoadingSentiment(false);
             setStreamStatus("Pain points done");
@@ -388,7 +487,7 @@ export default function DashboardPage() {
     setProductResult(null);
     setCompetitors(null);
     setFindings(null);
-    setToolCalls([]);
+    setActivity([]);
     setElapsed(0);
 
     try {
@@ -493,7 +592,7 @@ export default function DashboardPage() {
     setCompetitors(null);
     setFindings(null);
     setError(null);
-    setToolCalls([]);
+    setActivity([]);
     setElapsed(0);
     setProductRunId(null);
     setProductToken(null);
@@ -502,6 +601,18 @@ export default function DashboardPage() {
     setSentimentRunId(null);
     setSentimentToken(null);
   }, []);
+
+  const currentTrack: ActivityTrack = loadingCompetitors
+    ? "competitor"
+    : loadingSentiment
+      ? "sentiment"
+      : "product";
+
+  const currentItems = activity.filter((c) => c.track === currentTrack);
+  const currentMaxSteps = currentTrack === "product" ? 6 : 8;
+  const currentDoneCount = currentItems.filter(
+    (c) => c.status === "done" || c.status === "error",
+  ).length;
 
   const elapsedDisplay =
     elapsed < 60 ? `${elapsed}s` : `${Math.floor(elapsed / 60)}m ${elapsed % 60}s`;
@@ -580,7 +691,7 @@ export default function DashboardPage() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="mx-auto flex max-w-xl flex-col items-center pt-24"
+              className="mx-auto flex max-w-3xl flex-col items-stretch pt-16"
             >
               <div className="relative w-full">
                 <div className="pointer-events-none absolute -inset-4 rounded-3xl bg-[radial-gradient(ellipse_at_center,oklch(0.72_0.15_75_/_0.06),transparent_70%)]" />
@@ -599,6 +710,9 @@ export default function DashboardPage() {
                     <span className="flex-1 truncate bg-transparent text-sm text-foreground/60">
                       {url}
                     </span>
+                    <span className="hidden font-mono text-[11px] text-muted-foreground sm:inline">
+                      {elapsedDisplay}
+                    </span>
                     <button
                       onClick={handleCancel}
                       className="text-xs text-muted-foreground transition-colors hover:text-foreground"
@@ -608,14 +722,9 @@ export default function DashboardPage() {
                   </div>
                 </div>
 
-                <div className="mt-4 flex items-center justify-between text-xs text-muted-foreground">
-                  <span>Analyzing product</span>
-                  <span>{elapsedDisplay}</span>
-                </div>
-
                 {streamStatus && (
-                  <div className="mt-2 text-xs text-brand/70 font-mono">
-                    {streamStatus}
+                  <div className="mt-3 truncate text-xs text-brand/70 font-mono">
+                    &gt; {streamStatus}
                   </div>
                 )}
                 {streamError && (
@@ -624,21 +733,11 @@ export default function DashboardPage() {
                   </div>
                 )}
 
-                {toolCalls.length > 0 && (
-                  <div className="mt-4 space-y-1.5">
-                    {toolCalls.map((label, i) => (
-                      <motion.div
-                        key={i}
-                        initial={{ opacity: 0, x: -6 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        className="flex items-center gap-2 rounded-md px-3 py-1.5 text-xs text-muted-foreground"
-                      >
-                        <Loader2 className="size-3 shrink-0 animate-spin text-brand" />
-                        {label}
-                      </motion.div>
-                    ))}
-                  </div>
-                )}
+                <ActivityFeed
+                  items={currentItems}
+                  doneCount={currentDoneCount}
+                  maxSteps={currentMaxSteps}
+                />
               </div>
             </motion.div>
           )}
@@ -721,20 +820,19 @@ export default function DashboardPage() {
                 </div>
               </div>
 
-              {/* Loading for sub-research */}
+              {/* Loading for sub-research — keep the activity feed alive */}
               {(loadingCompetitors || loadingSentiment) && (
-                <div className="mt-4 space-y-1.5">
-                  {toolCalls.slice(productResult ? -10 : 0).map((label, i) => (
-                    <motion.div
-                      key={`sub-${i}`}
-                      initial={{ opacity: 0, x: -6 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      className="flex items-center gap-2 rounded-md px-3 py-1.5 text-xs text-muted-foreground"
-                    >
-                      <Loader2 className="size-3 shrink-0 animate-spin text-brand" />
-                      {label}
-                    </motion.div>
-                  ))}
+                <div className="mt-8">
+                  {streamStatus && (
+                    <div className="mb-2 truncate text-xs text-brand/70 font-mono">
+                      &gt; {streamStatus}
+                    </div>
+                  )}
+                  <ActivityFeed
+                    items={currentItems}
+                    doneCount={currentDoneCount}
+                    maxSteps={currentMaxSteps}
+                  />
                 </div>
               )}
 
@@ -768,22 +866,6 @@ export default function DashboardPage() {
                             {c.description}
                           </p>
                         </div>
-                        <div className="grid grid-cols-2 gap-2">
-                          <Field label="Features" value={c.featureSet} />
-                          <Field label="Pricing" value={c.pricingModel} />
-                          <Field label="Audience" value={c.targetAudience} />
-                          <Field label="Strengths" value={c.strengths} />
-                        </div>
-                        {c.weaknesses && (
-                          <div className="rounded-lg border border-red-500/10 bg-red-500/5 px-3 py-2">
-                            <span className="text-[10px] uppercase text-red-400/70">
-                              Weakness
-                            </span>
-                            <p className="mt-0.5 text-xs text-red-300/80">
-                              {c.weaknesses}
-                            </p>
-                          </div>
-                        )}
                       </div>
                     ))}
                   </div>

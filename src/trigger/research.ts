@@ -9,11 +9,86 @@ type StreamOptions = {
   maxSteps: number;
 };
 
+type ToolSummary = {
+  url?: string;
+  query?: string;
+  title?: string;
+  snippet?: string;
+};
+
+function summarizeToolResult(
+  toolName: string,
+  args: unknown,
+  result: unknown,
+): ToolSummary {
+  const a = (args ?? {}) as Record<string, unknown>;
+  const r = (result ?? {}) as Record<string, unknown>;
+
+  if (toolName === "fetchPageTool" || toolName === "fetch-page") {
+    const content = typeof r.content === "string" ? r.content : "";
+    return {
+      url: typeof a.url === "string" ? a.url : undefined,
+      title: typeof r.title === "string" ? r.title : undefined,
+      snippet: content ? collapseWhitespace(content).slice(0, 240) : undefined,
+    };
+  }
+
+  if (toolName === "searchWebTool" || toolName === "search-web") {
+    const results = Array.isArray(r.results) ? (r.results as Array<Record<string, unknown>>) : [];
+    const first = results[0];
+    const highlights = Array.isArray(first?.highlights)
+      ? (first.highlights as string[])
+      : [];
+    const text = typeof first?.text === "string" ? first.text : "";
+    return {
+      query: typeof a.query === "string" ? a.query : undefined,
+      title: typeof first?.title === "string" ? first.title : undefined,
+      snippet:
+        highlights[0] ??
+        (text ? collapseWhitespace(text).slice(0, 240) : undefined),
+    };
+  }
+
+  if (toolName === "searchHNTool" || toolName === "search-hn") {
+    const results = Array.isArray(r.results) ? (r.results as Array<Record<string, unknown>>) : [];
+    const first = results[0];
+    const topComments = Array.isArray(first?.topComments)
+      ? (first.topComments as Array<Record<string, unknown>>)
+      : [];
+    const snippetText =
+      typeof first?.snippet === "string" && first.snippet
+        ? stripHtml(first.snippet)
+        : typeof topComments[0]?.text === "string"
+          ? (topComments[0].text as string)
+          : "";
+    return {
+      query: typeof a.query === "string" ? a.query : undefined,
+      title: typeof first?.title === "string" ? first.title : undefined,
+      snippet: snippetText ? collapseWhitespace(snippetText).slice(0, 240) : undefined,
+    };
+  }
+
+  return {};
+}
+
+function collapseWhitespace(s: string): string {
+  return s.replace(/\s+/g, " ").trim();
+}
+
+function stripHtml(s: string): string {
+  return s.replace(/<[^>]*>/g, "").replace(/&[a-z]+;/gi, " ");
+}
+
 async function runWithRetry(
   agent: Agent,
   prompt: string,
   opts: StreamOptions,
-  onToolCall: (step: { toolCalls?: Array<{ payload: { toolCallId: string; toolName: string; args?: unknown } }> }) => void,
+  onToolCall: (step: {
+    toolCalls?: Array<{
+      payload: { toolCallId: string; toolName: string; args?: unknown };
+    }>;
+    toolResults?: Array<{ payload: unknown }>;
+  }) => void,
 ): Promise<Record<string, unknown>> {
   // First attempt — stream tool calls
   let result = await agent.stream(prompt, { ...opts, onStepFinish: onToolCall });
@@ -72,12 +147,21 @@ export const productResearchTask = task({
         },
         (step) => {
           const toolCalls = step.toolCalls ?? [];
-          for (const tc of toolCalls) {
+          const toolResults = step.toolResults ?? [];
+          for (let i = 0; i < toolCalls.length; i++) {
+            const tc = toolCalls[i];
+            const tr = toolResults[i];
+            const summary = summarizeToolResult(
+              tc.payload.toolName ?? "unknown",
+              tc.payload.args,
+              tr?.payload,
+            );
             researchStream.append(JSON.stringify({
               type: "tool-call",
               toolCallId: tc.payload.toolCallId ?? crypto.randomUUID(),
               toolName: tc.payload.toolName ?? "unknown",
               args: tc.payload.args as { url?: string } | undefined,
+              ...summary,
             }));
           }
         },
@@ -117,11 +201,6 @@ const competitorSchema = z.object({
       name: z.string(),
       url: z.string(),
       description: z.string(),
-      featureSet: z.string(),
-      pricingModel: z.string(),
-      targetAudience: z.string(),
-      strengths: z.string(),
-      weaknesses: z.string(),
       mentionSources: z.array(z.string()),
     }),
   ),
@@ -151,14 +230,9 @@ export const competitorResearchTask = task({
       throw new Error("Discovery agent not found");
     }
 
-    const prompt = `Research competitors for this product.
+    const prompt = `Find competitors for: ${payload.url}
 
-PRODUCT URL: ${payload.url}
-
-PRODUCT RESEARCH:
-${payload.researchSummary}
-
-Find every competitor, alternative, and substitute product. Search the web for company pages and comparison articles. Search HN for discussions about alternatives and switching. Read competitor landing pages to understand their positioning and features.`;
+${payload.researchSummary}`;
 
     try {
       const object = await runWithRetry(
@@ -170,12 +244,21 @@ Find every competitor, alternative, and substitute product. Search the web for c
         },
         (step) => {
           const toolCalls = step.toolCalls ?? [];
-          for (const tc of toolCalls) {
+          const toolResults = step.toolResults ?? [];
+          for (let i = 0; i < toolCalls.length; i++) {
+            const tc = toolCalls[i];
+            const tr = toolResults[i];
+            const summary = summarizeToolResult(
+              tc.payload.toolName ?? "unknown",
+              tc.payload.args,
+              tr?.payload,
+            );
             researchStream.append(JSON.stringify({
               type: "tool-call",
               toolCallId: tc.payload.toolCallId ?? crypto.randomUUID(),
               toolName: tc.payload.toolName ?? "unknown",
               args: tc.payload.args as { url?: string } | undefined,
+              ...summary,
             }));
           }
         },
@@ -224,14 +307,9 @@ export const sentimentResearchTask = task({
       throw new Error("Discovery agent not found");
     }
 
-    const prompt = `Research user sentiment and pain points for this product space.
+    const prompt = `Find user pain points for: ${payload.url}
 
-PRODUCT URL: ${payload.url}
-
-PRODUCT RESEARCH:
-${payload.researchSummary}
-
-Find what users hate, what they wish existed, and who these users are. Search the web for reviews and complaints. Search HN for "Ask HN" threads, complaint threads, and user discussions. Read review pages and threads deeply for exact quotes and ICP signals.`;
+${payload.researchSummary}`;
 
     try {
       const object = await runWithRetry(
@@ -243,12 +321,21 @@ Find what users hate, what they wish existed, and who these users are. Search th
         },
         (step) => {
           const toolCalls = step.toolCalls ?? [];
-          for (const tc of toolCalls) {
+          const toolResults = step.toolResults ?? [];
+          for (let i = 0; i < toolCalls.length; i++) {
+            const tc = toolCalls[i];
+            const tr = toolResults[i];
+            const summary = summarizeToolResult(
+              tc.payload.toolName ?? "unknown",
+              tc.payload.args,
+              tr?.payload,
+            );
             researchStream.append(JSON.stringify({
               type: "tool-call",
               toolCallId: tc.payload.toolCallId ?? crypto.randomUUID(),
               toolName: tc.payload.toolName ?? "unknown",
               args: tc.payload.args as { url?: string } | undefined,
+              ...summary,
             }));
           }
         },
