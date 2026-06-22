@@ -6,7 +6,7 @@ const EXA_API_BASE = 'https://api.exa.ai/search';
 export const searchWebTool = createTool({
   id: 'search-web',
   description:
-    'Search the web using Exa neural search. Returns relevant pages with content highlights and full text. Use for finding competitors, reviews, discussions, blog posts, and market intelligence. Supports category filtering (company, news, research paper) for targeted results.',
+    'Search the web using Exa neural/semantic search. Returns relevant pages with content highlights and full text. Exa is semantic — paraphrasing the same question returns ~40% duplicate results. Vary your angle (audience, use case, feature, competitive framing) to find new products. Use category "company" for competitor pages, "news" for recent coverage, "research paper" for academic analysis.',
   inputSchema: z.object({
     query: z
       .string()

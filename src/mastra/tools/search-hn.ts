@@ -75,7 +75,7 @@ async function fetchCommentsForStory(
 export const searchHNTool = createTool({
   id: 'search-hn',
   description:
-    'Search Hacker News for discussions, product mentions, and user sentiment. Optionally fetches the actual comment text from top threads so you can read what people are saying — their complaints, praise, and alternative recommendations.',
+    'Search Hacker News for discussions, product mentions, and user sentiment. Optionally fetches the actual comment text from top threads so you can read what people are saying — their complaints, praise, and alternative recommendations. Hacker News has a small, narrow index — one call per angle is usually enough; only search again with a clearly different framing.',
   inputSchema: z.object({
     query: z
       .string()
