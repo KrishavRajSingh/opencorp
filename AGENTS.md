@@ -40,3 +40,7 @@ pnpm is the only package manager in use.
 - Prefer `motion/react` (framer-motion v12+) for animations (already used in `page.tsx`).
 - All components are `"use client"` unless server-rendered.
 - **When making frontend UI changes, load the `frontend-design` skill first** for intentional, distinctive visual design.
+
+## Git
+
+- **Never commit.** The user is the only one who commits. Make file changes, but do not `git add`, `git commit`, or `git push` unless the user explicitly asks for that specific action. This includes commits to spec/plan/notes docs, code, config, and one-off fixes.
