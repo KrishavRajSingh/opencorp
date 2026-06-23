@@ -1,6 +1,7 @@
 import type { sentimentResearchTask } from "@/trigger/research";
 import { tasks } from "@trigger.dev/sdk";
 import { z } from "zod/v4";
+import { getAuthedUser } from "@/lib/supabase/auth";
 
 const inputSchema = z.object({
   url: z.string(),
@@ -15,6 +16,9 @@ const inputSchema = z.object({
 });
 
 export async function POST(request: Request) {
+  const auth = await getAuthedUser();
+  if ("response" in auth) return auth.response;
+
   let input: z.infer<typeof inputSchema>;
   try {
     const body = await request.json();

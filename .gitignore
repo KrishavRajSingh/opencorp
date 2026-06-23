@@ -49,3 +49,7 @@ yarn-error.log*
 next-env.d.ts
 
 .trigger
+
+# supabase CLI local state
+supabase/.temp/
+supabase/.branches/

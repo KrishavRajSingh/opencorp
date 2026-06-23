@@ -1,7 +1,11 @@
 import type { productResearchTask } from "@/trigger/research";
 import { tasks } from "@trigger.dev/sdk";
+import { getAuthedUser } from "@/lib/supabase/auth";
 
 export async function POST(request: Request) {
+  const auth = await getAuthedUser();
+  if ("response" in auth) return auth.response;
+
   let url: string;
   try {
     const body = await request.json();
