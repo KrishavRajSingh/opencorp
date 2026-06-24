@@ -369,7 +369,12 @@ export function SessionViewClient({
       const res = await fetch("/api/research/competitors", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(product),
+        body: JSON.stringify({
+          url: product.url,
+          productName: product.productName,
+          description: product.description,
+          keyFeatures: product.keyFeatures,
+        }),
       });
 
       const body = await res.json();

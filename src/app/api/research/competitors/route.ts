@@ -8,8 +8,6 @@ const inputSchema = z.object({
   productName: z.string(),
   description: z.string(),
   keyFeatures: z.array(z.string()),
-  targetAudience: z.string(),
-  pricingModel: z.string(),
 });
 
 export async function POST(request: Request) {

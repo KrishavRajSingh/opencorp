@@ -197,8 +197,6 @@ const productContextSchema = z.object({
   productName: z.string(),
   description: z.string(),
   keyFeatures: z.array(z.string()),
-  targetAudience: z.string(),
-  pricingModel: z.string(),
 });
 
 export const competitorResearchTask = task({
