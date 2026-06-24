@@ -118,8 +118,6 @@ const productSchema = z.object({
   keyFeatures: z.array(z.string()),
   targetAudience: z.string(),
   pricingModel: z.string(),
-  techStack: z.string(),
-  marketPosition: z.string(),
 });
 
 export const productResearchTask = task({
@@ -173,8 +171,6 @@ export const productResearchTask = task({
         ((object as Record<string, string[]>).keyFeatures?.length ?? 0) > 0 && `Key Features: ${(object as Record<string, string[]>).keyFeatures.join(", ")}`,
         (object as Record<string, string>).targetAudience && `Target Audience: ${(object as Record<string, string>).targetAudience}`,
         (object as Record<string, string>).pricingModel && `Pricing: ${(object as Record<string, string>).pricingModel}`,
-        (object as Record<string, string>).techStack && `Tech Stack: ${(object as Record<string, string>).techStack}`,
-        (object as Record<string, string>).marketPosition && `Market Position: ${(object as Record<string, string>).marketPosition}`,
       ]
         .filter(Boolean)
         .join("\n\n");
@@ -216,8 +212,6 @@ const productContextSchema = z.object({
   keyFeatures: z.array(z.string()),
   targetAudience: z.string(),
   pricingModel: z.string(),
-  techStack: z.string(),
-  marketPosition: z.string(),
 });
 
 export const competitorResearchTask = task({

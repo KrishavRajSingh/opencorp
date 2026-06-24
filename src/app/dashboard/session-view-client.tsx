@@ -25,8 +25,6 @@ type ProductResult = {
   keyFeatures: string[];
   targetAudience: string;
   pricingModel: string;
-  techStack: string;
-  marketPosition: string;
   researchSummary: string;
 };
 
@@ -178,8 +176,6 @@ function ProductBlock({ result }: { result: ProductResult }) {
       <div className="grid grid-cols-2 gap-3">
         <Field label="Pricing" value={result.pricingModel} />
         <Field label="Target Audience" value={result.targetAudience} />
-        <Field label="Tech Stack" value={result.techStack} />
-        <Field label="Market Position" value={result.marketPosition} />
       </div>
     </div>
   );

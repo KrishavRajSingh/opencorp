@@ -9,8 +9,6 @@ type ProductResult = {
   keyFeatures: string[];
   targetAudience: string;
   pricingModel: string;
-  techStack: string;
-  marketPosition: string;
   researchSummary: string;
 };
 

@@ -11,8 +11,6 @@ const inputSchema = z.object({
   keyFeatures: z.array(z.string()),
   targetAudience: z.string(),
   pricingModel: z.string(),
-  techStack: z.string(),
-  marketPosition: z.string(),
 });
 
 export async function POST(request: Request) {
