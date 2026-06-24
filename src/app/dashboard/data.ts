@@ -1,7 +1,7 @@
 import { cache } from "react";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import type { SessionSummary } from "./project-switcher";
+import type { SessionSummary } from "./project-list";
 
 export const fetchSessions = cache(async (): Promise<SessionSummary[]> => {
   const supabase = await createClient();

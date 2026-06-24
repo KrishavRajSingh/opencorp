@@ -15,6 +15,7 @@ import {
   ActivityFeed,
   type ActivityItem,
 } from "@/components/ai-elements/activity-feed";
+import { ProductFavicon } from "@/components/dashboard/product-favicon";
 import { cn } from "@/lib/utils";
 
 type ProductResult = {
@@ -127,19 +128,27 @@ function ProductBlock({ result }: { result: ProductResult }) {
   return (
     <div className="w-full space-y-6">
       <div className="space-y-4">
-        <div>
-          <h2 className="font-heading text-lg tracking-tight text-foreground">
-            {result.productName}
-          </h2>
-          <a
-            href={result.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="mt-1 inline-flex items-center gap-1.5 text-xs text-brand/70 hover:text-brand transition-colors"
-          >
-            {result.url}
-            <ExternalLink className="size-3" />
-          </a>
+        <div className="flex items-start gap-4">
+          <ProductFavicon
+            url={result.url}
+            size={40}
+            rounded="lg"
+            className="mt-1 ring-1 ring-border/40"
+          />
+          <div className="min-w-0 flex-1">
+            <h2 className="font-heading text-lg tracking-tight text-foreground">
+              {result.productName}
+            </h2>
+            <a
+              href={result.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-1 inline-flex items-center gap-1.5 text-xs text-brand/70 hover:text-brand transition-colors"
+            >
+              {result.url}
+              <ExternalLink className="size-3" />
+            </a>
+          </div>
         </div>
         {result.description && (
           <p className="text-sm text-foreground/75 leading-relaxed">
@@ -157,7 +166,7 @@ function ProductBlock({ result }: { result: ProductResult }) {
             {result.keyFeatures.map((f, i) => (
               <span
                 key={i}
-                className="inline-flex rounded-md border border-border/60 bg-card/40 px-2.5 py-1 text-xs text-foreground/70"
+                className="inline-flex rounded-md border border-border/60 bg-card px-2.5 py-1 text-xs text-foreground/80 transition-colors hover:border-brand/30 hover:text-foreground"
               >
                 {f}
               </span>
@@ -181,32 +190,47 @@ function CompetitorsBlock({ result }: { result: CompetitorResult }) {
     <motion.div
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
-      className="mt-8 space-y-4"
+      className="mt-10 space-y-4"
     >
-      <h3 className="font-heading text-sm tracking-tight text-foreground">
-        Competitors
-      </h3>
+      <div className="flex items-center justify-between">
+        <h3 className="font-heading text-sm tracking-tight text-foreground">
+          Competitors
+        </h3>
+        <span className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground/60">
+          {result.competitors.length} found
+        </span>
+      </div>
       {result.competitors.length === 0 ? (
         <p className="text-xs text-muted-foreground">
           No competitors found.
         </p>
       ) : (
-        <div className="space-y-3">
+        <div className="space-y-2">
           {result.competitors.map((c, i) => (
             <div
               key={i}
-              className="rounded-xl border border-border/60 bg-card/40 p-4 space-y-2"
+              className="group rounded-xl border border-border/60 bg-card p-4 transition-colors hover:border-brand/30"
             >
-              <a
-                href={c.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-1.5 text-sm font-medium text-foreground hover:text-brand transition-colors"
-              >
-                {c.name}
-                <ExternalLink className="size-3" />
-              </a>
-              <p className="text-xs text-foreground/65">{c.description}</p>
+              <div className="flex items-center gap-2.5">
+                <ProductFavicon
+                  url={c.url}
+                  size={22}
+                  rounded="md"
+                  className="ring-1 ring-border/40"
+                />
+                <a
+                  href={c.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 text-sm font-medium text-foreground transition-colors group-hover:text-brand"
+                >
+                  {c.name}
+                  <ExternalLink className="size-3" />
+                </a>
+              </div>
+              <p className="mt-2 text-xs leading-relaxed text-foreground/65">
+                {c.description}
+              </p>
             </div>
           ))}
         </div>

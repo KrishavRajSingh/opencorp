@@ -1,7 +1,6 @@
 import { notFound } from "next/navigation";
-import { DashboardShell } from "../dashboard-shell";
 import { SessionViewClient } from "../session-view-client";
-import { fetchSession, fetchSessions } from "../data";
+import { fetchSession } from "../data";
 
 type ProductResult = {
   url: string;
@@ -31,10 +30,7 @@ export default async function SessionPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const [session, sessions] = await Promise.all([
-    fetchSession(id),
-    fetchSessions(),
-  ]);
+  const session = await fetchSession(id);
 
   if (!session) {
     notFound();
@@ -46,16 +42,12 @@ export default async function SessionPage({
   }
 
   const competitors = session.competitor_result as CompetitorResult | null;
-  const activeName =
-    product.productName ?? sessions.find((s) => s.id === id)?.url ?? null;
 
   return (
-    <DashboardShell sessions={sessions} activeName={activeName}>
-      <SessionViewClient
-        sessionId={id}
-        product={product}
-        competitors={competitors}
-      />
-    </DashboardShell>
+    <SessionViewClient
+      sessionId={id}
+      product={product}
+      competitors={competitors}
+    />
   );
 }

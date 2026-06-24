@@ -17,9 +17,27 @@ const geistMono = Geist_Mono({
 const geistPixelSquare = GeistPixelSquare;
 
 export const metadata: Metadata = {
-  title: "OpenCorp — Find Your Users While You Build",
+  metadataBase: new URL(
+    process.env.NEXT_PUBLIC_SITE_URL ?? "https://opencorp.live",
+  ),
+  title: {
+    default: "OpenCorp — Find Your Users While You Build",
+    template: "%s · OpenCorp",
+  },
   description:
     "Your autonomous AI company. OpenCorp does market research, user discovery, SEO, and outreach — so you can focus on building.",
+  applicationName: "OpenCorp",
+  keywords: [
+    "user acquisition",
+    "market research",
+    "lead generation",
+    "AI agent",
+    "outreach",
+  ],
+  icons: {
+    icon: [{ url: "/icon.svg", type: "image/svg+xml" }],
+    apple: "/apple-icon.png",
+  },
 };
 
 export default function RootLayout({

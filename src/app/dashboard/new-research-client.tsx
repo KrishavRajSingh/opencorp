@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "motion/react";
 import {
   ArrowRight,
-  Search,
   Loader2,
   AlertTriangle,
   ExternalLink,
@@ -17,6 +16,8 @@ import {
   type ActivityItem,
   type ActivityTrack,
 } from "@/components/ai-elements/activity-feed";
+import { ProductFavicon } from "@/components/dashboard/product-favicon";
+import { Logo } from "@/components/dashboard/logo";
 import { cn } from "@/lib/utils";
 
 interface ProductResult {
@@ -119,8 +120,14 @@ function ProductResultCard({ result }: { result: ProductResult }) {
   return (
     <div className="mt-8 w-full space-y-6">
       <div className="space-y-4">
-        <div className="flex items-start justify-between gap-4">
-          <div>
+        <div className="flex items-start gap-4">
+          <ProductFavicon
+            url={result.url}
+            size={40}
+            rounded="lg"
+            className="mt-1 ring-1 ring-border/40"
+          />
+          <div className="min-w-0 flex-1">
             <h2 className="font-heading text-lg tracking-tight text-foreground">
               {result.productName}
             </h2>
@@ -381,20 +388,26 @@ export function NewResearchClient() {
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -8 }}
-          className="mx-auto flex max-w-xl flex-col items-center pt-24"
+          className="mx-auto flex max-w-2xl flex-col items-center pt-12 sm:pt-20"
         >
-          <h1 className="font-heading text-2xl tracking-tight text-foreground">
+          <div className="mb-6 flex items-center gap-2 font-mono text-[10px] uppercase tracking-widest text-muted-foreground/60">
+            <Logo size={14} />
+            <span>scope · market research</span>
+          </div>
+
+          <h1 className="text-center font-heading text-3xl tracking-tight text-foreground sm:text-4xl">
             What are you building?
           </h1>
-          <p className="mt-3 text-sm text-muted-foreground">
-            Enter a product URL. We&apos;ll research it and save a project you
-            can revisit.
+          <p className="mt-3 max-w-md text-center text-sm text-muted-foreground">
+            Drop a product URL. We&apos;ll scan the sources and hand you a
+            ready pipeline of users who need it.
           </p>
 
-          <div className="mt-8 w-full">
-            <div className="group relative rounded-2xl border border-border/60 bg-card/50 backdrop-blur-sm transition-colors focus-within:border-brand/40">
-              <div className="flex items-center gap-3 px-5 py-4">
-                <Search className="size-5 shrink-0 text-muted-foreground" />
+          <div className="mt-10 w-full">
+            <div className="group relative">
+              <div className="pointer-events-none absolute -inset-3 rounded-3xl bg-[radial-gradient(ellipse_at_center,oklch(0.72_0.15_75_/_0.08),transparent_70%)] opacity-0 transition-opacity duration-500 group-focus-within:opacity-100" />
+              <div className="relative flex items-center gap-3 rounded-2xl border border-border/60 bg-card/80 px-5 py-4 backdrop-blur-sm transition-all focus-within:border-brand/50 focus-within:shadow-[0_0_0_4px_oklch(0.72_0.15_75/0.08),0_24px_48px_-24px_oklch(0.72_0.15_75/0.4)]">
+                <Logo size={20} className="shrink-0" />
                 <input
                   type="url"
                   value={url}
@@ -423,6 +436,36 @@ export function NewResearchClient() {
                 {error}
               </p>
             )}
+
+            <div className="mt-6 flex flex-col items-center gap-2">
+              <span className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground/50">
+                or try one
+              </span>
+              <div className="flex flex-wrap items-center justify-center gap-2">
+                {[
+                  "https://linear.app",
+                  "https://notion.so",
+                  "https://vercel.com",
+                ].map((example) => (
+                  <button
+                    key={example}
+                    type="button"
+                    onClick={() => {
+                      setUrl(example);
+                      setError(null);
+                    }}
+                    className="group/chip flex items-center gap-2 rounded-full border border-border/60 bg-card/60 px-3 py-1.5 text-xs text-foreground/75 transition-colors hover:border-brand/40 hover:text-foreground"
+                  >
+                    <ProductFavicon
+                      url={example}
+                      size={12}
+                      rounded="sm"
+                    />
+                    {example.replace(/^https?:\/\//, "")}
+                  </button>
+                ))}
+              </div>
+            </div>
           </div>
         </motion.div>
       )}
@@ -448,6 +491,7 @@ export function NewResearchClient() {
                 }}
               />
               <div className="flex items-center gap-3 px-5 py-4">
+                <ProductFavicon url={url} size={20} rounded="sm" />
                 <Loader2 className="size-5 shrink-0 animate-spin text-brand" />
                 <span className="flex-1 truncate bg-transparent text-sm text-foreground/60">
                   {url}
