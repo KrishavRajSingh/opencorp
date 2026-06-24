@@ -102,7 +102,7 @@ const features = [
         </span>
         <div className="flex items-center gap-3">
           <a
-            href="https://github.com"
+            href="https://github.com/KrishavRajSingh/opencorp"
             target="_blank"
             rel="noopener noreferrer"
             className="text-muted-foreground transition-colors hover:text-foreground"

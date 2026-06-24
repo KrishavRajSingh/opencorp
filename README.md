@@ -92,7 +92,7 @@ Under the hood:
 ### Install
 
 ```bash
-git clone https://github.com/<your-username>/opencorp.git
+git clone https://github.com/KrishavRajSingh/opencorp.git
 cd opencorp
 pnpm install
 ```
