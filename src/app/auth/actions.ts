@@ -11,15 +11,11 @@ function safeNext(next: string | undefined): string {
 }
 
 function getOrigin(): string {
-  const url = process.env.NEXT_PUBLIC_SITE_URL ?? process.env.NEXT_PUBLIC_SUPABASE_URL;
-  if (url) {
-    try {
-      return new URL(url).origin;
-    } catch {
-      // fall through
-    }
+  // Override via env for local dev / Vercel previews.
+  if (process.env.NEXT_PUBLIC_SITE_URL) {
+    return process.env.NEXT_PUBLIC_SITE_URL.replace(/\/$/, "");
   }
-  return "http://localhost:3000";
+  return "https://opencorp.live";
 }
 
 export async function signIn(
