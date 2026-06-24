@@ -10,7 +10,6 @@ const productAnalystResultSchema = z.object({
   keyFeatures: z.array(z.string()).optional().default([]),
   targetAudience: z.string().optional().default(""),
   pricingModel: z.string().optional().default(""),
-  researchSummary: z.string().optional().default(""),
 }).passthrough();
 
 const competitorResultSchema = z.object({

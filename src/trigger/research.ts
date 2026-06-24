@@ -165,20 +165,9 @@ export const productResearchTask = task({
         },
       );
 
-      const researchSummary = [
-        `Product: ${(object as Record<string, string>).productName}`,
-        (object as Record<string, string>).description && `Description: ${(object as Record<string, string>).description}`,
-        ((object as Record<string, string[]>).keyFeatures?.length ?? 0) > 0 && `Key Features: ${(object as Record<string, string[]>).keyFeatures.join(", ")}`,
-        (object as Record<string, string>).targetAudience && `Target Audience: ${(object as Record<string, string>).targetAudience}`,
-        (object as Record<string, string>).pricingModel && `Pricing: ${(object as Record<string, string>).pricingModel}`,
-      ]
-        .filter(Boolean)
-        .join("\n\n");
-
       const result = {
         url: validatedUrl,
         ...object,
-        researchSummary,
       };
 
       await researchStream.append(JSON.stringify({ type: "result", ...result }));
@@ -203,12 +192,10 @@ const competitorSchema = z.object({
   searchQueriesUsed: z.array(z.string()),
 });
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const productContextSchema = z.object({
   url: z.string(),
   productName: z.string(),
   description: z.string(),
-  researchSummary: z.string(),
   keyFeatures: z.array(z.string()),
   targetAudience: z.string(),
   pricingModel: z.string(),
@@ -226,7 +213,9 @@ export const competitorResearchTask = task({
 
     const prompt = `Find competitors for: ${payload.url}
 
-${payload.researchSummary}`;
+Product name: ${payload.productName}
+Description: ${payload.description}
+Features: ${payload.keyFeatures.join(", ")}`;
 
     try {
       const object = await runWithRetry(
@@ -261,83 +250,6 @@ ${payload.researchSummary}`;
       const obj = object as { competitors: Array<Record<string, unknown>>; searchQueriesUsed: string[] };
       const result = {
         competitors: obj.competitors,
-        searchQueriesUsed: obj.searchQueriesUsed ?? [],
-      };
-
-      await researchStream.append(JSON.stringify({ type: "result", ...result }));
-      return result;
-    } catch (err) {
-      const message = err instanceof Error ? err.message : "Unknown error";
-      await researchStream.append(JSON.stringify({ type: "error", error: message }));
-      throw err;
-    }
-  },
-});
-
-const sentimentSchema = z.object({
-  findings: z.array(
-    z.object({
-      painPoint: z.string(),
-      severity: z.string(),
-      frequency: z.string(),
-      verbatimQuote: z.string(),
-      quoteSource: z.string(),
-      userRole: z.string(),
-      companyType: z.string(),
-      toolStack: z.string(),
-      wishlist: z.string(),
-    }),
-  ),
-  searchQueriesUsed: z.array(z.string()),
-});
-
-export const sentimentResearchTask = task({
-  id: "sentiment-research",
-  maxDuration: 3600,
-  run: async (payload: z.infer<typeof productContextSchema>) => {
-    const agent = mastra.getAgent("discoveryAgent");
-    if (!agent) {
-      await researchStream.append(JSON.stringify({ type: "error", error: "Discovery agent not found" }));
-      throw new Error("Discovery agent not found");
-    }
-
-    const prompt = `Find user pain points for: ${payload.url}
-
-${payload.researchSummary}`;
-
-    try {
-      const object = await runWithRetry(
-        agent,
-        prompt,
-        {
-          structuredOutput: { schema: sentimentSchema, model: "openrouter/owl-alpha" },
-          maxSteps: 8,
-        },
-        (step) => {
-          const toolCalls = step.toolCalls ?? [];
-          const toolResults = step.toolResults ?? [];
-          for (let i = 0; i < toolCalls.length; i++) {
-            const tc = toolCalls[i];
-            const tr = toolResults[i];
-            const summary = summarizeToolResult(
-              tc.payload.toolName ?? "unknown",
-              tc.payload.args,
-              tr?.payload,
-            );
-            researchStream.append(JSON.stringify({
-              type: "tool-call",
-              toolCallId: tc.payload.toolCallId ?? crypto.randomUUID(),
-              toolName: tc.payload.toolName ?? "unknown",
-              args: tc.payload.args as { url?: string } | undefined,
-              ...summary,
-            }));
-          }
-        },
-      );
-
-      const obj = object as { findings: Array<Record<string, unknown>>; searchQueriesUsed: string[] };
-      const result = {
-        findings: obj.findings,
         searchQueriesUsed: obj.searchQueriesUsed ?? [],
       };
 

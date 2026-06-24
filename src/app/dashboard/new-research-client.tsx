@@ -27,7 +27,6 @@ interface ProductResult {
   keyFeatures: string[];
   targetAudience: string;
   pricingModel: string;
-  researchSummary: string;
 }
 
 type Status = "idle" | "streaming" | "success" | "error";

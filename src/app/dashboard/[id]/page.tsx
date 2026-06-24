@@ -9,7 +9,6 @@ type ProductResult = {
   keyFeatures: string[];
   targetAudience: string;
   pricingModel: string;
-  researchSummary: string;
 };
 
 type CompetitorResult = {

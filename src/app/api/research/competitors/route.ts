@@ -7,7 +7,6 @@ const inputSchema = z.object({
   url: z.string(),
   productName: z.string(),
   description: z.string(),
-  researchSummary: z.string(),
   keyFeatures: z.array(z.string()),
   targetAudience: z.string(),
   pricingModel: z.string(),
