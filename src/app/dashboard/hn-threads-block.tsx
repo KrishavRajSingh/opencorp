@@ -61,9 +61,9 @@ function ThreadRow({
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.25, delay: index * 0.04, ease: "easeOut" }}
-      className="grid grid-cols-[2.5rem_1fr] gap-4 px-1 py-3.5 odd:bg-foreground/[0.015] first:border-t-0 border-t border-border/20"
+      className="grid grid-cols-[2.5rem_minmax(0,1fr)_auto] gap-x-4 gap-y-1 px-2 py-3.5 odd:bg-foreground/[0.015] first:border-t-0 border-t border-border/20 transition-colors hover:bg-foreground/[0.025]"
     >
-      <div className="flex flex-col items-end pt-0.5 font-mono text-[11px] leading-tight">
+      <div className="row-span-3 flex flex-col items-end pt-0.5 font-mono text-[11px] leading-tight">
         <span className="font-heading text-[15px] font-semibold tracking-tight text-orange-400">
           {rank}
         </span>
@@ -72,54 +72,80 @@ function ThreadRow({
         </span>
       </div>
 
-      <div className="min-w-0">
-        <a
-          href={hnUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="group/title inline-flex items-start gap-1.5 text-sm font-medium text-foreground/90 transition-colors hover:text-orange-300"
-        >
-          <span className="line-clamp-2">{thread.title}</span>
-          <ExternalLink className="mt-0.5 size-3 shrink-0 opacity-0 transition-opacity group-hover/title:opacity-100" />
-        </a>
+      <a
+        href={hnUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="group/title inline-flex items-start gap-1.5 text-sm font-medium text-foreground/90 transition-colors hover:text-orange-300"
+      >
+        <span className="line-clamp-2">{thread.title}</span>
+        <ExternalLink className="mt-0.5 size-3 shrink-0 opacity-0 transition-opacity group-hover/title:opacity-100" />
+      </a>
 
-        <div className="mt-1 flex flex-wrap items-center gap-x-1.5 gap-y-0.5 font-mono text-[11px] text-muted-foreground/70">
-          <span className="text-foreground/70">@{thread.author || "unknown"}</span>
-          <span className="text-muted-foreground/40">·</span>
-          <span>{relativeDate(thread.date)}</span>
-          <span className="text-muted-foreground/40">·</span>
-          <span className="inline-flex items-center gap-1">
-            <MessageSquare className="size-3" />
-            {thread.comments}
+      <div className="row-span-3 hidden items-start pt-0.5 sm:flex">
+        {storyHost ? (
+          <a
+            href={thread.url ?? "#"}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="rounded border border-border/40 bg-background/40 px-1.5 py-0.5 font-mono text-[10px] uppercase tracking-wider text-muted-foreground/70 transition-colors hover:border-orange-400/40 hover:text-orange-300"
+          >
+            {storyHost}
+          </a>
+        ) : (
+          <span className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground/40">
+            self
           </span>
-          {storyHost && (
-            <>
-              <span className="text-muted-foreground/40">·</span>
-              <a
-                href={thread.url ?? "#"}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-foreground/60 transition-colors hover:text-orange-300"
-              >
-                {storyHost}
-              </a>
-            </>
-          )}
-        </div>
-
-        {thread.whyRelevant && (
-          <p className="mt-2 text-xs italic leading-relaxed text-foreground/60">
-            {thread.whyRelevant}
-          </p>
-        )}
-
-        {thread.topCommentSnippet && (
-          <p className="mt-1.5 line-clamp-2 text-[11px] leading-relaxed text-muted-foreground/70">
-            <span className="text-muted-foreground/40">&gt; </span>
-            {thread.topCommentSnippet}
-          </p>
         )}
       </div>
+
+      <div className="flex flex-wrap items-center gap-x-1.5 gap-y-0.5 font-mono text-[11px] text-muted-foreground/70 sm:hidden">
+        <span className="text-foreground/70">@{thread.author || "unknown"}</span>
+        <span className="text-muted-foreground/40">·</span>
+        <span>{relativeDate(thread.date)}</span>
+        <span className="text-muted-foreground/40">·</span>
+        <span className="inline-flex items-center gap-1">
+          <MessageSquare className="size-3" />
+          {thread.comments}
+        </span>
+        {storyHost && (
+          <>
+            <span className="text-muted-foreground/40">·</span>
+            <a
+              href={thread.url ?? "#"}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-foreground/60 transition-colors hover:text-orange-300"
+            >
+              {storyHost}
+            </a>
+          </>
+        )}
+      </div>
+
+      <div className="hidden flex-wrap items-center gap-x-1.5 gap-y-0.5 font-mono text-[11px] text-muted-foreground/70 sm:flex">
+        <span className="text-foreground/70">@{thread.author || "unknown"}</span>
+        <span className="text-muted-foreground/40">·</span>
+        <span>{relativeDate(thread.date)}</span>
+        <span className="text-muted-foreground/40">·</span>
+        <span className="inline-flex items-center gap-1">
+          <MessageSquare className="size-3" />
+          {thread.comments}
+        </span>
+      </div>
+
+      {thread.whyRelevant && (
+        <p className="mt-1 text-xs italic leading-relaxed text-foreground/60">
+          {thread.whyRelevant}
+        </p>
+      )}
+
+      {thread.topCommentSnippet && (
+        <p className="line-clamp-2 text-[11px] leading-relaxed text-muted-foreground/70">
+          <span className="text-muted-foreground/40">&gt; </span>
+          {thread.topCommentSnippet}
+        </p>
+      )}
     </motion.div>
   );
 }

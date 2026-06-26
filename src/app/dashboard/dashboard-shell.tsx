@@ -7,7 +7,6 @@ import { ProjectList, useActiveId, type SessionSummary } from "./project-list";
 import { Logo } from "@/components/dashboard/logo";
 import { ScanlineBackdrop } from "@/components/dashboard/scanline-backdrop";
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
 
 type Props = {
   sessions: SessionSummary[];
@@ -115,14 +114,10 @@ export function DashboardShell({ sessions, activeName, user, children }: Props) 
 
       <div className="flex min-w-0 flex-1 flex-col">
         <MobileTopBar activeName={activeName} />
-        <main
-          className={cn(
-            "relative flex-1",
-          )}
-        >
+        <main className="relative flex-1">
           <ScanlineBackdrop />
           <div className="relative px-6 pb-24 pt-10 sm:px-10 md:pt-14">
-            <div className="mx-auto w-full max-w-3xl">{children}</div>
+            <div className="mx-auto w-full max-w-6xl">{children}</div>
           </div>
         </main>
       </div>
