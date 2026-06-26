@@ -566,16 +566,18 @@ export function SessionViewClient({
   sessionId,
   product,
   competitors: initialCompetitors,
+  hnResult: initialHNResult,
 }: {
   sessionId: string;
   product: ProductResult;
   competitors: CompetitorResult | null;
+  hnResult: HNResult | null;
 }) {
   const router = useRouter();
   const [competitors, setCompetitors] = useState<CompetitorResult | null>(
     initialCompetitors,
   );
-  const [hnResult, setHNResult] = useState<HNResult | null>(null);
+  const [hnResult, setHNResult] = useState<HNResult | null>(initialHNResult);
   const [loadingCompetitors, setLoadingCompetitors] = useState(false);
   const [loadingHN, setLoadingHN] = useState(false);
   const [streamStatus, setStreamStatus] = useState<string | null>(null);
@@ -753,7 +755,19 @@ export function SessionViewClient({
             const r = event as unknown as HNResult;
             setHNResult(r);
             setLoadingHN(false);
-            setHNStreamStatus("Done");
+            setHNStreamStatus("Saved");
+            fetch("/api/research/save", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                id: sessionId,
+                hn_threads_result: r,
+              }),
+            })
+              .then((res) => {
+                if (res.ok) router.refresh();
+              })
+              .catch(() => {});
             break;
           }
           case "error": {
@@ -767,7 +781,7 @@ export function SessionViewClient({
     }, (err) => setStreamError(`HN: ${err}`), controller.signal);
 
     return () => controller.abort();
-  }, [hnRunId, hnToken]);
+  }, [hnRunId, hnToken, sessionId, router]);
 
   const runHN = useCallback(async () => {
     setLoadingHN(true);

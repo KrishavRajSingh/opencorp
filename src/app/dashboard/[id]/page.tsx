@@ -21,6 +21,20 @@ type CompetitorResult = {
   searchQueriesUsed?: string[];
 };
 
+type HNResult = {
+  threads: Array<{
+    objectID: string;
+    title: string;
+    url: string | null;
+    points: number;
+    comments: number;
+    author: string;
+    date: string;
+    whyRelevant: string;
+    topCommentSnippet: string | null;
+  }>;
+};
+
 export default async function SessionPage({
   params,
 }: {
@@ -39,12 +53,14 @@ export default async function SessionPage({
   }
 
   const competitors = session.competitor_result as CompetitorResult | null;
+  const hnThreads = session.hn_threads_result as HNResult | null;
 
   return (
     <SessionViewClient
       sessionId={id}
       product={product}
       competitors={competitors}
+      hnResult={hnThreads}
     />
   );
 }

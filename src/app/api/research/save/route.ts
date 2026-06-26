@@ -22,11 +22,26 @@ const competitorResultSchema = z.object({
   searchQueriesUsed: z.array(z.string()).optional().default([]),
 }).passthrough();
 
+const hnThreadsResultSchema = z.object({
+  threads: z.array(z.object({
+    objectID: z.string(),
+    title: z.string(),
+    url: z.string().nullable(),
+    points: z.number(),
+    comments: z.number(),
+    author: z.string(),
+    date: z.string(),
+    whyRelevant: z.string(),
+    topCommentSnippet: z.string().nullable(),
+  }).passthrough()).optional().default([]),
+}).passthrough();
+
 const baseSchema = z.object({
   id: z.string().uuid().optional(),
   input: z.object({ url: z.string() }).passthrough().optional(),
   product_analyst_result: productAnalystResultSchema.optional(),
   competitor_result: competitorResultSchema.optional(),
+  hn_threads_result: hnThreadsResultSchema.optional(),
 });
 
 export async function POST(request: Request) {
@@ -75,6 +90,9 @@ export async function POST(request: Request) {
   }
   if (body.competitor_result !== undefined) {
     update.competitor_result = body.competitor_result;
+  }
+  if (body.hn_threads_result !== undefined) {
+    update.hn_threads_result = body.hn_threads_result;
   }
   if (body.input !== undefined) {
     update.input = body.input;
