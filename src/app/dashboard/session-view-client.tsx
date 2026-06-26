@@ -9,6 +9,7 @@ import {
   ExternalLink,
   Check,
   Users,
+  MessageSquare,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -16,6 +17,7 @@ import {
   type ActivityItem,
 } from "@/components/ai-elements/activity-feed";
 import { ProductFavicon } from "@/components/dashboard/product-favicon";
+import { HNThreadsBlock, type HNThread } from "@/app/dashboard/hn-threads-block";
 import { cn } from "@/lib/utils";
 
 type ProductResult = {
@@ -39,6 +41,10 @@ type CompetitorResult = {
   searchQueriesUsed?: string[];
 };
 
+type HNResult = {
+  threads: HNThread[];
+};
+
 type ToolCallChunk = {
   toolCallId: string;
   toolName: string;
@@ -47,6 +53,7 @@ type ToolCallChunk = {
   query?: string;
   title?: string;
   snippet?: string;
+  track?: string;
 };
 
 function readSSEStream(
@@ -247,16 +254,24 @@ export function SessionViewClient({
   const [competitors, setCompetitors] = useState<CompetitorResult | null>(
     initialCompetitors,
   );
+  const [hnResult, setHNResult] = useState<HNResult | null>(null);
   const [loadingCompetitors, setLoadingCompetitors] = useState(false);
+  const [loadingHN, setLoadingHN] = useState(false);
   const [activity, setActivity] = useState<ActivityItem[]>([]);
   const [streamStatus, setStreamStatus] = useState<string | null>(null);
   const [streamError, setStreamError] = useState<string | null>(null);
   const [elapsed, setElapsed] = useState(0);
   const [error, setError] = useState<string | null>(null);
+  const [hnStreamStatus, setHNStreamStatus] = useState<string | null>(null);
+  const [hnElapsed, setHNElapsed] = useState(0);
+  const [hnError, setHNError] = useState<string | null>(null);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const hnTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const [runId, setRunId] = useState<string | null>(null);
   const [token, setToken] = useState<string | null>(null);
+  const [hnRunId, setHNRunId] = useState<string | null>(null);
+  const [hnToken, setHNToken] = useState<string | null>(null);
 
   useEffect(() => {
     if (loadingCompetitors) {
@@ -273,6 +288,22 @@ export function SessionViewClient({
       }
     };
   }, [loadingCompetitors]);
+
+  useEffect(() => {
+    if (loadingHN) {
+      hnTimerRef.current = setInterval(() => setHNElapsed((e) => e + 1), 1000);
+    } else if (hnTimerRef.current) {
+      clearInterval(hnTimerRef.current);
+      hnTimerRef.current = null;
+      setHNElapsed(0);
+    }
+    return () => {
+      if (hnTimerRef.current) {
+        clearInterval(hnTimerRef.current);
+        hnTimerRef.current = null;
+      }
+    };
+  }, [loadingHN]);
 
   useEffect(() => {
     if (!runId || !token) return;
@@ -397,13 +428,139 @@ export function SessionViewClient({
     setLoadingCompetitors(false);
   }, []);
 
+  useEffect(() => {
+    if (!hnRunId || !hnToken) return;
+    const controller = new AbortController();
+    const done = { current: false };
+
+    readSSEStream(hnRunId, "research", hnToken, (data) => {
+      try {
+        const event = JSON.parse(data) as { type: string } & Record<string, unknown>;
+        switch (event.type) {
+          case "tool-call": {
+            const chunk = event as unknown as ToolCallChunk;
+            const label = chunk.title
+              ? `Read: ${chunk.title}`
+              : chunk.query
+                ? `Searching "${chunk.query}"`
+                : chunk.url
+                  ? `Reading ${chunk.url}...`
+                  : chunk.toolName;
+            setHNStreamStatus(label);
+            if (chunk.toolCallId) {
+              const id = chunk.toolCallId;
+              setActivity((prev) => {
+                if (prev.some((c) => c.id === id)) return prev;
+                return [
+                  ...prev.map((c) =>
+                    c.status === "in-flight" && c.track === "hn"
+                      ? { ...c, status: "done" as const }
+                      : c,
+                  ),
+                  {
+                    id,
+                    track: "hn",
+                    toolName: chunk.toolName,
+                    url: chunk.url ?? chunk.args?.url,
+                    query: chunk.query ?? chunk.args?.query,
+                    title: chunk.title,
+                    snippet: chunk.snippet,
+                    status: "in-flight",
+                    arrivedAt: Date.now(),
+                  },
+                ];
+              });
+            }
+            break;
+          }
+          case "result": {
+            controller.abort();
+            if (done.current) break;
+            done.current = true;
+            setActivity((prev) =>
+              prev.map((c) =>
+                c.status === "in-flight" && c.track === "hn"
+                  ? { ...c, status: "done" as const }
+                  : c,
+              ),
+            );
+            const r = event as unknown as HNResult;
+            setHNResult(r);
+            setLoadingHN(false);
+            setHNStreamStatus("Done");
+            break;
+          }
+          case "error": {
+            controller.abort();
+            setHNError((event as unknown as { error: string }).error);
+            setLoadingHN(false);
+            break;
+          }
+        }
+      } catch { /* skip */ }
+    }, (err) => setStreamError(`HN: ${err}`), controller.signal);
+
+    return () => controller.abort();
+  }, [hnRunId, hnToken]);
+
+  const runHN = useCallback(async () => {
+    setLoadingHN(true);
+    setHNError(null);
+    setHNRunId(null);
+    setHNToken(null);
+    setHNStreamStatus(null);
+
+    try {
+      const res = await fetch("/api/research/hn", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          url: product.url,
+          productName: product.productName,
+          description: product.description,
+          keyFeatures: product.keyFeatures,
+          competitors:
+            competitors?.competitors?.map((c) => ({
+              name: c.name,
+              url: c.url,
+            })) ?? [],
+        }),
+      });
+
+      const body = await res.json();
+
+      if (!res.ok) {
+        throw new Error(body.error ?? `Request failed (${res.status})`);
+      }
+
+      setHNRunId(body.runId);
+      setHNToken(body.publicAccessToken);
+    } catch (err) {
+      setHNError(err instanceof Error ? err.message : "Something went wrong");
+      setLoadingHN(false);
+    }
+  }, [product, competitors]);
+
+  const cancelHN = useCallback(() => {
+    setHNRunId(null);
+    setHNToken(null);
+    setLoadingHN(false);
+  }, []);
+
   const currentItems = activity.filter((c) => c.track === "competitor");
+  const hnItems = activity.filter((c) => c.track === "hn");
   const currentMaxSteps = 8;
+  const hnMaxSteps = 6;
   const currentDoneCount = currentItems.filter(
+    (c) => c.status === "done" || c.status === "error",
+  ).length;
+  const hnDoneCount = hnItems.filter(
     (c) => c.status === "done" || c.status === "error",
   ).length;
   const elapsedDisplay =
     elapsed < 60 ? `${elapsed}s` : `${Math.floor(elapsed / 60)}m ${elapsed % 60}s`;
+  const hnElapsedDisplay =
+    hnElapsed < 60 ? `${hnElapsed}s` : `${Math.floor(hnElapsed / 60)}m ${hnElapsed % 60}s`;
 
   return (
     <div className="space-y-8">
@@ -421,6 +578,21 @@ export function SessionViewClient({
           >
             <Users className="size-4" />
             Find competitors
+          </button>
+        </div>
+      )}
+
+      {competitors && !hnResult && !loadingHN && (
+        <div className="flex flex-col items-center gap-3 pt-2">
+          <button
+            onClick={runHN}
+            className={cn(
+              "inline-flex items-center gap-2 rounded-xl border border-border/60 bg-card/40 px-4 py-2.5 text-sm transition-all",
+              "text-foreground/70 hover:border-orange-400/40 hover:text-orange-300",
+            )}
+          >
+            <MessageSquare className="size-4 text-orange-400" />
+            Find HN threads
           </button>
         </div>
       )}
@@ -472,6 +644,55 @@ export function SessionViewClient({
           <div className="flex items-center gap-2 rounded-lg border border-red-500/20 bg-red-500/5 px-4 py-3 text-xs text-red-400">
             <AlertTriangle className="size-3.5 shrink-0" />
             {error}
+          </div>
+        )}
+
+        {loadingHN && (
+          <motion.div
+            key="loading-hn"
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0 }}
+            className="space-y-3"
+          >
+            <div className="rounded-2xl border border-orange-400/30 bg-card/50 backdrop-blur-sm">
+              <div className="flex items-center gap-3 px-5 py-4">
+                <Loader2 className="size-5 shrink-0 animate-spin text-orange-400" />
+                <span className="flex-1 truncate text-sm text-foreground/60">
+                  Finding HN threads
+                </span>
+                <span className="hidden font-mono text-[11px] text-muted-foreground sm:inline">
+                  {hnElapsedDisplay}
+                </span>
+                <button
+                  onClick={cancelHN}
+                  className="text-xs text-muted-foreground transition-colors hover:text-foreground"
+                >
+                  cancel
+                </button>
+              </div>
+            </div>
+            {hnStreamStatus && (
+              <div className="truncate text-xs text-orange-400/80 font-mono">
+                &gt; {hnStreamStatus}
+              </div>
+            )}
+            <ActivityFeed
+              items={hnItems}
+              doneCount={hnDoneCount}
+              maxSteps={hnMaxSteps}
+            />
+          </motion.div>
+        )}
+
+        {hnResult && (
+          <HNThreadsBlock key="hn-result" result={hnResult} />
+        )}
+
+        {hnError && (
+          <div className="flex items-center gap-2 rounded-lg border border-red-500/20 bg-red-500/5 px-4 py-3 text-xs text-red-400">
+            <AlertTriangle className="size-3.5 shrink-0" />
+            {hnError}
           </div>
         )}
       </AnimatePresence>
