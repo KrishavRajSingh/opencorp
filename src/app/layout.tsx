@@ -48,7 +48,7 @@ export const metadata: Metadata = {
       "Your autonomous AI company. OpenCorp does market research, user discovery, SEO, and outreach — so you can focus on building.",
     images: [
       {
-        url: "/opengraph-image",
+        url: "/og.png",
         width: 1200,
         height: 630,
         alt: "OpenCorp — Find Your Users While You Build",
@@ -60,7 +60,7 @@ export const metadata: Metadata = {
     title: "OpenCorp — Find Your Users While You Build",
     description:
       "Your autonomous AI company. OpenCorp does market research, user discovery, SEO, and outreach — so you can focus on building.",
-    images: ["/opengraph-image"],
+    images: ["/og.png"],
     site: "@opencorpai",
     creator: "@opencorpai",
   },
