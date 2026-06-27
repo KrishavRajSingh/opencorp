@@ -38,6 +38,36 @@ export const metadata: Metadata = {
     icon: [{ url: "/icon.svg", type: "image/svg+xml" }],
     apple: "/apple-icon.png",
   },
+  openGraph: {
+    type: "website",
+    locale: "en_US",
+    url: "https://opencorp.live",
+    siteName: "OpenCorp",
+    title: "OpenCorp — Find Your Users While You Build",
+    description:
+      "Your autonomous AI company. OpenCorp does market research, user discovery, SEO, and outreach — so you can focus on building.",
+    images: [
+      {
+        url: "/opengraph-image",
+        width: 1200,
+        height: 630,
+        alt: "OpenCorp — Find Your Users While You Build",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "OpenCorp — Find Your Users While You Build",
+    description:
+      "Your autonomous AI company. OpenCorp does market research, user discovery, SEO, and outreach — so you can focus on building.",
+    images: ["/opengraph-image"],
+    site: "@opencorpai",
+    creator: "@opencorpai",
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
 };
 
 export default function RootLayout({
