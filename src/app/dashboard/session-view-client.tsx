@@ -9,6 +9,8 @@ import {
   Users,
   MessageSquare,
   Link2,
+  Share2,
+  Check,
 } from "lucide-react";
 import { ProductFavicon } from "@/components/dashboard/product-favicon";
 import type { HNThread } from "@/app/dashboard/hn-threads-block";
@@ -212,6 +214,7 @@ type ConsoleProps = {
   loadingHN: boolean;
   activeResult: "competitors" | "hn";
   onSwitchResult: (tab: "competitors" | "hn") => void;
+  readOnly?: boolean;
 };
 
 function Console({
@@ -233,6 +236,7 @@ function Console({
   loadingHN,
   activeResult,
   onSwitchResult,
+  readOnly = false,
 }: ConsoleProps) {
   const domain = (() => {
     try {
@@ -311,7 +315,7 @@ function Console({
         </div>
       )}
 
-      {(showCompetitorBtn || showHNBtn) && (
+      {!readOnly && (showCompetitorBtn || showHNBtn) && (
         <div className="space-y-2 border-b border-border/30 px-4 py-3">
           {showCompetitorBtn && (
             <button
@@ -567,11 +571,13 @@ export function SessionViewClient({
   product,
   competitors: initialCompetitors,
   hnResult: initialHNResult,
+  readOnly = false,
 }: {
   sessionId: string;
   product: ProductResult;
   competitors: CompetitorResult | null;
   hnResult: HNResult | null;
+  readOnly?: boolean;
 }) {
   const router = useRouter();
   const [competitors, setCompetitors] = useState<CompetitorResult | null>(
@@ -598,6 +604,35 @@ export function SessionViewClient({
   const [activeResult, setActiveResult] = useState<"competitors" | "hn">(
     "competitors",
   );
+
+  const [shareCopied, setShareCopied] = useState(false);
+  const shareTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const copyShareUrl = useCallback(async () => {
+    const url = `${window.location.origin}/share/${sessionId}`;
+    try {
+      await navigator.clipboard.writeText(url);
+    } catch {
+      const ta = document.createElement("textarea");
+      ta.value = url;
+      ta.setAttribute("readonly", "");
+      ta.style.position = "fixed";
+      ta.style.opacity = "0";
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand("copy");
+      document.body.removeChild(ta);
+    }
+    setShareCopied(true);
+    if (shareTimerRef.current) clearTimeout(shareTimerRef.current);
+    shareTimerRef.current = setTimeout(() => setShareCopied(false), 1800);
+  }, [sessionId]);
+
+  useEffect(() => {
+    return () => {
+      if (shareTimerRef.current) clearTimeout(shareTimerRef.current);
+    };
+  }, []);
 
   useEffect(() => {
     if (loadingCompetitors) {
@@ -849,32 +884,60 @@ export function SessionViewClient({
   };
 
   return (
-    <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_28rem] lg:items-start lg:gap-8">
-      <div>
-        <ProductHeader result={product} />
-      </div>
+    <div>
+      {!readOnly && (
+        <div className="mb-6 flex items-center justify-between border-b border-border/30 pb-3">
+          <span className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground/60">
+            Research session
+          </span>
+          <button
+            type="button"
+            onClick={copyShareUrl}
+            className={cn(
+              "inline-flex items-center gap-1.5 rounded-md border px-2.5 py-1 text-[11px] transition-all",
+              shareCopied
+                ? "border-emerald-400/40 bg-emerald-400/10 text-emerald-400"
+                : "border-border/60 bg-card/40 text-foreground/80 hover:border-brand/50 hover:bg-brand/5 hover:text-foreground",
+            )}
+          >
+            {shareCopied ? (
+              <Check className="size-3" />
+            ) : (
+              <Share2 className="size-3" />
+            )}
+            {shareCopied ? "Copied" : "Share"}
+          </button>
+        </div>
+      )}
 
-      <div className="lg:sticky lg:top-10 lg:h-[calc(100vh-5rem)]">
-        <Console
-          status={status}
-          hasCompetitors={!!competitors}
-          hasHN={!!hnResult}
-          competitorCount={competitors?.competitors.length ?? 0}
-          hnCount={hnResult?.threads.length ?? 0}
-          url={product.url}
-          onFindCompetitors={runCompetitors}
-          onFindHN={runHN}
-          onCancel={cancelCurrent}
-          streamStatus={activeStreamStatus}
-          elapsedDisplay={elapsedDisplay}
-          error={error || hnError || streamError}
-          competitors={competitors}
-          hnResult={hnResult}
-          loadingCompetitors={loadingCompetitors}
-          loadingHN={loadingHN}
-          activeResult={activeResult}
-          onSwitchResult={setActiveResult}
-        />
+      <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_28rem] lg:items-start lg:gap-8">
+        <div>
+          <ProductHeader result={product} />
+        </div>
+
+        <div className="lg:sticky lg:top-10 lg:h-[calc(100vh-5rem)]">
+          <Console
+            status={status}
+            hasCompetitors={!!competitors}
+            hasHN={!!hnResult}
+            competitorCount={competitors?.competitors.length ?? 0}
+            hnCount={hnResult?.threads.length ?? 0}
+            url={product.url}
+            onFindCompetitors={runCompetitors}
+            onFindHN={runHN}
+            onCancel={cancelCurrent}
+            streamStatus={activeStreamStatus}
+            elapsedDisplay={elapsedDisplay}
+            error={error || hnError || streamError}
+            competitors={competitors}
+            hnResult={hnResult}
+            loadingCompetitors={loadingCompetitors}
+            loadingHN={loadingHN}
+            activeResult={activeResult}
+            onSwitchResult={setActiveResult}
+            readOnly={readOnly}
+          />
+        </div>
       </div>
     </div>
   );
