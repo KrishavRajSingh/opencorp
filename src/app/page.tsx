@@ -9,35 +9,14 @@ import {
   BarChart3,
   SendHorizonal,
   Globe,
-  Star,
   Target,
+  Sparkles,
+  MessageSquare,
+  Mail,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
-
-function RedditIcon({ className }: { className?: string }) {
-  return (
-    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M12 8c2.648 0 5.028.826 6.675 2.14a2.5 2.5 0 0 1 2.326 4.36c0 3.59-4.03 6.5-9 6.5-4.875 0-8.845-2.8-9-6.294l-1-.206a2.5 2.5 0 0 1 2.326-4.36c1.646-1.313 4.026-2.14 6.674-2.14z" />
-      <path d="M12 8l1-5 6 1" />
-      <path d="M18 4a1 1 0 1 0 2 0 1 1 0 1 0-2 0" />
-      <path d="M8.5 13a.5.5 0 1 0 1 0 .5.5 0 1 0-1 0" />
-      <path d="M14.5 13a.5.5 0 1 0 1 0 .5.5 0 1 0-1 0" />
-      <path d="M10 17c.667.333 1.333.5 2 .5s1.333-.167 2-.5" />
-    </svg>
-  );
-}
-
-function HNIcon({ className }: { className?: string }) {
-  return (
-    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M4 6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6z" />
-      <path d="M8 7l4 6 4-6" />
-      <path d="M12 13v4" />
-    </svg>
-  );
-}
 
 function GitHubIcon({ className }: { className?: string }) {
   return (
@@ -47,11 +26,30 @@ function GitHubIcon({ className }: { className?: string }) {
   );
 }
 
+function HNIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none">
+      <rect width="24" height="24" rx="3" fill="#FF6600" />
+      <path
+        d="M6 6H9.5L12 10L14.5 6H18L13 13V18H11V13L6 6Z"
+        fill="white"
+      />
+    </svg>
+  );
+}
+
 function XIcon({ className }: { className?: string }) {
   return (
-    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M4 4l11.733 16h4.267L8.267 4H4z" />
-      <path d="M4 20l6.768-6.768m2.46-2.46L20 4" />
+    <svg className={className} viewBox="0 0 24 24" fill="currentColor">
+      <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+    </svg>
+  );
+}
+
+function LinkedInIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="currentColor">
+      <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.063 2.063 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
     </svg>
   );
 }
@@ -59,12 +57,11 @@ function XIcon({ className }: { className?: string }) {
 const features = [
   {
     icon: Search,
-    title: "Market Research",
+    title: "Find your first users",
     description:
-      "Two discovery tracks — pain-point discovery (problem-first) and competitor discovery (tool-first, dissatisfaction signals). Scans Reddit, HN, Twitter, Product Hunt, and GitHub issues across both.",
+      "Drop in a link. OpenCorp figures out who would want your product, who's already building something similar, and where they're talking about it.",
     span: "lg:col-span-2",
-    stat: "12K+ conversations analyzed daily",
-    tags: ["Reddit", "HN", "Twitter", "Product Hunt", "GitHub"],
+    stat: "One link → full report",
   },
   {
     icon: Users,
@@ -120,81 +117,72 @@ const features = [
 }
 
 function PipelineDiagram() {
-  const sources = [
-    { label: "Reddit", desc: "PRAW API", color: "border-orange-500/30 bg-orange-500/5", icon: <RedditIcon className="size-4 text-orange-500" /> },
-    { label: "HN", desc: "Algolia API", color: "border-orange-500/30 bg-orange-500/5", icon: <HNIcon className="size-4 text-orange-500" /> },
-    { label: "GitHub", desc: "Search API", color: "border-border/30 bg-muted/50", icon: <GitHubIcon className="size-4 text-foreground" /> },
-    { label: "Twitter", desc: "X API", color: "border-border/30 bg-muted/50", icon: <XIcon className="size-4 text-foreground" /> },
-  ];
-
   return (
     <div className="overflow-hidden rounded-xl border bg-card p-6">
       <div className="flex flex-col items-center gap-3 text-center">
-        <div className="flex flex-wrap justify-center gap-2">
-          {sources.map((s) => (
-            <div key={s.label} className={`rounded-lg border px-3 py-2 ${s.color}`}>
-              <div className="flex items-center gap-1.5">
-                {s.icon}
-                <span className="text-xs font-medium text-foreground">{s.label}</span>
-              </div>
-            </div>
-          ))}
-        </div>
+        <motion.div
+          initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
+          className="w-full rounded-lg border border-brand/30 bg-brand/5 p-4"
+        >
+          <div className="flex items-center justify-center gap-2">
+            <Search className="size-4 text-brand" />
+            <span className="text-sm font-medium text-brand">You share a link</span>
+          </div>
+          <div className="mt-2 text-[11px] text-muted-foreground">
+            Your product page, a landing page, or just a description
+          </div>
+        </motion.div>
 
         <motion.div
-          initial={{ scaleY: 0 }} animate={{ scaleY: 1 }}
+          initial={{ scaleY: 0 }} animate={{ scaleY: 1 }} transition={{ delay: 0.3 }}
           className="h-6 w-0.5 origin-top bg-border"
         />
 
-        <div className="flex flex-wrap justify-center gap-4">
-          <motion.div
-            initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}
-            className="flex-1 min-w-[180px] rounded-lg border border-brand/30 bg-brand/5 p-3"
-          >
-            <div className="flex items-center gap-2">
-              <Search className="size-4 text-brand" />
-              <span className="text-xs font-medium text-brand">Track 1 — Pain-Point Discovery</span>
-            </div>
-            <div className="mt-2 space-y-1 text-[11px] text-muted-foreground">
-              <div>&ldquo;is there a tool&rdquo; / &ldquo;frustrated with&rdquo;</div>
-              <div>&ldquo;how do I&rdquo; / &ldquo;manual process&rdquo;</div>
-            </div>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }}
-            className="flex-1 min-w-[180px] rounded-lg border border-purple-500/30 bg-purple-500/5 p-3"
-          >
-            <div className="flex items-center gap-2">
-              <Star className="size-4 text-purple-400" />
-              <span className="text-xs font-medium text-purple-400">Track 2 — Competitor Discovery</span>
-            </div>
-            <div className="mt-2 space-y-1 text-[11px] text-muted-foreground">
-              <div>&ldquo;alternative&rdquo; / &ldquo;switching from&rdquo;</div>
-              <div>&ldquo;too expensive&rdquo; / &ldquo;won&apos;t fix&rdquo;</div>
-            </div>
-          </motion.div>
-        </div>
+        <motion.div
+          initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }}
+          className="w-full rounded-lg border bg-card/60 p-4"
+        >
+          <div className="flex items-center justify-center gap-2">
+            <Sparkles className="size-4 text-foreground" />
+            <span className="text-sm font-medium text-foreground">OpenCorp does the work</span>
+          </div>
+          <div className="mt-2 text-[11px] text-muted-foreground">
+            Reads, searches, ranks — while you keep building
+          </div>
+        </motion.div>
 
         <motion.div
           initial={{ scaleY: 0 }} animate={{ scaleY: 1 }} transition={{ delay: 0.6 }}
           className="h-6 w-0.5 origin-top bg-border"
         />
 
-        <motion.div
-          initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.8 }}
-          className="w-full rounded-lg border border-green-500/30 bg-green-500/5 p-3"
-        >
-          <div className="flex items-center justify-center gap-2">
-            <Target className="size-4 text-green-400" />
-            <span className="text-sm font-medium text-green-400">Scored Lead Pipeline</span>
-          </div>
-          <div className="mt-2 flex flex-wrap justify-center gap-4 text-xs text-muted-foreground">
-            <span>47 pain-point leads</span>
-            <span className="text-purple-400">16 competitor leads</span>
-            <span>tagged by intent</span>
-          </div>
-        </motion.div>
+        <div className="flex w-full flex-wrap justify-center gap-4">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.7 }}
+            className="flex-1 min-w-[180px] rounded-lg border border-green-500/30 bg-green-500/5 p-3"
+          >
+            <div className="flex items-center gap-2">
+              <Users className="size-4 text-green-400" />
+              <span className="text-sm font-medium text-green-400">Your competitors</span>
+            </div>
+            <div className="mt-1 text-[11px] text-muted-foreground">
+              with the sources behind them
+            </div>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.8 }}
+            className="flex-1 min-w-[180px] rounded-lg border border-orange-500/30 bg-orange-500/5 p-3"
+          >
+            <div className="flex items-center gap-2">
+              <HNIcon className="size-4" />
+              <span className="text-sm font-medium text-orange-400">Where to talk about it</span>
+            </div>
+            <div className="mt-1 text-[11px] text-muted-foreground">
+              threads where your future users already are
+            </div>
+          </motion.div>
+        </div>
       </div>
     </div>
   );
@@ -219,10 +207,9 @@ function InteractiveInput() {
       </div>
       <div className="space-y-1 p-5 pt-4">
         {[
-          { icon: RedditIcon, text: "47 pain-point conversations on Reddit", color: "text-orange-500" },
-          { icon: GitHubIcon, text: "16 devs frustrated with existing tools on GitHub", color: "text-foreground" },
-          { icon: HNIcon, text: "12 posts on HN: \"looking for alternatives\"", color: "text-orange-500" },
-          { icon: Target, text: "All leads sorted by intent score", color: "text-green-400" },
+          { icon: Users, text: "Who else is building this", color: "text-foreground" },
+          { icon: MessageSquare, text: "Where people are already talking about the problem", color: "text-foreground" },
+          { icon: Target, text: "Ranked by how likely they are to want what you made", color: "text-green-400" },
         ].map((item, i) => (
           <motion.div
             key={item.text}
@@ -346,17 +333,15 @@ export default function Page() {
           <div className="mx-auto max-w-4xl px-6 py-24">
             <div className="mb-12 text-center">
               <Badge variant="secondary" className="mb-4">
-                Dual-Track Pipeline
+                How it works
               </Badge>
               <h2 className="font-heading text-3xl tracking-tight sm:text-4xl">
-                Two Tracks. One Pipeline.
+                Drop a link. Get a plan.
               </h2>
               <p className="mt-4 text-muted-foreground">
-                Track 1 finds people with the problem (pain-point discovery).
-                Track 2 finds people dissatisfied with competitors (intent
-                signals). Both sweep the same sources — Reddit, HN, GitHub,
-                Twitter, Product Hunt — but with different query strategies.
-                Leads merge into a single scored pipeline.
+                OpenCorp reads what you made, figures out who needs it, and
+                hands you a list of competitors plus the conversations you
+                should join. You stay in your editor.
               </p>
             </div>
             <PipelineDiagram />
@@ -366,9 +351,9 @@ export default function Page() {
         <section className="mx-auto max-w-6xl px-6 py-24">
           <div className="grid divide-x divide-border/50 text-center sm:grid-cols-3">
             {[
-              { value: "2", label: "Discovery Tracks" },
-              { value: "10K+", label: "Users Identified" },
-              { value: "100%", label: "Autonomous" },
+              { value: "1", label: "Link in" },
+              { value: "2", label: "Lists out" },
+              { value: "0", label: "Manual research" },
             ].map((stat) => (
               <div
                 key={stat.label}
@@ -418,9 +403,40 @@ export default function Page() {
       </main>
 
       <footer className="border-t border-border/50">
-        <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-6 text-sm text-muted-foreground">
-          <span className="font-heading">OpenCorp</span>
-          <span>Built for builders who need users</span>
+        <div className="mx-auto flex max-w-6xl flex-col gap-6 px-6 py-8 text-sm text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex items-center gap-4">
+            <span className="font-heading text-foreground">OpenCorp</span>
+            <span className="hidden sm:inline">Built for builders who need users</span>
+          </div>
+          <div className="flex flex-wrap items-center gap-5">
+            <a
+              href="mailto:support@opencorp.live"
+              className="inline-flex items-center gap-1.5 transition-colors hover:text-foreground"
+            >
+              <Mail className="size-4" />
+              support@opencorp.live
+            </a>
+            <a
+              href="https://www.linkedin.com/company/opencorpai"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1.5 transition-colors hover:text-foreground"
+              aria-label="LinkedIn"
+            >
+              <LinkedInIcon className="size-4" />
+              LinkedIn
+            </a>
+            <a
+              href="https://x.com/opencorpai"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1.5 transition-colors hover:text-foreground"
+              aria-label="X (Twitter)"
+            >
+              <XIcon className="size-3.5" />
+              @opencorpai
+            </a>
+          </div>
         </div>
       </footer>
     </>
