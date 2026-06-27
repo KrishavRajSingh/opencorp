@@ -12,6 +12,7 @@ export type SessionSummary = {
   product_name: string | null;
   has_product: boolean;
   has_competitor: boolean;
+  has_hn: boolean;
   updated_at: string;
 };
 

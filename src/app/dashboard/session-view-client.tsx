@@ -2,20 +2,16 @@
 
 import { useState, useCallback, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { motion, AnimatePresence } from "motion/react";
 import {
   Loader2,
   AlertTriangle,
   ExternalLink,
-  Check,
   Users,
+  MessageSquare,
+  Link2,
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import {
-  ActivityFeed,
-  type ActivityItem,
-} from "@/components/ai-elements/activity-feed";
 import { ProductFavicon } from "@/components/dashboard/product-favicon";
+import type { HNThread } from "@/app/dashboard/hn-threads-block";
 import { cn } from "@/lib/utils";
 
 type ProductResult = {
@@ -39,6 +35,10 @@ type CompetitorResult = {
   searchQueriesUsed?: string[];
 };
 
+type HNResult = {
+  threads: HNThread[];
+};
+
 type ToolCallChunk = {
   toolCallId: string;
   toolName: string;
@@ -47,6 +47,7 @@ type ToolCallChunk = {
   query?: string;
   title?: string;
   snippet?: string;
+  track?: string;
 };
 
 function readSSEStream(
@@ -110,49 +111,41 @@ function readSSEStream(
     });
 }
 
-function Field({ label, value }: { label: string; value: string }) {
+function ProductHeader({ result }: { result: ProductResult }) {
   return (
-    <div>
-      <span className="font-mono text-[10px] uppercase text-muted-foreground/60">
-        {label}
-      </span>
-      <p className="text-xs text-foreground/75">{value || "\u2014"}</p>
-    </div>
-  );
-}
-
-function ProductBlock({ result }: { result: ProductResult }) {
-  return (
-    <div className="w-full space-y-6">
-      <div className="space-y-4">
-        <div className="flex items-start gap-4">
-          <ProductFavicon
-            url={result.url}
-            size={40}
-            rounded="lg"
-            className="mt-1 ring-1 ring-border/40"
-          />
-          <div className="min-w-0 flex-1">
-            <h2 className="font-heading text-lg tracking-tight text-foreground">
-              {result.productName}
-            </h2>
-            <a
-              href={result.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="mt-1 inline-flex items-center gap-1.5 text-xs text-brand/70 hover:text-brand transition-colors"
-            >
-              {result.url}
-              <ExternalLink className="size-3" />
-            </a>
-          </div>
+    <div className="space-y-4">
+      <div className="flex items-start gap-3.5">
+        <ProductFavicon
+          url={result.url}
+          size={40}
+          rounded="lg"
+          className="mt-0.5 ring-1 ring-border/40"
+        />
+        <div className="min-w-0 flex-1">
+          <span className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground/50">
+            subject
+          </span>
+          <h2 className="mt-0.5 font-heading text-xl tracking-tight text-foreground sm:text-2xl">
+            {result.productName}
+          </h2>
+          <a
+            href={result.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-0.5 inline-flex items-center gap-1.5 text-xs text-brand/70 hover:text-brand transition-colors"
+          >
+            <Link2 className="size-3" />
+            <span className="truncate">{result.url}</span>
+            <ExternalLink className="size-3 opacity-0 transition-opacity group-hover:opacity-100" />
+          </a>
         </div>
-        {result.description && (
-          <p className="text-sm text-foreground/75 leading-relaxed">
-            {result.description}
-          </p>
-        )}
       </div>
+
+      {result.description && (
+        <p className="max-w-2xl text-sm leading-relaxed text-foreground/80">
+          {result.description}
+        </p>
+      )}
 
       {result.keyFeatures.length > 0 && (
         <div className="space-y-2">
@@ -163,7 +156,7 @@ function ProductBlock({ result }: { result: ProductResult }) {
             {result.keyFeatures.map((f, i) => (
               <span
                 key={i}
-                className="inline-flex rounded-md border border-border/60 bg-card px-2.5 py-1 text-xs text-foreground/80 transition-colors hover:border-brand/30 hover:text-foreground"
+                className="inline-flex rounded-md border border-border/40 bg-card/30 px-2 py-0.5 text-[11px] text-foreground/80"
               >
                 {f}
               </span>
@@ -172,65 +165,400 @@ function ProductBlock({ result }: { result: ProductResult }) {
         </div>
       )}
 
-      <div className="grid grid-cols-2 gap-3">
-        <Field label="Pricing" value={result.pricingModel} />
-        <Field label="Target Audience" value={result.targetAudience} />
-      </div>
+      {(result.pricingModel || result.targetAudience) && (
+        <dl className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+          {result.pricingModel && (
+            <div>
+              <dt className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground/60">
+                Pricing
+              </dt>
+              <dd className="mt-1 text-sm text-foreground/85 leading-relaxed">
+                {result.pricingModel}
+              </dd>
+            </div>
+          )}
+          {result.targetAudience && (
+            <div>
+              <dt className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground/60">
+                Target Audience
+              </dt>
+              <dd className="mt-1 text-sm text-foreground/85 leading-relaxed">
+                {result.targetAudience}
+              </dd>
+            </div>
+          )}
+        </dl>
+      )}
     </div>
   );
 }
 
-function CompetitorsBlock({ result }: { result: CompetitorResult }) {
+type ConsoleProps = {
+  status: "idle" | "competitors" | "hn";
+  hasCompetitors: boolean;
+  hasHN: boolean;
+  competitorCount: number;
+  hnCount: number;
+  url: string;
+  onFindCompetitors: () => void;
+  onFindHN: () => void;
+  onCancel: () => void;
+  streamStatus: string | null;
+  elapsedDisplay: string;
+  error: string | null;
+  competitors: CompetitorResult | null;
+  hnResult: HNResult | null;
+  loadingCompetitors: boolean;
+  loadingHN: boolean;
+  activeResult: "competitors" | "hn";
+  onSwitchResult: (tab: "competitors" | "hn") => void;
+};
+
+function Console({
+  status,
+  hasCompetitors,
+  hasHN,
+  competitorCount,
+  hnCount,
+  url,
+  onFindCompetitors,
+  onFindHN,
+  onCancel,
+  streamStatus,
+  elapsedDisplay,
+  error,
+  competitors,
+  hnResult,
+  loadingCompetitors,
+  loadingHN,
+  activeResult,
+  onSwitchResult,
+}: ConsoleProps) {
+  const domain = (() => {
+    try {
+      return new URL(url).host.replace(/^www\./, "");
+    } catch {
+      return url;
+    }
+  })();
+
+  const busy = status !== "idle";
+  const showCompetitorBtn = !hasCompetitors;
+  const showHNBtn = hasCompetitors && !hasHN;
+  const allDone = hasCompetitors && hasHN && !busy;
+
+  const statusMeta = {
+    idle: {
+      dot: "bg-muted-foreground/50",
+      label: "READY",
+      tone: "text-muted-foreground/70",
+    },
+    allComplete: {
+      dot: "bg-emerald-400",
+      label: "ALL COMPLETE",
+      tone: "text-emerald-400/80",
+    },
+    competitors: {
+      dot: "bg-brand",
+      label: "FINDING COMPETITORS",
+      tone: "text-brand",
+    },
+    hn: {
+      dot: "bg-orange-400",
+      label: "FINDING HN THREADS",
+      tone: "text-orange-400",
+    },
+  }[allDone ? "allComplete" : status];
+
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 12 }}
-      animate={{ opacity: 1, y: 0 }}
-      className="mt-10 space-y-4"
-    >
-      <div className="flex items-center justify-between">
-        <h3 className="font-heading text-sm tracking-tight text-foreground">
-          Competitors
-        </h3>
-        <span className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground/60">
-          {result.competitors.length} found
-        </span>
+    <div className="flex h-full flex-col overflow-hidden rounded-2xl border border-border/40 bg-card/40 backdrop-blur-sm">
+      <div
+        className={cn(
+          "flex items-center justify-between gap-3 border-b border-border/30 px-4 py-3",
+          status === "competitors" && "border-brand/30",
+          status === "hn" && "border-orange-400/30",
+          allDone && "border-emerald-400/30",
+        )}
+      >
+        <div className="flex min-w-0 items-center gap-2">
+          <span
+            className={cn(
+              "inline-block size-1.5 rounded-full",
+              statusMeta.dot,
+              busy && "animate-pulse",
+            )}
+          />
+          <span
+            className={cn(
+              "font-mono text-[10px] uppercase tracking-widest",
+              statusMeta.tone,
+            )}
+          >
+            {statusMeta.label}
+          </span>
+        </div>
+        {busy && (
+          <span className="shrink-0 font-mono text-[10px] tabular-nums text-muted-foreground/60">
+            {elapsedDisplay}
+          </span>
+        )}
       </div>
-      {result.competitors.length === 0 ? (
-        <p className="text-xs text-muted-foreground">
-          No competitors found.
-        </p>
-      ) : (
-        <div className="space-y-2">
-          {result.competitors.map((c, i) => (
-            <div
-              key={i}
-              className="group rounded-xl border border-border/60 bg-card p-4 transition-colors hover:border-brand/30"
-            >
-              <div className="flex items-center gap-2.5">
-                <ProductFavicon
-                  url={c.url}
-                  size={22}
-                  rounded="md"
-                  className="ring-1 ring-border/40"
-                />
-                <a
-                  href={c.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1.5 text-sm font-medium text-foreground transition-colors group-hover:text-brand"
-                >
-                  {c.name}
-                  <ExternalLink className="size-3" />
-                </a>
-              </div>
-              <p className="mt-2 text-xs leading-relaxed text-foreground/65">
-                {c.description}
-              </p>
-            </div>
-          ))}
+
+      {streamStatus && busy && (
+        <div className="border-b border-border/30 px-4 py-2.5 font-mono text-[11px] text-brand/80 truncate">
+          <span className="text-muted-foreground/50">&gt; </span>
+          {streamStatus}
         </div>
       )}
-    </motion.div>
+
+      {(showCompetitorBtn || showHNBtn) && (
+        <div className="space-y-2 border-b border-border/30 px-4 py-3">
+          {showCompetitorBtn && (
+            <button
+              onClick={onFindCompetitors}
+              disabled={busy}
+              className={cn(
+                "group/btn flex w-full items-center justify-between gap-3 rounded-xl border bg-card/60 px-4 py-2.5 text-left text-sm transition-all",
+                busy
+                  ? "cursor-not-allowed border-border/40 text-muted-foreground/50"
+                  : "border-border/60 text-foreground/85 hover:border-brand/50 hover:bg-brand/5 hover:text-foreground",
+              )}
+            >
+              <div className="flex items-center gap-2.5">
+                <Users className="size-4 text-brand" />
+                <span className="font-medium">Find competitors</span>
+              </div>
+              <span className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground/50 group-hover/btn:text-brand/70">
+                Stage 1
+              </span>
+            </button>
+          )}
+          {showHNBtn && (
+            <button
+              onClick={onFindHN}
+              disabled={busy}
+              className={cn(
+                "group/btn flex w-full items-center justify-between gap-3 rounded-xl border bg-card/60 px-4 py-2.5 text-left text-sm transition-all",
+                busy
+                  ? "cursor-not-allowed border-border/40 text-muted-foreground/50"
+                  : "border-border/60 text-foreground/85 hover:border-orange-400/50 hover:bg-orange-400/5 hover:text-foreground",
+              )}
+            >
+              <div className="flex items-center gap-2.5">
+                <MessageSquare className="size-4 text-orange-400" />
+                <span className="font-medium">Find HN threads</span>
+              </div>
+              <span className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground/50 group-hover/btn:text-orange-400">
+                Stage 2
+              </span>
+            </button>
+          )}
+          {busy && (
+            <button
+              onClick={onCancel}
+              className="block w-full py-1 text-center text-[11px] text-muted-foreground transition-colors hover:text-foreground"
+            >
+              cancel
+            </button>
+          )}
+        </div>
+      )}
+
+
+      <div className="flex-1 overflow-y-auto">
+        <div className="m-3 flex items-center rounded-lg border border-border/30 bg-card/30 p-0.5">
+          <button
+            onClick={() => onSwitchResult("competitors")}
+            className={cn(
+              "flex flex-1 items-center justify-center gap-1.5 rounded-md px-3 py-1.5 text-xs transition-all",
+              activeResult === "competitors"
+                ? "bg-brand/10 text-foreground"
+                : "text-muted-foreground/70 hover:text-foreground/80",
+            )}
+          >
+            <span
+              className={cn(
+                "size-1.5 rounded-full",
+                activeResult === "competitors" ? "bg-brand" : "bg-brand/40",
+              )}
+            />
+            <span>Competitors</span>
+            {competitorCount > 0 && (
+              <span className="font-mono text-[10px] tabular-nums text-muted-foreground/60">
+                {competitorCount}
+              </span>
+            )}
+          </button>
+          <button
+            onClick={() => onSwitchResult("hn")}
+            className={cn(
+              "flex flex-1 items-center justify-center gap-1.5 rounded-md px-3 py-1.5 text-xs transition-all",
+              activeResult === "hn"
+                ? "bg-orange-400/10 text-foreground"
+                : "text-muted-foreground/70 hover:text-foreground/80",
+            )}
+          >
+            <span
+              className={cn(
+                "size-1.5 rounded-full",
+                activeResult === "hn"
+                  ? "bg-orange-400"
+                  : "bg-orange-400/40",
+              )}
+            />
+            <span>Hacker News</span>
+            {hnCount > 0 && (
+              <span className="font-mono text-[10px] tabular-nums text-muted-foreground/60">
+                {hnCount}
+              </span>
+            )}
+          </button>
+        </div>
+
+        {activeResult === "competitors" ? (
+          <div className="border-t border-border/30 px-4 py-4">
+            <div className="mb-3 flex items-center justify-between">
+              <span className="font-heading text-[10px] tracking-widest uppercase text-muted-foreground/60">
+                Stage 1 · Competitors
+              </span>
+              <span className="font-mono text-[10px] tabular-nums text-muted-foreground/60">
+                {competitorCount}
+              </span>
+            </div>
+            {competitors && competitors.competitors.length > 0 ? (
+              <div className="space-y-2">
+                {competitors.competitors.map((c, i) => (
+                  <a
+                    key={i}
+                    href={c.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="block rounded-lg border border-border/60 bg-card/40 p-3 transition-all hover:border-brand/40 hover:bg-card/70"
+                  >
+                    <div className="flex items-center gap-2">
+                      <ProductFavicon
+                        url={c.url}
+                        size={16}
+                        rounded="sm"
+                        className="ring-1 ring-border/40"
+                      />
+                      <span className="inline-flex items-center gap-1 truncate text-sm font-medium text-foreground transition-colors group-hover:text-brand">
+                        {c.name}
+                      </span>
+                      <ExternalLink className="ml-auto size-3 shrink-0 text-muted-foreground/40" />
+                    </div>
+                    <p className="mt-1.5 line-clamp-2 text-xs leading-relaxed text-foreground/65">
+                      {c.description}
+                    </p>
+                    {c.mentionSources.length > 0 && (
+                      <div className="mt-2 flex flex-wrap gap-1">
+                        {c.mentionSources.slice(0, 3).map((s, j) => (
+                          <span
+                            key={j}
+                            className="rounded border border-border/40 bg-background/50 px-1.5 py-0.5 font-mono text-[9px] uppercase tracking-wider text-muted-foreground/70"
+                          >
+                            {s}
+                          </span>
+                        ))}
+                      </div>
+                    )}
+                  </a>
+                ))}
+              </div>
+            ) : loadingCompetitors ? (
+              <div className="flex items-center gap-2 py-2 text-xs text-muted-foreground/70">
+                <Loader2 className="size-3 animate-spin text-brand" />
+                <span>Scanning…</span>
+              </div>
+            ) : (
+              <p className="py-2 text-xs text-muted-foreground/50">
+                Click{" "}
+                <span className="text-foreground/70">Find competitors</span>{" "}
+                above
+              </p>
+            )}
+          </div>
+        ) : (
+          <div className="border-t border-border/30 px-4 py-4">
+            <div className="mb-3 flex items-center justify-between">
+              <span className="font-heading text-[10px] tracking-widest uppercase text-muted-foreground/60">
+                Stage 2 · Hacker News
+              </span>
+              <span className="font-mono text-[10px] tabular-nums text-muted-foreground/60">
+                {hnCount}
+              </span>
+            </div>
+            {hnResult && hnResult.threads.length > 0 ? (
+              <div className="space-y-0.5">
+                {hnResult.threads.map((t, i) => {
+                  const rank = String(i + 1).padStart(2, "0");
+                  const hnUrl = `https://news.ycombinator.com/item?id=${t.objectID}`;
+                  return (
+                    <a
+                      key={t.objectID}
+                      href={hnUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="group/row flex items-start gap-2 rounded-md px-2 py-1.5 transition-colors hover:bg-card/60"
+                    >
+                      <span className="mt-0.5 w-5 shrink-0 text-right font-mono text-[10px] tabular-nums text-orange-400/80">
+                        {rank}
+                      </span>
+                      <div className="min-w-0 flex-1">
+                        <p className="line-clamp-2 text-xs text-foreground/85 group-hover/row:text-foreground">
+                          {t.title}
+                        </p>
+                        <div className="mt-0.5 flex items-center gap-1.5 font-mono text-[10px] text-muted-foreground/50">
+                          <span>▲ {t.points}</span>
+                          <span className="text-muted-foreground/30">·</span>
+                          <span>{t.comments} comments</span>
+                        </div>
+                      </div>
+                    </a>
+                  );
+                })}
+              </div>
+            ) : loadingHN ? (
+              <div className="flex items-center gap-2 py-2 text-xs text-muted-foreground/70">
+                <Loader2 className="size-3 animate-spin text-orange-400" />
+                <span>Searching…</span>
+              </div>
+            ) : (
+              <p className="py-2 text-xs text-muted-foreground/50">
+                {hasCompetitors
+                  ? "Click Find HN threads above"
+                  : "Run Stage 1 first"}
+              </p>
+            )}
+          </div>
+        )}
+
+        <div className="px-4 py-4">
+          <div className="mb-2 flex items-center gap-2">
+            <span className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground/50">
+              session
+            </span>
+          </div>
+          <dl className="space-y-2">
+            <div className="flex items-center justify-between gap-3">
+              <dt className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground/50">
+                domain
+              </dt>
+              <dd className="truncate text-xs text-foreground/80" title={domain}>
+                {domain || "—"}
+              </dd>
+            </div>
+          </dl>
+        </div>
+      </div>
+
+      {error && (
+        <div className="flex items-start gap-2 border-t border-border/30 px-4 py-3 text-xs text-red-400">
+          <AlertTriangle className="mt-0.5 size-3.5 shrink-0" />
+          <span>{error}</span>
+        </div>
+      )}
+    </div>
   );
 }
 
@@ -238,25 +566,38 @@ export function SessionViewClient({
   sessionId,
   product,
   competitors: initialCompetitors,
+  hnResult: initialHNResult,
 }: {
   sessionId: string;
   product: ProductResult;
   competitors: CompetitorResult | null;
+  hnResult: HNResult | null;
 }) {
   const router = useRouter();
   const [competitors, setCompetitors] = useState<CompetitorResult | null>(
     initialCompetitors,
   );
+  const [hnResult, setHNResult] = useState<HNResult | null>(initialHNResult);
   const [loadingCompetitors, setLoadingCompetitors] = useState(false);
-  const [activity, setActivity] = useState<ActivityItem[]>([]);
+  const [loadingHN, setLoadingHN] = useState(false);
   const [streamStatus, setStreamStatus] = useState<string | null>(null);
   const [streamError, setStreamError] = useState<string | null>(null);
   const [elapsed, setElapsed] = useState(0);
   const [error, setError] = useState<string | null>(null);
+  const [hnStreamStatus, setHNStreamStatus] = useState<string | null>(null);
+  const [hnElapsed, setHNElapsed] = useState(0);
+  const [hnError, setHNError] = useState<string | null>(null);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const hnTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const [runId, setRunId] = useState<string | null>(null);
   const [token, setToken] = useState<string | null>(null);
+  const [hnRunId, setHNRunId] = useState<string | null>(null);
+  const [hnToken, setHNToken] = useState<string | null>(null);
+
+  const [activeResult, setActiveResult] = useState<"competitors" | "hn">(
+    "competitors",
+  );
 
   useEffect(() => {
     if (loadingCompetitors) {
@@ -273,6 +614,22 @@ export function SessionViewClient({
       }
     };
   }, [loadingCompetitors]);
+
+  useEffect(() => {
+    if (loadingHN) {
+      hnTimerRef.current = setInterval(() => setHNElapsed((e) => e + 1), 1000);
+    } else if (hnTimerRef.current) {
+      clearInterval(hnTimerRef.current);
+      hnTimerRef.current = null;
+      setHNElapsed(0);
+    }
+    return () => {
+      if (hnTimerRef.current) {
+        clearInterval(hnTimerRef.current);
+        hnTimerRef.current = null;
+      }
+    };
+  }, [loadingHN]);
 
   useEffect(() => {
     if (!runId || !token) return;
@@ -293,39 +650,12 @@ export function SessionViewClient({
                   ? `Reading ${chunk.url}...`
                   : chunk.toolName;
             setStreamStatus(label);
-            if (chunk.toolCallId) {
-              const id = chunk.toolCallId;
-              setActivity((prev) => {
-                if (prev.some((c) => c.id === id)) return prev;
-                return [
-                  ...prev.map((c) =>
-                    c.status === "in-flight" ? { ...c, status: "done" as const } : c,
-                  ),
-                  {
-                    id,
-                    track: "competitor",
-                    toolName: chunk.toolName,
-                    url: chunk.url ?? chunk.args?.url,
-                    query: chunk.query ?? chunk.args?.query,
-                    title: chunk.title,
-                    snippet: chunk.snippet,
-                    status: "in-flight",
-                    arrivedAt: Date.now(),
-                  },
-                ];
-              });
-            }
             break;
           }
           case "result": {
             controller.abort();
             if (done.current) break;
             done.current = true;
-            setActivity((prev) =>
-              prev.map((c) =>
-                c.status === "in-flight" ? { ...c, status: "done" as const } : c,
-              ),
-            );
             const r = event as unknown as CompetitorResult;
             setCompetitors(r);
             setLoadingCompetitors(false);
@@ -397,84 +727,155 @@ export function SessionViewClient({
     setLoadingCompetitors(false);
   }, []);
 
-  const currentItems = activity.filter((c) => c.track === "competitor");
-  const currentMaxSteps = 8;
-  const currentDoneCount = currentItems.filter(
-    (c) => c.status === "done" || c.status === "error",
-  ).length;
+  useEffect(() => {
+    if (!hnRunId || !hnToken) return;
+    const controller = new AbortController();
+    const done = { current: false };
+
+    readSSEStream(hnRunId, "research", hnToken, (data) => {
+      try {
+        const event = JSON.parse(data) as { type: string } & Record<string, unknown>;
+        switch (event.type) {
+          case "tool-call": {
+            const chunk = event as unknown as ToolCallChunk;
+            const label = chunk.title
+              ? `Read: ${chunk.title}`
+              : chunk.query
+                ? `Searching "${chunk.query}"`
+                : chunk.url
+                  ? `Reading ${chunk.url}...`
+                  : chunk.toolName;
+            setHNStreamStatus(label);
+            break;
+          }
+          case "result": {
+            controller.abort();
+            if (done.current) break;
+            done.current = true;
+            const r = event as unknown as HNResult;
+            setHNResult(r);
+            setLoadingHN(false);
+            setHNStreamStatus("Saved");
+            fetch("/api/research/save", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                id: sessionId,
+                hn_threads_result: r,
+              }),
+            })
+              .then((res) => {
+                if (res.ok) router.refresh();
+              })
+              .catch(() => {});
+            break;
+          }
+          case "error": {
+            controller.abort();
+            setHNError((event as unknown as { error: string }).error);
+            setLoadingHN(false);
+            break;
+          }
+        }
+      } catch { /* skip */ }
+    }, (err) => setStreamError(`HN: ${err}`), controller.signal);
+
+    return () => controller.abort();
+  }, [hnRunId, hnToken, sessionId, router]);
+
+  const runHN = useCallback(async () => {
+    setLoadingHN(true);
+    setHNError(null);
+    setHNRunId(null);
+    setHNToken(null);
+    setHNStreamStatus(null);
+
+    try {
+      const res = await fetch("/api/research/hn", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          url: product.url,
+          productName: product.productName,
+          description: product.description,
+          keyFeatures: product.keyFeatures,
+          competitors:
+            competitors?.competitors?.map((c) => ({
+              name: c.name,
+              url: c.url,
+            })) ?? [],
+        }),
+      });
+
+      const body = await res.json();
+
+      if (!res.ok) {
+        throw new Error(body.error ?? `Request failed (${res.status})`);
+      }
+
+      setHNRunId(body.runId);
+      setHNToken(body.publicAccessToken);
+    } catch (err) {
+      setHNError(err instanceof Error ? err.message : "Something went wrong");
+      setLoadingHN(false);
+    }
+  }, [product, competitors]);
+
+  const cancelHN = useCallback(() => {
+    setHNRunId(null);
+    setHNToken(null);
+    setLoadingHN(false);
+  }, []);
+
+  const status: "idle" | "competitors" | "hn" = loadingCompetitors
+    ? "competitors"
+    : loadingHN
+      ? "hn"
+      : "idle";
+  const activeStreamStatus = loadingCompetitors
+    ? streamStatus
+    : loadingHN
+      ? hnStreamStatus
+      : null;
+  const activeElapsed = loadingCompetitors ? elapsed : loadingHN ? hnElapsed : 0;
   const elapsedDisplay =
-    elapsed < 60 ? `${elapsed}s` : `${Math.floor(elapsed / 60)}m ${elapsed % 60}s`;
+    activeElapsed < 60
+      ? `${activeElapsed}s`
+      : `${Math.floor(activeElapsed / 60)}m ${activeElapsed % 60}s`;
+
+  const cancelCurrent = () => {
+    if (loadingCompetitors) cancelCompetitors();
+    else if (loadingHN) cancelHN();
+  };
 
   return (
-    <div className="space-y-8">
-      <ProductBlock result={product} />
+    <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_28rem] lg:items-start lg:gap-8">
+      <div>
+        <ProductHeader result={product} />
+      </div>
 
-      {!competitors && !loadingCompetitors && (
-        <div className="flex flex-col items-center gap-3 pt-4">
-          <p className="text-xs text-muted-foreground">Want to dig deeper?</p>
-          <button
-            onClick={runCompetitors}
-            className={cn(
-              "inline-flex items-center gap-2 rounded-xl border border-border/60 bg-card/40 px-4 py-2.5 text-sm transition-all",
-              "text-foreground/70 hover:border-brand/30 hover:text-foreground",
-            )}
-          >
-            <Users className="size-4" />
-            Find competitors
-          </button>
-        </div>
-      )}
-
-      <AnimatePresence>
-        {loadingCompetitors && (
-          <motion.div
-            key="loading"
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0 }}
-            className="space-y-3"
-          >
-            <div className="rounded-2xl border border-brand/30 bg-card/50 backdrop-blur-sm">
-              <div className="flex items-center gap-3 px-5 py-4">
-                <Loader2 className="size-5 shrink-0 animate-spin text-brand" />
-                <span className="flex-1 truncate text-sm text-foreground/60">
-                  Finding competitors
-                </span>
-                <span className="hidden font-mono text-[11px] text-muted-foreground sm:inline">
-                  {elapsedDisplay}
-                </span>
-                <button
-                  onClick={cancelCompetitors}
-                  className="text-xs text-muted-foreground transition-colors hover:text-foreground"
-                >
-                  cancel
-                </button>
-              </div>
-            </div>
-            {streamStatus && (
-              <div className="truncate text-xs text-brand/70 font-mono">
-                &gt; {streamStatus}
-              </div>
-            )}
-            <ActivityFeed
-              items={currentItems}
-              doneCount={currentDoneCount}
-              maxSteps={currentMaxSteps}
-            />
-          </motion.div>
-        )}
-
-        {competitors && (
-          <CompetitorsBlock key="result" result={competitors} />
-        )}
-
-        {error && competitors && (
-          <div className="flex items-center gap-2 rounded-lg border border-red-500/20 bg-red-500/5 px-4 py-3 text-xs text-red-400">
-            <AlertTriangle className="size-3.5 shrink-0" />
-            {error}
-          </div>
-        )}
-      </AnimatePresence>
+      <div className="lg:sticky lg:top-10 lg:h-[calc(100vh-5rem)]">
+        <Console
+          status={status}
+          hasCompetitors={!!competitors}
+          hasHN={!!hnResult}
+          competitorCount={competitors?.competitors.length ?? 0}
+          hnCount={hnResult?.threads.length ?? 0}
+          url={product.url}
+          onFindCompetitors={runCompetitors}
+          onFindHN={runHN}
+          onCancel={cancelCurrent}
+          streamStatus={activeStreamStatus}
+          elapsedDisplay={elapsedDisplay}
+          error={error || hnError || streamError}
+          competitors={competitors}
+          hnResult={hnResult}
+          loadingCompetitors={loadingCompetitors}
+          loadingHN={loadingHN}
+          activeResult={activeResult}
+          onSwitchResult={setActiveResult}
+        />
+      </div>
     </div>
   );
 }

@@ -7,7 +7,7 @@ export const fetchSessions = cache(async (): Promise<SessionSummary[]> => {
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("research_sessions")
-    .select("id, input, product_analyst_result, competitor_result, updated_at")
+    .select("id, input, product_analyst_result, competitor_result, hn_threads_result, updated_at")
     .order("updated_at", { ascending: false })
     .limit(50);
 
@@ -24,6 +24,7 @@ export const fetchSessions = cache(async (): Promise<SessionSummary[]> => {
       product_name: product?.productName ?? null,
       has_product: !!row.product_analyst_result,
       has_competitor: !!row.competitor_result,
+      has_hn: !!row.hn_threads_result,
       updated_at: row.updated_at,
     };
   });
@@ -46,11 +47,12 @@ export const fetchSession = cache(
     input: unknown;
     product_analyst_result: unknown;
     competitor_result: unknown;
+    hn_threads_result: unknown;
   } | null> => {
     const supabase = await createClient();
     const { data } = await supabase
       .from("research_sessions")
-      .select("id, input, product_analyst_result, competitor_result")
+      .select("id, input, product_analyst_result, competitor_result, hn_threads_result")
       .eq("id", id)
       .maybeSingle();
     return (data as {
@@ -58,6 +60,7 @@ export const fetchSession = cache(
       input: unknown;
       product_analyst_result: unknown;
       competitor_result: unknown;
+      hn_threads_result: unknown;
     } | null) ?? null;
   },
 );

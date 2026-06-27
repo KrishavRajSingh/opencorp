@@ -4,7 +4,7 @@ import { AnimatePresence, motion } from "motion/react";
 import { AlertTriangle, Check, FileText, Globe, MessageSquare } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-export type ActivityTrack = "product" | "competitor" | "sentiment";
+export type ActivityTrack = "product" | "competitor" | "sentiment" | "hn";
 
 export type ActivityItem = {
   id: string;

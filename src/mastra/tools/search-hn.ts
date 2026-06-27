@@ -4,23 +4,31 @@ import { z } from 'zod';
 const HN_ALGOLIA_BASE = 'https://hn.algolia.com/api/v1';
 
 interface HNResult {
-  title: string;
-  url: string;
-  points: number;
-  num_comments: number;
-  author: string;
-  created_at: string;
+  title?: string;
+  url?: string;
+  points?: number;
+  num_comments?: number;
+  author?: string;
+  created_at?: string;
   objectID: string;
   story_text?: string;
   comment_text?: string;
 }
 
 interface HNComment {
-  author: string;
-  comment_text: string;
-  created_at: string;
-  points: number;
+  author?: string;
+  comment_text?: string;
+  created_at?: string;
+  points?: number;
 }
+
+const STOP_WORDS = new Set([
+  'a', 'an', 'and', 'are', 'as', 'at', 'be', 'by', 'do', 'for', 'from',
+  'has', 'have', 'how', 'in', 'is', 'it', 'its', 'of', 'on', 'or', 'that',
+  'the', 'this', 'to', 'was', 'were', 'what', 'when', 'where', 'which',
+  'who', 'why', 'will', 'with', 'you', 'your', 'about', 'can', 'into',
+  'than', 'them', 'these', 'they', 'use', 'used', 'using',
+]);
 
 function stripHtml(html: string): string {
   return html
@@ -56,44 +64,63 @@ async function fetchCommentsForStory(
   if (!response.ok) return [];
 
   const data = (await response.json()) as {
-    hits: Array<{
-      author?: string;
-      comment_text?: string;
-      created_at?: string;
-      points?: number;
-    }>;
+    hits: HNComment[];
   };
 
-  return data.hits.map((hit) => ({
-    author: hit.author ?? 'unknown',
-    comment_text: hit.comment_text ?? '',
-    created_at: hit.created_at ?? '',
-    points: hit.points ?? 0,
-  }));
+  return data.hits;
+}
+
+async function algoliaSearch(params: URLSearchParams): Promise<HNResult[]> {
+  try {
+    const response = await fetch(`${HN_ALGOLIA_BASE}/search?${params.toString()}`);
+    if (!response.ok) return [];
+    const data = (await response.json()) as { hits?: HNResult[] };
+    return data.hits ?? [];
+  } catch {
+    return [];
+  }
+}
+
+function extractQueryWords(query: string): string[] {
+  return [...new Set(
+    query
+      .toLowerCase()
+      .split(/[^a-z0-9]+/)
+      .filter((w) => w.length > 2 && !STOP_WORDS.has(w)),
+  )];
+}
+
+function buildWhyRelevant(hit: HNResult, query: string): string | null {
+  const queryWords = extractQueryWords(query);
+  const haystack = `${hit.title ?? ''} ${hit.story_text ?? ''} ${hit.comment_text ?? ''}`.toLowerCase();
+  const matched = queryWords.filter((w) => haystack.includes(w));
+
+  if (matched.length === 0) return null;
+  return `matched: ${matched.join(', ')}`;
 }
 
 export const searchHNTool = createTool({
   id: 'search-hn',
   description:
-    'Search Hacker News for discussions, product mentions, and user sentiment. Optionally fetches the actual comment text from top threads so you can read what people are saying — their complaints, praise, and alternative recommendations. Hacker News has a small, narrow index — one call per angle is usually enough; only search again with a clearly different framing.',
+    "Search Hacker News for relevant discussions and product launches. Pass 1-3 short keyword terms (e.g. 'autofill extension', 'job application AI'). The tool uses Algolia's built-in 'similarQuery' under the hood, which OR-matches all words from your query (with stop words removed) and ranks by word-match count — so it handles both short keyword queries and verbose natural-language ones. Use tags='all' (default) to catch both stories and comments, 'story' for stories only, 'comment' for comments only. Set semantic=false to use a strict AND keyword match instead. Hacker News has a small, narrow index — vary the angle (e.g. competitor name vs. user pain) between calls, never with a longer paraphrase of the same angle.",
   inputSchema: z.object({
     query: z
       .string()
       .describe(
-        'Search query. Use keywords, product names, competitor names, or problem descriptions.',
+        "1-3 short keyword terms. HN's index is keyword-based — verbose natural-language queries return zero hits with semantic=false, but similarQuery (default) handles them well. Examples: 'autofill extension', 'job application AI', 'form filling Show HN'.",
       ),
     tags: z
       .enum(['story', 'comment', 'all'])
       .optional()
       .default('all')
-      .describe('Filter by type'),
+      .describe('Filter by type. Default all.'),
     limit: z
       .number()
       .min(1)
       .max(50)
       .optional()
       .default(20)
-      .describe('Max search results'),
+      .describe('Max results to return (1-50).'),
     includeComments: z
       .number()
       .min(0)
@@ -102,6 +129,13 @@ export const searchHNTool = createTool({
       .default(10)
       .describe(
         'Number of top comments to fetch per story thread (0 = skip). Useful for reading actual user sentiment, complaints, and recommendations from discussions.',
+      ),
+    semantic: z
+      .boolean()
+      .optional()
+      .default(true)
+      .describe(
+        'When true (default), use Algolia similarQuery (broad OR-match — handles verbose queries). When false, use a strict keyword AND-match (precise but misses verbose queries).',
       ),
   }),
   outputSchema: z.object({
@@ -126,39 +160,29 @@ export const searchHNTool = createTool({
             }),
           )
           .nullable(),
+        whyRelevant: z.string().nullable(),
       }),
     ),
     totalHits: z.number(),
   }),
   execute: async (inputData) => {
-    const { query, tags, limit, includeComments } = inputData;
+    const { query, tags, limit, includeComments, semantic } = inputData;
+    const limitNum = limit ?? 20;
 
-    const searchParams = new URLSearchParams();
-    searchParams.set('query', query);
-    if (tags && tags !== 'all') {
-      searchParams.set('tags', tags);
-    }
-    searchParams.set('hitsPerPage', String(limit));
+    // single Algolia call:
+    //   semantic=true  → similarQuery (OR-match, handles verbose queries)
+    //   semantic=false → query       (AND-match, strict keyword)
+    const params = new URLSearchParams();
+    params.set(semantic === false ? 'query' : 'similarQuery', query);
+    params.set('hitsPerPage', String(limitNum));
+    if (tags && tags !== 'all') params.set('tags', tags);
 
-    const response = await fetch(
-      `${HN_ALGOLIA_BASE}/search?${searchParams.toString()}`,
-    );
-
-    if (!response.ok) {
-      throw new Error(
-        `HN search failed: ${response.status} ${response.statusText}`,
-      );
-    }
-
-    const data = (await response.json()) as {
-      hits: HNResult[];
-      nbHits: number;
-    };
+    const hits = await algoliaSearch(params);
+    const finalHits = hits.slice(0, limitNum);
 
     const results = await Promise.all(
-      data.hits.map(async (hit) => {
+      finalHits.map(async (hit) => {
         const isStory = hit.url || hit.story_text;
-        const storyId = hit.objectID;
 
         let topComments: Array<{
           author: string;
@@ -168,20 +192,19 @@ export const searchHNTool = createTool({
         }> | null = null;
 
         const commentLimit = includeComments ?? 10;
-        if (isStory && commentLimit > 0 && hit.num_comments > 0) {
-          const comments = await fetchCommentsForStory(storyId, commentLimit);
+        if (isStory && commentLimit > 0 && (hit.num_comments ?? 0) > 0) {
+          const comments = await fetchCommentsForStory(hit.objectID, commentLimit);
           topComments = comments.map((c) => ({
-            author: c.author,
-            text: stripHtml(c.comment_text),
-            date: c.created_at,
-            points: c.points,
+            author: c.author ?? 'unknown',
+            text: stripHtml(c.comment_text ?? ''),
+            date: c.created_at ?? '',
+            points: c.points ?? 0,
           }));
         }
 
         return {
           title: hit.title ?? 'Untitled',
-          url:
-            hit.url ?? `https://news.ycombinator.com/item?id=${hit.objectID}`,
+          url: hit.url ?? `https://news.ycombinator.com/item?id=${hit.objectID}`,
           points: hit.points ?? 0,
           comments: hit.num_comments ?? 0,
           author: hit.author ?? 'unknown',
@@ -189,6 +212,7 @@ export const searchHNTool = createTool({
           objectID: hit.objectID,
           snippet: hit.story_text ?? hit.comment_text ?? null,
           topComments,
+          whyRelevant: buildWhyRelevant(hit, query),
         };
       }),
     );
@@ -196,7 +220,7 @@ export const searchHNTool = createTool({
     return {
       query,
       results,
-      totalHits: data.nbHits,
+      totalHits: results.length,
     };
   },
 });
