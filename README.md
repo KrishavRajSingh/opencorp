@@ -1,6 +1,6 @@
 # opencorp
 
-> **Find your users while you build.** Tell opencorp what you're building — it researches the market, finds the people who need your product, and hands you a scored pipeline of leads. Fully autonomous.
+> **Find your users while you build.** Drop in a link to what you're building — opencorp runs a research agent that finds your competitors and surfaces the Hacker News threads where your future users are already talking.
 
 [![License: Elastic 2.0](https://img.shields.io/badge/License-Elastic_2.0-blue.svg)](./LICENSE)
 [![Next.js 16](https://img.shields.io/badge/Next.js-16-black)](https://nextjs.org)
@@ -11,60 +11,45 @@
 
 ## What it does
 
-opencorp is an autonomous user-acquisition platform. Give it a product description, and it runs a two-track discovery pipeline against the sources where real users complain, recommend, and switch tools:
+opencorp is an autonomous user-acquisition platform. Drop in a link to what you're building, and it runs a research agent that returns two things:
 
-| Track | Question it answers | Signals it hunts |
-| --- | --- | --- |
-| **Pain-Point Discovery** | Who has the problem I'm solving? | "is there a tool", "frustrated with", "how do I", "manual process" |
-| **Competitor Discovery** | Who's unhappy with my competitors? | "alternative", "switching from", "too expensive", "won't fix" |
+- **Competitors** — who else is building something similar, with the sources behind them
+- **Hacker News threads** — where your future users are already talking, ranked by how relevant each thread is to your product
 
-Both tracks scan the same sources — **Reddit, Hacker News, GitHub, Twitter/X, Product Hunt** — but with different query strategies. Results merge into a single scored lead pipeline.
+The agent picks its own queries, decides how many searches to run, and re-ranks results. You stay in your editor.
 
 ### Features
 
-- **Market research** — scans Reddit, HN, Twitter, Product Hunt, and GitHub issues for problem- and competitor-fit signals
-- **User discovery** — extracts real people (handle, context, sentiment) from the noise
-- **Product analysis** — autonomously reads a product's site, pricing, and docs to build a structured understanding
-- **SEO & content** — keyword research, competitive analysis, and content strategy
-- **Outreach engine** — personalized multi-channel message drafting (email, Twitter DM, LinkedIn)
-- **Streaming UI** — research results stream to the dashboard in real time via Server-Sent Events
-- **Auth + persistence** — Supabase auth, per-user research sessions, full history
+- **Product analysis** — autonomously reads a product's site to extract name, description, features, audience, and pricing
+- **Competitor discovery** — searches the web for adjacent tools, with each result traced back to a source
+- **HN thread discovery** — surfaces Show HN launches, Ask HN threads, and discussions where the user can pitch
+- **Streaming UI** — research results stream to the dashboard in real time, so the user sees tool calls and partial results as they happen
+- **Auth + persistence** — per-user research sessions, full history (each session row stores product analysis, competitors, and HN threads)
+- **Multi-source research** — combines web search, Hacker News, and the product's own site for grounded context
 
 ---
 
 ## How it works
 
 ```
-Product description
-        │
-        ▼
-  Product Analyst  ──►  Fetches & reads the product's site
-        │                  (homepage, pricing, docs, about, ...)
-        ▼
-   ┌────────────┐         ┌─────────────────────┐
-   │  Track 1   │ ──────► │  Pain-Point Leads   │
-   │ Discovery  │         └─────────────────────┘
-   └────────────┘                  │
-   ┌────────────┐                  ▼
-   │  Track 2   │         ┌─────────────────────┐
-   │ Discovery  │ ──────► │ Competitor Leads    │
-   └────────────┘         └─────────────────────┘
-                                  │
-                                  ▼
-                       Scored Lead Pipeline
-                                  │
-                                  ▼
-                          Dashboard UI
+Product URL
+    │
+    ▼
+Product Analyst ───► Reads the product's site
+    │                  (homepage, pricing, docs, about, ...)
+    ▼
+┌──────────────────────┐
+│  Discovery Agent     │  Picks queries, decides how many to run,
+│  (autonomous)        │  re-ranks results
+└──────────────────────┘
+    │
+    ├──► Competitor research task ──► List of competitors with sources
+    │
+    └──► HN threads task ──► Curated HN threads with relevance reasons
+                                      │
+                                      ▼
+                              Dashboard UI (live stream)
 ```
-
-Under the hood:
-
-- **Mastra** orchestrates agents and tools (`src/mastra/`)
-- **Trigger.dev** runs the long-running discovery tasks asynchronously (`src/trigger/`)
-- **OpenRouter** is the LLM provider — swap models in `src/mastra/agents/*.ts`
-- **Supabase** handles auth, the `research_sessions` table, and row-level security
-- **LibSQL + DuckDB** are Mastra's storage and observability backends
-- **Next.js 16 App Router** serves the UI and API routes
 
 ---
 
@@ -107,11 +92,14 @@ cp .env.example .env
 
 See [Environment variables](#environment-variables) below for the full list.
 
-### Run the database migration
+### Run the database migrations
 
-Open the Supabase SQL editor for your project, paste the contents of
-`supabase/migrations/0001_research_sessions.sql`, and run it. This creates the
-`research_sessions` table and its RLS policies. See `supabase/README.md`.
+Open the Supabase SQL editor for your project and run the migrations in order:
+
+1. `supabase/migrations/0001_research_sessions.sql` — creates the `research_sessions` table and its RLS policies
+2. `supabase/migrations/0002_hn_threads_result.sql` — adds the `hn_threads_result` column for persisting curated HN thread output
+
+See `supabase/README.md` for details.
 
 ### Start the dev server
 
@@ -136,8 +124,6 @@ pnpm dlx trigger.dev dev
 | `OPENROUTER_API_KEY` | yes | LLM provider — Mastra routes all model calls through OpenRouter |
 | `JINA_API_KEY` | yes | Used by `fetchPageTool` to read product pages as clean markdown |
 | `EXA_API_KEY` | yes | Used by `searchWebTool` for semantic web search |
-| `COMPOSIO_API_KEY` | yes | Reddit access via Composio |
-| `COMPOSIO_REDDIT_ACCOUNT_ID` | yes | Specific Reddit account the agent posts/reads as |
 | `TRIGGER_SECRET_KEY` | yes | Authenticates the Next.js app → Trigger.dev worker |
 | `NEXT_PUBLIC_SUPABASE_URL` | yes | Supabase project URL (browser-safe) |
 | `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | yes | Supabase anon key (browser-safe) |
@@ -154,23 +140,24 @@ pnpm dlx trigger.dev dev
 opencorp/
 ├── src/
 │   ├── app/                       # Next.js App Router
-│   │   ├── (marketing)/           # Landing page
+│   │   ├── page.tsx               # Landing page
 │   │   ├── auth/                  # Sign-in / sign-up flows
 │   │   ├── dashboard/             # Research dashboard (projects, sessions)
-│   │   └── api/research/          # Streaming research API (SSE)
+│   │   └── api/research/          # Streaming research API + task triggers + persistence
 │   ├── components/
 │   │   ├── ui/                    # shadcn/ui primitives
-│   │   └── ai-elements/           # Custom AI chat / artifact UI
+│   │   ├── ai-elements/           # Custom AI chat / artifact UI
+│   │   └── dashboard/             # Dashboard-specific blocks (HN threads, etc.)
 │   ├── mastra/                    # Mastra AI framework
 │   │   ├── agents/                # discovery, product-analyst, weather
-│   │   ├── tools/                 # search-web, search-hn, fetch-page
+│   │   ├── tools/                 # search-web, search-hn, fetch-page, weather
 │   │   └── workflows/             # weather-workflow (example)
 │   ├── trigger/                   # Trigger.dev task definitions
-│   │   ├── research.ts            # Long-running research orchestrator
+│   │   ├── research.ts            # product-research, competitor-research, hn-threads
 │   │   └── streams.ts             # Real-time event streaming
-│   └── lib/                       # Shared utilities
+│   └── lib/                       # Shared utilities (supabase clients, cn, etc.)
 ├── supabase/
-│   └── migrations/                # SQL migrations
+│   └── migrations/                # SQL migrations (run in order)
 ├── trigger.config.ts              # Trigger.dev project config
 ├── next.config.ts
 ├── components.json                # shadcn/ui config
@@ -192,10 +179,9 @@ opencorp/
 
 ## Architecture notes
 
-- **Streaming research** — the dashboard consumes Server-Sent Events from `/api/research/sse`, so the user sees tool calls and partial results as agents work, not after they finish.
-- **Two agents, one task** — `productAnalystAgent` and `discoveryAgent` run as independent Trigger.dev tasks and write back into the same `research_sessions` row when each completes.
-- **Tools are scoped** — `fetchPageTool` uses Jina, `searchWebTool` uses Exa, `searchHNTool` uses the public HN Algolia API. Each tool is described to the model with intentional guidance (e.g. *"Exa is semantic — paraphrasing returns duplicates; vary your angle"*) so the agents behave like an experienced researcher, not a chatbot.
-- **Mastra storage** is LibSQL (default domain) + DuckDB (observability domain). Local files (`mastra.db`, `mastra.duckdb`) are git-ignored.
+- **Streaming research** — research results stream to the dashboard in real time as the agent works, not after it finishes.
+- **One agent, three tasks** — `productAnalystAgent` runs alone for product analysis; `discoveryAgent` powers both the `competitor-research` task and the `hn-threads` task. Each task writes its structured output back into its own column on the `research_sessions` row.
+- **Mastra storage** uses LibSQL by default and DuckDB for observability. Local files (`mastra.db`, `mastra.duckdb`) are git-ignored.
 
 ---
 
@@ -204,7 +190,7 @@ opencorp/
 Any platform that runs Next.js 16 will work — [Vercel](https://vercel.com) is the path of least resistance. You will also need to:
 
 1. **Deploy the Trigger.dev worker** — `pnpm dlx trigger.dev deploy` (requires a `TRIGGER_SECRET_KEY` set in the worker environment).
-2. **Run the Supabase migration** in your production project.
+2. **Run the Supabase migrations** in your production project (both files in `supabase/migrations/`, in order).
 3. **Set every environment variable** from the table above in your hosting platform. Treat `SUPABASE_SECRET_KEY` as server-only.
 
 ---
@@ -239,4 +225,4 @@ This is **not an OSI-approved open-source license**. If you need a different lic
 - [Trigger.dev](https://trigger.dev) for reliable long-running tasks
 - [Supabase](https://supabase.com) for auth and Postgres
 - [shadcn/ui](https://ui.shadcn.com) for the component primitives
-- The `r/SomebodyMakeThis`, `r/SaaS`, `r/Entrepreneur`, HN, and GitHub Issues communities — the people posting in these places are the actual product.
+- The Hacker News community — the people posting, asking, and Show-HN-ing in those threads are the actual product.
