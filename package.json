@@ -51,6 +51,7 @@
     "tokenlens": "^1.3.1",
     "tw-animate-css": "^1.4.0",
     "use-stick-to-bottom": "^1.1.6",
+    "wawoff2": "^2.0.1",
     "zod": "^4.4.3"
   },
   "devDependencies": {
