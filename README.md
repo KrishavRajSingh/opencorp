@@ -6,6 +6,7 @@
 [![Next.js 16](https://img.shields.io/badge/Next.js-16-black)](https://nextjs.org)
 [![Mastra AI](https://img.shields.io/badge/Mastra-AI-purple)](https://mastra.ai)
 [![pnpm](https://img.shields.io/badge/pnpm-only-orange)](https://pnpm.io)
+[![Discord](https://img.shields.io/badge/Discord-Join-5865F2?logo=discord&logoColor=white)](https://discord.gg/ArQF8jtC9)
 
 ---
 
