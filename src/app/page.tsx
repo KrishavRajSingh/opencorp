@@ -159,11 +159,11 @@ function PipelineDiagram() {
         <div className="flex w-full flex-wrap justify-center gap-4">
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.7 }}
-            className="flex-1 min-w-[180px] rounded-lg border border-green-500/30 bg-green-500/5 p-3"
+            className="flex-1 min-w-[180px] rounded-lg border border-brand/30 bg-brand/5 p-3"
           >
             <div className="flex items-center gap-2">
-              <Users className="size-4 text-green-400" />
-              <span className="text-sm font-medium text-green-400">Your competitors</span>
+              <Users className="size-4 text-brand" />
+              <span className="text-sm font-medium text-brand">Your competitors</span>
             </div>
             <div className="mt-1 text-[11px] text-muted-foreground">
               with the sources behind them
@@ -172,11 +172,11 @@ function PipelineDiagram() {
 
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.8 }}
-            className="flex-1 min-w-[180px] rounded-lg border border-orange-500/30 bg-orange-500/5 p-3"
+            className="flex-1 min-w-[180px] rounded-lg border border-brand/30 bg-brand/5 p-3"
           >
             <div className="flex items-center gap-2">
               <HNIcon className="size-4" />
-              <span className="text-sm font-medium text-orange-400">Where to talk about it</span>
+              <span className="text-sm font-medium text-brand">Where to talk about it</span>
             </div>
             <div className="mt-1 text-[11px] text-muted-foreground">
               threads where your future users already are
@@ -209,7 +209,7 @@ function InteractiveInput() {
         {[
           { icon: Users, text: "Who else is building this", color: "text-foreground" },
           { icon: MessageSquare, text: "Where people are already talking about the problem", color: "text-foreground" },
-          { icon: Target, text: "Ranked by how likely they are to want what you made", color: "text-green-400" },
+          { icon: Target, text: "Ranked by how likely they are to want what you made", color: "text-brand" },
         ].map((item, i) => (
           <motion.div
             key={item.text}
