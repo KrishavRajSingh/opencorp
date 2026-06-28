@@ -2,6 +2,7 @@
 
 import { motion } from "motion/react";
 import { ExternalLink, MessageSquare } from "lucide-react";
+import { HNIcon } from "@/components/dashboard/hn-icon";
 
 export type HNThread = {
   objectID: string;
@@ -160,7 +161,8 @@ export function HNThreadsBlock({ result }: { result: { threads: HNThread[] } }) 
       className="mt-12 space-y-4"
     >
       <div className="flex items-center justify-between">
-        <div className="flex items-baseline gap-2.5">
+        <div className="flex items-center gap-2.5">
+          <HNIcon className="size-4" />
           <h3 className="font-heading text-sm tracking-tight text-foreground">
             Hacker News
           </h3>

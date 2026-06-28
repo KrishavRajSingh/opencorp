@@ -6,13 +6,13 @@ import {
   AlertTriangle,
   ExternalLink,
   Users,
-  MessageSquare,
   Link2,
   Share2,
   Check,
 } from "lucide-react";
 import { ProductFavicon } from "@/components/dashboard/product-favicon";
 import { DinoLoader } from "@/components/dashboard/dino-loader";
+import { HNIcon } from "@/components/dashboard/hn-icon";
 import type { HNThread } from "@/app/dashboard/hn-threads-block";
 import { cn } from "@/lib/utils";
 
@@ -349,7 +349,7 @@ function Console({
               )}
             >
               <div className="flex items-center gap-2.5">
-                <MessageSquare className="size-4 text-orange-400" />
+                <HNIcon className="size-4" />
                 <span className="font-medium">Find HN threads</span>
               </div>
               <span className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground/50 group-hover/btn:text-orange-400">

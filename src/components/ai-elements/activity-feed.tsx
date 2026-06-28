@@ -1,7 +1,8 @@
 "use client";
 
 import { AnimatePresence, motion } from "motion/react";
-import { AlertTriangle, Check, FileText, Globe, MessageSquare } from "lucide-react";
+import { AlertTriangle, Check, FileText, Globe } from "lucide-react";
+import { HNIcon } from "@/components/dashboard/hn-icon";
 import { cn } from "@/lib/utils";
 
 export type ActivityTrack = "product" | "competitor" | "sentiment" | "hn";
@@ -34,12 +35,12 @@ const TOOL_META: Record<
   "search-web": { label: "Web search", Icon: Globe, tone: "text-foreground/70" },
   searchHNTool: {
     label: "Hacker News",
-    Icon: MessageSquare,
+    Icon: HNIcon,
     tone: "text-orange-400",
   },
   "search-hn": {
     label: "Hacker News",
-    Icon: MessageSquare,
+    Icon: HNIcon,
     tone: "text-orange-400",
   },
 };
