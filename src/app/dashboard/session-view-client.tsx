@@ -474,6 +474,7 @@ function Console({
                 instanceKey="competitors"
                 label="Scanning for competitors…"
                 loading={loadingCompetitors}
+                sublabel="This usually takes 5–7 minutes. We’re reading the page, searching for competitors, and ranking the results — hang tight."
                 tone="brand"
               />
             ) : (
@@ -529,6 +530,7 @@ function Console({
                 instanceKey="hn"
                 label="Searching Hacker News…"
                 loading={loadingHN}
+                sublabel="This usually takes 1–2 minutes. We’re searching Hacker News for threads where your future users are already talking — hang tight."
                 tone="orange"
               />
             ) : (

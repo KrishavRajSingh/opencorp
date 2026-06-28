@@ -27,7 +27,7 @@ type Props = {
 
 const TOOL_META: Record<
   string,
-  { label: string; Icon: typeof FileText; tone: string }
+  { label: string; Icon: React.ComponentType<{ className?: string }>; tone: string }
 > = {
   fetchPageTool: { label: "Reading", Icon: FileText, tone: "text-amber-300" },
   "fetch-page": { label: "Reading", Icon: FileText, tone: "text-amber-300" },

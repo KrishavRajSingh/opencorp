@@ -14,11 +14,13 @@ type Tone = "brand" | "orange";
 export function DinoLoader({
   loading,
   label,
+  sublabel,
   tone,
   instanceKey,
 }: {
   loading: boolean;
   label: string;
+  sublabel: string;
   tone: Tone;
   instanceKey: string;
 }) {
@@ -125,26 +127,29 @@ export function DinoLoader({
       <div className="mb-2 flex items-center gap-2">
         <span
           className={cn(
-            "size-1.5 rounded-full",
+            "size-2 rounded-full",
             tone === "brand" ? "bg-brand" : "bg-orange-400",
             "animate-pulse",
           )}
         />
         <span
           className={cn(
-            "font-mono text-[10px] uppercase tracking-widest",
+            "font-mono text-xs font-medium uppercase tracking-widest",
             tone === "brand" ? "text-brand" : "text-orange-400",
           )}
         >
           {label}
         </span>
       </div>
+      <p className="mb-3 text-[11px] leading-relaxed text-muted-foreground/70">
+        {sublabel}
+      </p>
       <div className="overflow-hidden rounded-md bg-zinc-950">
         <ChromeDinoGame key={instanceKey} />
       </div>
-      <div className="mt-1.5 text-center font-mono text-[9px] uppercase tracking-widest text-muted-foreground/50">
-        SPACE / ↑ jump · ↓ duck
-      </div>
+      <p className="mt-2 text-center text-[11px] text-muted-foreground/60">
+        Press <kbd className="rounded border border-border/60 bg-background/60 px-1.5 py-0.5 font-mono text-[10px] text-foreground/80">SPACE</kbd> to play the dino while you wait
+      </p>
     </div>
   );
 }
