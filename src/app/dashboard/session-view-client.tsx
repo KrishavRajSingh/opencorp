@@ -3,7 +3,6 @@
 import { useState, useCallback, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import {
-  Loader2,
   AlertTriangle,
   ExternalLink,
   Users,
@@ -13,6 +12,7 @@ import {
   Check,
 } from "lucide-react";
 import { ProductFavicon } from "@/components/dashboard/product-favicon";
+import { DinoLoader } from "@/components/dashboard/dino-loader";
 import type { HNThread } from "@/app/dashboard/hn-threads-block";
 import { cn } from "@/lib/utils";
 
@@ -416,8 +416,8 @@ function Console({
                 {hnCount}
               </span>
             )}
-          </button>
-        </div>
+           </button>
+         </div>
 
         {activeResult === "competitors" ? (
           <div className="border-t border-border/30 px-4 py-4">
@@ -470,10 +470,12 @@ function Console({
                 ))}
               </div>
             ) : loadingCompetitors ? (
-              <div className="flex items-center gap-2 py-2 text-xs text-muted-foreground/70">
-                <Loader2 className="size-3 animate-spin text-brand" />
-                <span>Scanning…</span>
-              </div>
+              <DinoLoader
+                instanceKey="competitors"
+                label="Scanning for competitors…"
+                loading={loadingCompetitors}
+                tone="brand"
+              />
             ) : (
               <p className="py-2 text-xs text-muted-foreground/50">
                 Click{" "}
@@ -523,10 +525,12 @@ function Console({
                 })}
               </div>
             ) : loadingHN ? (
-              <div className="flex items-center gap-2 py-2 text-xs text-muted-foreground/70">
-                <Loader2 className="size-3 animate-spin text-orange-400" />
-                <span>Searching…</span>
-              </div>
+              <DinoLoader
+                instanceKey="hn"
+                label="Searching Hacker News…"
+                loading={loadingHN}
+                tone="orange"
+              />
             ) : (
               <p className="py-2 text-xs text-muted-foreground/50">
                 {hasCompetitors
