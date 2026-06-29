@@ -18,6 +18,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { HNIcon } from "@/components/dashboard/hn-icon";
 import { cn } from "@/lib/utils";
+import { trackEvent } from "@/lib/analytics";
 
 function GitHubIcon({ className }: { className?: string }) {
   return (
@@ -87,7 +88,7 @@ const features = [
   },
 ];
 
- function Nav() {
+  function Nav() {
   return (
     <header className="fixed top-0 z-50 w-full border-b border-border/50 bg-background/80 backdrop-blur-sm">
       <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-6">
@@ -113,7 +114,13 @@ const features = [
           >
             <DiscordIcon className="size-5" />
           </a>
-          <Button size="sm" asChild>
+          <Button
+            size="sm"
+            asChild
+            onClick={() =>
+              trackEvent({ name: "cta_open_dashboard", data: { location: "hero" } })
+            }
+          >
             <Link href="/dashboard">Dashboard</Link>
           </Button>
         </div>
@@ -260,13 +267,27 @@ export default function Page() {
               pipeline of users — completely autonomously.
             </p>
             <div className="mt-8 flex flex-col items-center gap-4 sm:flex-row">
-              <Button size="lg" className="w-full sm:w-auto" asChild>
+              <Button
+                size="lg"
+                className="w-full sm:w-auto"
+                asChild
+                onClick={() =>
+                  trackEvent({ name: "cta_open_dashboard", data: { location: "hero" } })
+                }
+              >
                 <Link href="/dashboard">
                   Open Dashboard
                   <ArrowRight className="size-4" />
                 </Link>
               </Button>
-              <Button variant="outline" size="lg" className="w-full sm:w-auto">
+              <Button
+                variant="outline"
+                size="lg"
+                className="w-full sm:w-auto"
+                onClick={() =>
+                  trackEvent({ name: "cta_watch_demo", data: { location: "hero" } })
+                }
+              >
                 <Globe className="size-4" />
                 Watch Demo
               </Button>
@@ -392,13 +413,27 @@ export default function Page() {
               of users — so you can focus on what you do best.
             </p>
             <div className="mt-8 flex flex-col items-center gap-4 sm:flex-row">
-              <Button size="lg" className="w-full sm:w-auto" asChild>
+              <Button
+                size="lg"
+                className="w-full sm:w-auto"
+                asChild
+                onClick={() =>
+                  trackEvent({ name: "cta_open_dashboard", data: { location: "footer" } })
+                }
+              >
                 <Link href="/dashboard">
                   Open Dashboard
                   <ArrowRight className="size-4" />
                 </Link>
               </Button>
-              <Button variant="outline" size="lg" className="w-full sm:w-auto">
+              <Button
+                variant="outline"
+                size="lg"
+                className="w-full sm:w-auto"
+                onClick={() =>
+                  trackEvent({ name: "cta_watch_demo", data: { location: "footer" } })
+                }
+              >
                 <Globe className="size-4" />
                 Watch Demo
               </Button>

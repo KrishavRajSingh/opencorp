@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Script from "next/script";
 import { Geist, Geist_Mono } from "next/font/google";
 import { GeistPixelSquare } from "geist/font/pixel";
 import { Analytics } from "@vercel/analytics/react";
@@ -83,6 +84,15 @@ export default function RootLayout({
       <body className="min-h-full dark flex flex-col">
         {children}
         <Analytics />
+        {process.env.NEXT_PUBLIC_UMAMI_WEBSITE_ID &&
+          process.env.NEXT_PUBLIC_UMAMI_HOST_URL && (
+            <Script
+              src={`${process.env.NEXT_PUBLIC_UMAMI_HOST_URL}/script.js`}
+              data-website-id={process.env.NEXT_PUBLIC_UMAMI_WEBSITE_ID}
+              data-host-url={process.env.NEXT_PUBLIC_UMAMI_HOST_URL}
+              strategy="afterInteractive"
+            />
+          )}
       </body>
     </html>
   );

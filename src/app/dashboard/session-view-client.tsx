@@ -884,6 +884,10 @@ export function SessionViewClient({
       ? `${activeElapsed}s`
       : `${Math.floor(activeElapsed / 60)}m ${activeElapsed % 60}s`;
 
+  const handleTabSwitch = useCallback((tab: "competitors" | "hn") => {
+    setActiveResult(tab);
+  }, []);
+
   const cancelCurrent = () => {
     if (loadingCompetitors) cancelCompetitors();
     else if (loadingHN) cancelHN();
@@ -940,7 +944,7 @@ export function SessionViewClient({
             loadingCompetitors={loadingCompetitors}
             loadingHN={loadingHN}
             activeResult={activeResult}
-            onSwitchResult={setActiveResult}
+            onSwitchResult={handleTabSwitch}
             readOnly={readOnly}
           />
         </div>

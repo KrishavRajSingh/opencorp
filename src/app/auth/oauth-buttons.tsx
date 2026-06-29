@@ -1,6 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import { trackEvent } from "@/lib/analytics";
 import { signInWithGoogle } from "./actions";
 
 function GoogleIcon({ className }: { className?: string }) {
@@ -39,6 +40,7 @@ export function OAuthButtons({ next }: { next: string }) {
           type="submit"
           variant="outline"
           className="w-full"
+          onClick={() => trackEvent({ name: "auth_google_oauth_click" })}
         >
           <GoogleIcon className="size-4" />
           Continue with Google

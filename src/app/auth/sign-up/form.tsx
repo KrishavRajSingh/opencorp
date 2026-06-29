@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Loader2, ArrowRight } from "lucide-react";
+import { trackEvent } from "@/lib/analytics";
 import { OAuthButtons } from "../oauth-buttons";
 
 export function SignUpForm({ next }: { next: string }) {
@@ -52,6 +53,7 @@ export function SignUpForm({ next }: { next: string }) {
           type="submit"
           disabled={isPending}
           className="group w-full"
+          onClick={() => trackEvent({ name: "auth_signup_submit" })}
         >
           {isPending ? (
             <Loader2 className="size-3.5 animate-spin" />

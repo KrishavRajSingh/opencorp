@@ -19,6 +19,7 @@ pnpm is the only package manager in use.
 - **`src/components/ai-elements/`** — custom AI chat UI components (panels, messages, artifacts, etc.).
 - **`src/mastra/`** — Mastra AI framework. Entrypoint at `src/mastra/index.ts` exports a `Mastra` instance with storage (LibSQL + DuckDB), Pino logging, and OpenTelemetry observability.
 - **`src/lib/utils.ts`** — `cn()` helper via `clsx` + `tailwind-merge`.
+- **`src/lib/analytics.ts`** — typed `trackEvent(...)` wrapper around `window.umami.track(...)`. No-ops in dev (`NODE_ENV !== "production"`). Umami cloud script is injected via `next/script` in `src/app/layout.tsx`. Event-name union lives in this file.
 - **Path alias**: `@/*` → `./src/*`
 
 ## Mastra
