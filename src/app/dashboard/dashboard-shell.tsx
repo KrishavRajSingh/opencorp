@@ -91,15 +91,17 @@ function Sidebar({
             {user.email}
           </div>
         )}
-        <form action={signOut} className="mt-2">
-          <button
-            type="submit"
-            className="inline-flex items-center gap-1.5 text-[11px] text-muted-foreground transition-colors hover:text-foreground"
-          >
-            <LogOut className="size-3" />
-            Sign out
-          </button>
-        </form>
+        {user && (
+          <form action={signOut} className="mt-2">
+            <button
+              type="submit"
+              className="inline-flex items-center gap-1.5 text-[11px] text-muted-foreground transition-colors hover:text-foreground"
+            >
+              <LogOut className="size-3" />
+              Sign out
+            </button>
+          </form>
+        )}
       </div>
     </aside>
   );

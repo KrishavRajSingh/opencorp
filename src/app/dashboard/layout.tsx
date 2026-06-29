@@ -1,4 +1,3 @@
-import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { DashboardShell } from "./dashboard-shell";
 import { fetchSessions } from "./data";
@@ -13,17 +12,13 @@ export default async function DashboardLayout({
     data: { user },
   } = await supabase.auth.getUser();
 
-  if (!user) {
-    redirect("/auth/sign-in?next=/dashboard");
-  }
-
-  const sessions = await fetchSessions();
+  const sessions = user ? await fetchSessions() : [];
 
   return (
     <DashboardShell
       sessions={sessions}
       activeName={null}
-      user={{ email: user.email ?? null }}
+      user={user ? { email: user.email ?? null } : null}
     >
       {children}
     </DashboardShell>

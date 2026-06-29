@@ -172,10 +172,16 @@ function ProductResultCard({ result }: { result: ProductResult }) {
   );
 }
 
-export function NewResearchClient() {
+export function NewResearchClient({
+  isAuthed = false,
+  initialUrl = "",
+}: {
+  isAuthed?: boolean;
+  initialUrl?: string;
+} = {}) {
   const router = useRouter();
   const [status, setStatus] = useState<Status>("idle");
-  const [url, setUrl] = useState("");
+  const [url, setUrl] = useState(initialUrl);
   const [result, setResult] = useState<ProductResult | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [activity, setActivity] = useState<ActivityItem[]>([]);
@@ -301,6 +307,12 @@ export function NewResearchClient() {
     return () => controller.abort();
   }, [runId, token, router]);
 
+  useEffect(() => {
+    if (initialUrl) {
+      document.cookie = "pending_url=; path=/; max-age=0";
+    }
+  }, [initialUrl]);
+
   const handleSubmit = useCallback(async () => {
     let trimmed = url.trim();
     if (!trimmed) return;
@@ -311,6 +323,12 @@ export function NewResearchClient() {
       new URL(trimmed);
     } catch {
       setError("Enter a valid URL (e.g. https://example.com)");
+      return;
+    }
+
+    if (!isAuthed) {
+      document.cookie = `pending_url=${encodeURIComponent(trimmed)}; path=/; max-age=600; SameSite=Lax`;
+      router.push("/auth/sign-in?next=/dashboard");
       return;
     }
 
@@ -341,7 +359,7 @@ export function NewResearchClient() {
       setError(err instanceof Error ? err.message : "Something went wrong");
       setStatus("error");
     }
-  }, [url]);
+  }, [url, isAuthed, router]);
 
   const handleCancel = useCallback(() => {
     setRunId(null);
