@@ -515,6 +515,9 @@ function Console({
                         <p className="line-clamp-2 text-xs text-foreground/85 group-hover/row:text-foreground">
                           {t.title}
                         </p>
+                        <p className="mt-0.5 text-[11px] italic text-muted-foreground/70">
+                          {t.whyRelevant}
+                        </p>
                         <div className="mt-0.5 flex items-center gap-1.5 font-mono text-[10px] text-muted-foreground/50">
                           <span>▲ {t.points}</span>
                           <span className="text-muted-foreground/30">·</span>
