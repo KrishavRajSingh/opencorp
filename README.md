@@ -10,6 +10,12 @@
 
 ---
 
+## Demo
+
+<video src="https://files.catbox.moe/sqrtf7.mp4" controls width="800"></video>
+
+[Direct link to demo video (mp4)](https://files.catbox.moe/sqrtf7.mp4)
+
 ## What it does
 
 opencorp is an autonomous user-acquisition platform. Drop in a link to what you're building, and it runs a research agent that returns two things:
