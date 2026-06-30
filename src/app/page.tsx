@@ -1,17 +1,21 @@
 "use client";
 
-import { motion } from "motion/react";
+import { useEffect, useRef, useState } from "react";
+import { AnimatePresence, motion } from "motion/react";
 import Link from "next/link";
 import {
   ArrowRight,
+  Play,
   Search,
   Users,
   BarChart3,
   SendHorizonal,
-  Globe,
-  Target,
-  Sparkles,
   MessageSquare,
+  Sparkles,
+  Target,
+  Volume2,
+  VolumeX,
+  XIcon,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -19,6 +23,8 @@ import { HNIcon } from "@/components/dashboard/hn-icon";
 import { MarketingShell } from "@/components/marketing-shell";
 import { cn } from "@/lib/utils";
 import { trackEvent } from "@/lib/analytics";
+
+const DEMO_VIDEO_SRC = "https://files.catbox.moe/sqrtf7.mp4";
 
 const features = [
   {
@@ -167,7 +173,91 @@ function InteractiveInput() {
   );
 }
 
+function DemoVideo({ onClose }: { onClose?: () => void }) {
+  const [muted, setMuted] = useState(false);
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+    const p = video.play();
+    if (p && typeof p.catch === "function") p.catch(() => {});
+  }, []);
+
+  useEffect(() => {
+    if (videoRef.current) {
+      videoRef.current.muted = muted;
+    }
+  }, [muted]);
+
+  return (
+    <div className="group relative overflow-hidden rounded-2xl border border-border/60 bg-card/50 shadow-[0_30px_60px_-15px_oklch(0_0_0_/_0.5),0_0_0_1px_oklch(0.72_0.15_75_/_0.06)] backdrop-blur-sm">
+      <div className="flex items-center gap-3 border-b border-border/40 px-4 py-2.5">
+        <span className="flex gap-1.5">
+          <span className="size-2.5 rounded-full bg-red-500/70" />
+          <span className="size-2.5 rounded-full bg-yellow-500/70" />
+          <span className="size-2.5 rounded-full bg-green-500/70" />
+        </span>
+        <span className="text-xs text-muted-foreground">opencorp.ai/demo</span>
+        <div className="ml-auto flex items-center gap-1.5 text-xs text-brand">
+          <span className="relative flex size-1.5">
+            <span className="absolute inline-flex size-full animate-ping rounded-full bg-brand opacity-60" />
+            <span className="relative inline-flex size-1.5 rounded-full bg-brand" />
+          </span>
+          Live demo
+        </div>
+      </div>
+      <div className="relative">
+        <video
+          ref={videoRef}
+          src={DEMO_VIDEO_SRC}
+          autoPlay
+          muted={muted}
+          loop
+          playsInline
+          preload="metadata"
+          className="aspect-video w-full bg-black"
+        />
+        {onClose && (
+          <button
+            type="button"
+            onClick={onClose}
+            aria-label="Close demo"
+            className="absolute top-3 right-3 z-10 inline-flex size-8 items-center justify-center rounded-full bg-black/60 text-white backdrop-blur-sm transition-colors hover:bg-black/80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60"
+          >
+            <XIcon className="size-4" />
+          </button>
+        )}
+        <button
+          type="button"
+          onClick={() => setMuted((m) => !m)}
+          aria-label={muted ? "Unmute demo" : "Mute demo"}
+          className="absolute bottom-3 right-3 z-10 inline-flex items-center gap-1.5 rounded-full bg-black/60 px-2.5 py-1 text-xs text-white backdrop-blur-sm transition-colors hover:bg-black/80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60"
+        >
+          {muted ? (
+            <VolumeX className="size-3.5" />
+          ) : (
+            <Volume2 className="size-3.5" />
+          )}
+          {muted ? "Tap for sound" : "Sound on"}
+        </button>
+      </div>
+    </div>
+  );
+}
+
 export default function Page() {
+  const [showDemo, setShowDemo] = useState(false);
+
+  const toggleDemo = (location: "hero" | "footer") => {
+    const willShow = !showDemo;
+    setShowDemo(willShow);
+    trackEvent({ name: "cta_watch_demo", data: { location } });
+    if (location === "footer" && willShow) {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  };
+
   return (
     <MarketingShell>
       <main className="flex-1">
@@ -210,23 +300,38 @@ export default function Page() {
                 variant="outline"
                 size="lg"
                 className="w-full sm:w-auto"
-                onClick={() =>
-                  trackEvent({ name: "cta_watch_demo", data: { location: "hero" } })
-                }
+                onClick={() => toggleDemo("hero")}
               >
-                <Globe className="size-4" />
-                Watch Demo
+                {showDemo ? (
+                  <>
+                    <XIcon className="size-4" />
+                    Hide demo
+                  </>
+                ) : (
+                  <>
+                    <Play className="size-4" />
+                    Watch Demo
+                  </>
+                )}
               </Button>
             </div>
           </motion.div>
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.3 }}
-            className="mt-16 w-full max-w-lg"
-          >
-            <InteractiveInput />
-          </motion.div>
+          <AnimatePresence mode="wait" initial={false}>
+            <motion.div
+              key={showDemo ? "video" : "input"}
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -8 }}
+              transition={{ duration: 0.2 }}
+              className="mt-16 w-full max-w-lg"
+            >
+              {showDemo ? (
+                <DemoVideo onClose={() => setShowDemo(false)} />
+              ) : (
+                <InteractiveInput />
+              )}
+            </motion.div>
+          </AnimatePresence>
         </section>
 
         <section className="mx-auto max-w-6xl px-6 py-24">
@@ -356,12 +461,19 @@ export default function Page() {
                 variant="outline"
                 size="lg"
                 className="w-full sm:w-auto"
-                onClick={() =>
-                  trackEvent({ name: "cta_watch_demo", data: { location: "footer" } })
-                }
+                onClick={() => toggleDemo("footer")}
               >
-                <Globe className="size-4" />
-                Watch Demo
+                {showDemo ? (
+                  <>
+                    <XIcon className="size-4" />
+                    Hide demo
+                  </>
+                ) : (
+                  <>
+                    <Play className="size-4" />
+                    Watch Demo
+                  </>
+                )}
               </Button>
             </div>
           </div>
