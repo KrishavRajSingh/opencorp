@@ -12,9 +12,7 @@
 
 ## Demo
 
-<video src="https://files.catbox.moe/sqrtf7.mp4" controls width="800"></video>
-
-[Direct link to demo video (mp4)](https://files.catbox.moe/sqrtf7.mp4)
+https://github.com/user-attachments/assets/2b013934-a672-436b-9fdf-85b5d0277fff
 
 ## What it does
 
