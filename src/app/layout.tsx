@@ -22,7 +22,7 @@ export const metadata: Metadata = {
     process.env.NEXT_PUBLIC_SITE_URL ?? "https://opencorp.live",
   ),
   title: {
-    default: "OpenCorp — Find Your Users While You Build",
+    default: "OpenCorp — Find Your Market While You Build",
     template: "%s · OpenCorp",
   },
   description:
@@ -44,7 +44,7 @@ export const metadata: Metadata = {
     locale: "en_US",
     url: "https://opencorp.live",
     siteName: "OpenCorp",
-    title: "OpenCorp — Find Your Users While You Build",
+    title: "OpenCorp — Find Your Market While You Build",
     description:
       "Your autonomous AI company. OpenCorp does market research, user discovery, SEO, and outreach — so you can focus on building.",
     images: [
@@ -52,13 +52,13 @@ export const metadata: Metadata = {
         url: "/og.png",
         width: 1200,
         height: 630,
-        alt: "OpenCorp — Find Your Users While You Build",
+        alt: "OpenCorp — Find Your Market While You Build",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "OpenCorp — Find Your Users While You Build",
+    title: "OpenCorp — Find Your Market While You Build",
     description:
       "Your autonomous AI company. OpenCorp does market research, user discovery, SEO, and outreach — so you can focus on building.",
     images: ["/og.png"],

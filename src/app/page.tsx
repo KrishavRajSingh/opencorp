@@ -1,180 +1,386 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { AnimatePresence, motion } from "motion/react";
+import { motion } from "motion/react";
 import Link from "next/link";
 import {
   ArrowRight,
-  Play,
+  Maximize2,
+  Minimize2,
   Search,
-  Users,
-  BarChart3,
-  SendHorizonal,
-  MessageSquare,
   Sparkles,
-  Target,
   Volume2,
   VolumeX,
-  XIcon,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { HNIcon } from "@/components/dashboard/hn-icon";
 import { MarketingShell } from "@/components/marketing-shell";
+import { AgentConsole } from "@/components/agent-console";
+import {
+  LandingConsole,
+  type LandingConsoleData,
+} from "@/components/landing-console";
 import { cn } from "@/lib/utils";
 import { trackEvent } from "@/lib/analytics";
 
 const DEMO_VIDEO_SRC = "https://files.catbox.moe/sqrtf7.mp4";
+const FOUNDER_HANDLE = "opencorpai";
 
-const features = [
-  {
-    icon: Search,
-    title: "Find your first users",
-    description:
-      "Drop in a link. OpenCorp figures out who would want your product, who's already building something similar, and where they're talking about it.",
-    span: "lg:col-span-2",
-    stat: "One link → full report",
-  },
-  {
-    icon: Users,
-    title: "User Discovery",
-    description:
-      "Identifies real people talking about the problems you solve — with name, context, and sentiment.",
-    span: "lg:col-span-1",
-    stat: "47 users identified / hour",
-  },
-  {
-    icon: BarChart3,
-    title: "SEO & Content",
-    description:
-      "Keyword research, competitive analysis, and content strategy that gets you found organically.",
-    span: "lg:col-span-1",
-    stat: "Track your ranking daily",
-  },
-  {
-    icon: SendHorizonal,
-    title: "Outreach Engine",
-    description:
-      "Crafts personalized multi-channel messages that open conversations with decision-makers at scale.",
-    span: "lg:col-span-2",
-    stat: "3 channels active",
-    tags: ["Email", "Twitter DM", "LinkedIn"],
-  },
-];
+const RESULTS: LandingConsoleData = {
+  domain: "filler.live",
+  competitors: [
+    {
+      name: "FormPilot",
+      url: "https://github.com/Karan-Raj-KR/FormPilot",
+      description:
+        "AI-powered Chrome extension that scans any web form, understands each field with LLMs (GPT-4o, Claude, Gemini, Groq), and fills long-form essay fields too. Native setter bypass for React/Vue SPAs, BYOK, 100% local.",
+      mentionSources: ["chrome store", "github", "hacker news"],
+    },
+    {
+      name: "Superfill.ai",
+      url: "https://github.com/superfill-ai/superfill.ai",
+      description:
+        "MIT open-source cross-browser extension with an intelligent memory layer of Q&A pairs. Supports OpenAI, Anthropic, Groq, DeepSeek, Google, Ollama. AES-256 encryption, zero telemetry.",
+      mentionSources: ["github", "hacker news"],
+    },
+    {
+      name: "Fillify",
+      url: "https://fillify.tech",
+      description:
+        "AI form filler driven by plain-language descriptions. Multi-backend (ChatGPT, Claude, Gemini, DeepSeek, Ollama), personal knowledge base, multilingual, privacy-first with local API keys. ~652 users, 5.0 rating.",
+      mentionSources: ["chrome store"],
+    },
+    {
+      name: "AI Form Filler",
+      url: "https://chromewebstore.google.com/detail/ai-form-filler/bmjhemfapilakkdabmpgafjejbfopefn",
+      description:
+        "Uses AI to intelligently fill forms with realistic data. Works on Google Forms, Microsoft Forms, and standard web forms — names, addresses, payment info. ~2,000 users.",
+      mentionSources: ["chrome store"],
+    },
+    {
+      name: "QuickForm",
+      url: "https://chromewebstore.google.com/detail/quickform-autofill-form-f/hmbnbbbknglecphfogchkhpdjiodfclh",
+      description:
+        "Record any form once, autofill forever. Works on React/Angular/Vue/dynamic SPAs with auto-click, smart delays, URL-specific profiles. ~40,000 users. Not AI — record and replay.",
+      mentionSources: ["chrome store"],
+    },
+    {
+      name: "FillSwift",
+      url: "https://chromewebstore.google.com/detail/fillswift-ai-powered-auto/oaiolajedpcbgniefchcpdkagieojlie",
+      description:
+        "Profile-based intelligent autofill with LLM-powered semantic matching. Multiple profiles (work, personal, clients), one-click full form fill, handles multi-step forms. Free, no limits. ~11 users.",
+      mentionSources: ["chrome store"],
+    },
+    {
+      name: "FillWise",
+      url: "https://chromewebstore.google.com/detail/fillwise/kpkdnalfelngnbdnglcgemgiigggloim",
+      description:
+        "AI auto-filling across 100+ languages with translation. Supports Latin, Cyrillic, Arabic, Chinese. Pulls data from CRM, spreadsheets, or emails. ~229 users. Updated January 2026.",
+      mentionSources: ["chrome store"],
+    },
+    {
+      name: "Smart Form Filler (hddevteam)",
+      url: "https://github.com/hddevteam/smart-form-filler",
+      description:
+        "AI-powered browser extension for intelligent data extraction and form filling. Ollama local model support for fully offline AI. ~42 stars, ISC license.",
+      mentionSources: ["github"],
+    },
+    {
+      name: "AI Form Helper (aiform)",
+      url: "https://github.com/aiform/ai-form-helper",
+      description:
+        "OpenAI-compatible LLM extension that analyzes DOM structures for automatic field recognition, data extraction, and one-click filling. AI memory, smart generation for unknown fields. Manifest V3.",
+      mentionSources: ["github"],
+    },
+    {
+      name: "LoopFil",
+      url: "https://chromewebstore.google.com/detail/loopfil/ahcfioaldlbkboagekngignbjmgohbln",
+      description:
+        "AI-powered smart form filling using ChatGPT or Gemini. Smart form detection, custom profiles, Google Drive sync, offline mode, privacy-first. ~14 users.",
+      mentionSources: ["chrome store"],
+    },
+    {
+      name: "AutoFill Forms (tlintspr)",
+      url: "https://chromewebstore.google.com/detail/autofill-forms/focmhibpdifbdjacabpgnifhdalgfogg",
+      description:
+        "Classic form filler with multiple profiles and regex-based rules. Random passwords/strings, multi-line text, position-based filling. ~100,000 users. Rule and pattern-based — not AI.",
+      mentionSources: ["chrome store"],
+    },
+    {
+      name: "Lightning Autofill",
+      url: "https://chromewebstore.google.com/detail/lightning-autofill/nlmmgnhgdeffjkdckmikfpnddkbbfkkk",
+      description:
+        "Long-established autofill extension (since 2010) combining form filling, automation, macros, text expansion, random data, and form recovery. ~500,000 users. Not AI-powered.",
+      mentionSources: ["chrome store"],
+    },
+    {
+      name: "Universal Form Compiler",
+      url: "https://github.com/universal-form-compiler/universal-form-compiler",
+      description:
+        "Auto-fills any web form from uploaded PDFs or DOCX using OpenAI. Anti-hallucination guards, Angular Material/React compatibility, on-demand activation. MIT licensed.",
+      mentionSources: ["github"],
+    },
+    {
+      name: "PrIDA",
+      url: "https://github.com/prida/prida",
+      description:
+        "Personal Information Digital Assistant using Chrome's built-in Gemini Nano for on-device autofill. Label detection, context-aware suggestions, multiple profiles, context menu. 100% on-device, MIT.",
+      mentionSources: ["github"],
+    },
+    {
+      name: "Formilot",
+      url: "https://formilot.com",
+      description:
+        "AI-powered one-click autofill with natural language interaction. Smart recognition of complex forms, multi-language support, random data for testing, encrypted local storage. Freemium ($2-3/mo Pro).",
+      mentionSources: ["website", "hacker news"],
+    },
+    {
+      name: "AI Autofill (chandrasuda)",
+      url: "https://github.com/chandrasuda/ai-autofill",
+      description:
+        "RAG-based autofill for researchers applying for grants. Uploads PDFs, Word, plain text, uses a local LLM with RAG to answer questions and autofill forms. 27 stars, MIT.",
+      mentionSources: ["github"],
+    },
+    {
+      name: "Tap Apply",
+      url: "https://tapapply.net",
+      description:
+        "Browser extension focused on job applications. Autofills from resume, generates tailored cover letters and answers via AI. Credit-based pricing for AI features; autofill itself is free.",
+      mentionSources: ["website", "hacker news"],
+    },
+    {
+      name: "TETRAform",
+      url: "https://tetraform.app",
+      description:
+        "Free autofill Chrome extension with multiple profiles (Work, Personal, Job Applications, School). 100% private — data never leaves device. Smart field detection, blocks sensitive fields. No account required.",
+      mentionSources: ["website"],
+    },
+    {
+      name: "LiftmyCV",
+      url: "https://www.liftmycv.com/",
+      description:
+        "AI job search agent with Chrome extension that auto-applies across 7 job boards/ATS platforms. GPT-4o powered. Freemium/pay-as-you-go. 942 signups, 70 paying users since Feb 2025.",
+      mentionSources: ["hacker news"],
+    },
+    {
+      name: "Simplify Copilot",
+      url: "https://chromewebstore.google.com/detail/simplify-copilot-autofill/pbanhockgagggenencehbnadejlgchfc",
+      description:
+        "AI tool for job search efficiency. Autofills Workday, Lever, Greenhouse, generates tailored resumes and cover letters, all-in-one job tracker. 500,000 users, 4.9 rating. Free autofill.",
+      mentionSources: ["chrome store"],
+    },
+    {
+      name: "KeeperFill",
+      url: "https://keepersecurity.com",
+      description:
+        "Patented technology from Keeper Security using AI to securely log into sites. Autofills usernames, passwords, TOTP, passkeys, addresses, payment. Phishing protection. Cross-platform.",
+      mentionSources: ["website"],
+    },
+    {
+      name: "Zetoe",
+      url: "https://zetoe.com",
+      description:
+        "Blue action bubble on text selection with instant AI actions: ask AI, one-click summaries, translations, in-context fact checking, and smart form autofill. ~60 users.",
+      mentionSources: ["hacker news", "chrome store"],
+    },
+    {
+      name: "Form Sherpa",
+      url: "https://github.com/form-sherpa/form-sherpa",
+      description:
+        "Privacy-first Chrome extension that explains form fields, translates labels/errors, autofills from a local encrypted vault, and adds a PII guardrail before submit. On-device via Chrome Prompt API, MIT.",
+      mentionSources: ["github"],
+    },
+    {
+      name: "Form Filler (thuyydt)",
+      url: "https://addons.mozilla.org",
+      description:
+        "AI-powered form filler for developers and testers. Smart scoring on context, labels, HTML structure. Detects Email, Phone, Address, Names (Vietnamese/Japanese/English). Privacy-first, no data collection. Open source.",
+      mentionSources: ["mozilla addons"],
+    },
+  ],
+  hnThreads: [
+    {
+      objectID: "41250001",
+      title: "Show HN: Superfill.ai – Open-source AI extension for intelligent form autofill",
+      url: "https://news.ycombinator.com/item?id=46134574",
+      points: 4,
+      comments: 0,
+      author: "superfill_team",
+      date: "2026-06-29T14:20:00Z",
+      whyRelevant:
+        "Direct competitor launch (Superfill.ai). The thread pitch explicitly names the problem Filler solves: retyping the same information across different websites like job applications, dating profiles, rental forms, surveys. You can respond with Filler as a competing approach — highlighting differentiators like local-only profiles (vs. their BYOK LLM approach), no account required, the flag-guesses-for-review UX, and that it handles dropdowns/radios (which they're still building in Phase 2).",
+      topCommentSnippet: null,
+    },
+    {
+      objectID: "41249880",
+      title: "Show HN: Job App Filler – free Chrome extension",
+      url: 'https://news.ycombinator.com/item?id=41068891',
+      points: 3,
+      comments: 1,
+      author: "jobappfiller",
+      date: "2026-06-28T09:11:00Z",
+      whyRelevant:
+        "A direct competitor in the same Chrome extension job-autofill space, but narrow (job apps only). Still in early stages. Opportunity to pitch Filler as the broader tool that does jobs AND Google Forms, Tally, Ashby, surveys, signup pages. Great place to differentiate on scope and on the privacy-first, no-account model.",
+      topCommentSnippet: null,
+    },
+    {
+      objectID: "41247125",
+      title: "Show HN: I made a Chrome extension to auto-apply to jobs",
+      url: 'https://news.ycombinator.com/item?id=41126965',
+      points: 12,
+      comments: 3,
+      author: "instaapply",
+      date: "2026-06-26T16:48:00Z",
+      whyRelevant:
+        "InstaApply does auto-apply with AI, and the founder describes the exact pain Filler solves: applying to dozens of jobs… filling out the same data over and over again. The thread has active discussion from job-seekers. Perfect place to pitch Filler as the complement (or alternative) — especially since posts in this thread note concerns about ATS spam and degradation of application quality. Filler's human-in-the-loop review, no-auto-submit, and privacy positioning directly address those concerns.",
+      topCommentSnippet: null,
+    },
+    {
+      objectID: "41246102",
+      title: "Show HN: LiftmyCV – AI Job Search Agent and Auto-Apply Tool",
+      url: "https://news.ycombinator.com/item?id=43682614",
+      points: 15,
+      comments: 0,
+      author: "liftmycv",
+      date: "2026-06-24T11:32:00Z",
+      whyRelevant:
+        "Direct competitor description mentions GPT-4o-powered auto-fill for job applications and lists competing products. The founder explicitly describes struggling with fine-tuning the AI auto-fill logic and GPT-generated responses required constant tweaks. Pitch here to highlight Filler's different design choice — reusing verified, human-saved answers from the user's own data instead of hallucinated AI answers, and never auto-submitting.",
+      topCommentSnippet: null,
+    },
+    {
+      objectID: "41244780",
+      title: "Show HN: Free AI tool that fills web forms from plain text (FillApp)",
+      url: 'https://news.ycombinator.com/item?id=44016661',
+      points: 3,
+      comments: 2,
+      author: "fillapp_dev",
+      date: "2026-06-22T19:05:00Z",
+      whyRelevant:
+        "A direct competitor (broad web-form filler). Comments from HN users are already raising data-privacy concerns. This is the ideal opening to pitch Filler, which stores profile data locally in the browser and is no-account-required.",
+      topCommentSnippet:
+        "If the model runs locally, form data would not have to be collected by you… not clear why you would need to retain all user-submitted data post-response.",
+    },
+    {
+      objectID: "41242915",
+      title: "Show HN: FinalApp – paste a job link, review the filled application, then submit",
+      url: 'https://news.ycombinator.com/item?id=48555531',
+      points: 1,
+      comments: 0,
+      author: "finalapp",
+      date: "2026-06-20T08:44:00Z",
+      whyRelevant:
+        "Competitor that auto-fills AND submits. Good place to pitch Filler's different philosophy: never auto-submits, skips sensitive fields (passwords, payments, OTPs, government IDs) by design, works on non-job forms too.",
+      topCommentSnippet:
+        "Fills out and submits the real application with a Strict Mode to wait for approval.",
+    },
+    {
+      objectID: "41240440",
+      title: "Show HN: Fake Data Extension – The best wannabe form filler",
+      url: 'https://news.ycombinator.com/item?id=17718190',
+      points: 3,
+      comments: 0,
+      author: "fakedata_dev",
+      date: "2026-06-17T13:20:00Z",
+      whyRelevant:
+        "Existing form-filler extension asking for critics. The pitch is for fake/test data, which is a completely different use case than Filler (real profile data). Easy to thread a comment introducing Filler as the tool that fills real personal info, not fake data.",
+      topCommentSnippet: "Throw here everything that you dislike.",
+    },
+    {
+      objectID: "41238120",
+      title: "Show HN: Drafting AI – Human-in-the-loop AI automation for ops teams email",
+      url: 'https://news.ycombinator.com/item?id=42247037',
+      points: 29,
+      comments: 2,
+      author: "drafting_ai",
+      date: "2026-06-15T10:12:00Z",
+      whyRelevant:
+        "Drafting AI's whole thesis is that AI should draft responses but not submit them, and that pre-filling form fields will become standard for AI. This is philosophically aligned with Filler's never auto-submits design. The thread is a good place to pitch Filler as the consumer-facing version of the same principle — pre-fill, human reviews, human submits.",
+      topCommentSnippet:
+        "AI should draft responses but not submit them… pre-filling form fields will become standard for AI.",
+    },
+    {
+      objectID: "41235509",
+      title: "Show HN: I Made a Form Autofiller",
+      url: 'https://news.ycombinator.com/item?id=42809198',
+      points: 1,
+      comments: 1,
+      author: "formautofiller",
+      date: "2026-06-12T15:50:00Z",
+      whyRelevant:
+        "Direct competitor Show HN. The single comment is the data-privacy question — a perfect opening to pitch Filler's local-first, no-account, no-server-storage architecture.",
+      topCommentSnippet: "What about data privacy?",
+    },
+    {
+      objectID: "41233871",
+      title: "Autofill Easy to Use (EasyAutoFill)",
+      url: 'https://news.ycombinator.com/item?id=41233871',
+      points: 2,
+      comments: 0,
+      author: "easyfill_dev",
+      date: "2026-06-10T09:30:00Z",
+      whyRelevant:
+        "Competitor that securely saves your form data and automatically fills it the next time you visit the same page. Differentiator: EasyAutoFill is page-remembers-what-you-typed; Filler is profile-based and reads question text with AI to map to profile fields on any new form. Also Filler handles dropdowns/radios and guesses unseen questions.",
+      topCommentSnippet: null,
+    },
+    {
+      objectID: "41231444",
+      title: "Show HN: Advance AI to intelligently fill forms with realistic data (AI Form Filler)",
+      url: "https://news.ycombinator.com/item?id=40857392",
+      points: 1,
+      comments: 0,
+      author: "samuelaidoo0001",
+      date: "2026-06-07T17:24:00Z",
+      whyRelevant:
+        "Direct competitor (AI Form Filler on Chrome Web Store). Pitch Filler here with differentiators: local profile storage, no account, answer reuse across forms, flag-guesses-for-review UX, and broad form support (Ashby, Tally, Google Forms).",
+      topCommentSnippet: null,
+    },
+    {
+      objectID: "41228660",
+      title: "Show HN: FormFaker – AI-powered browser extension that fills forms with realistic fake data",
+      url: 'https://news.ycombinator.com/item?id=41228660',
+      points: 2,
+      comments: 8,
+      author: "formfaker",
+      date: "2026-06-04T12:08:00Z",
+      whyRelevant:
+        "Fake-data filler (dev/test tool). Active discussion. Good place to comment introducing Filler as the real-data counterpart — for people who want to fill forms with their actual data instead of LLM-generated fake data.",
+      topCommentSnippet: null,
+    },
+  ],
+};
 
-function PipelineDiagram() {
+function VideoControlButton({
+  onClick,
+  label,
+  children,
+}: {
+  onClick: () => void;
+  label: string;
+  children: React.ReactNode;
+}) {
   return (
-    <div className="overflow-hidden rounded-xl border bg-card p-6">
-      <div className="flex flex-col items-center gap-3 text-center">
-        <motion.div
-          initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
-          className="w-full rounded-lg border border-brand/30 bg-brand/5 p-4"
-        >
-          <div className="flex items-center justify-center gap-2">
-            <Search className="size-4 text-brand" />
-            <span className="text-sm font-medium text-brand">You share a link</span>
-          </div>
-          <div className="mt-2 text-[11px] text-muted-foreground">
-            Your product page, a landing page, or just a description
-          </div>
-        </motion.div>
-
-        <motion.div
-          initial={{ scaleY: 0 }} animate={{ scaleY: 1 }} transition={{ delay: 0.3 }}
-          className="h-6 w-0.5 origin-top bg-border"
-        />
-
-        <motion.div
-          initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }}
-          className="w-full rounded-lg border bg-card/60 p-4"
-        >
-          <div className="flex items-center justify-center gap-2">
-            <Sparkles className="size-4 text-foreground" />
-            <span className="text-sm font-medium text-foreground">OpenCorp does the work</span>
-          </div>
-          <div className="mt-2 text-[11px] text-muted-foreground">
-            Reads, searches, ranks — while you keep building
-          </div>
-        </motion.div>
-
-        <motion.div
-          initial={{ scaleY: 0 }} animate={{ scaleY: 1 }} transition={{ delay: 0.6 }}
-          className="h-6 w-0.5 origin-top bg-border"
-        />
-
-        <div className="flex w-full flex-wrap justify-center gap-4">
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.7 }}
-            className="flex-1 min-w-[180px] rounded-lg border border-brand/30 bg-brand/5 p-3"
-          >
-            <div className="flex items-center gap-2">
-              <Users className="size-4 text-brand" />
-              <span className="text-sm font-medium text-brand">Your competitors</span>
-            </div>
-            <div className="mt-1 text-[11px] text-muted-foreground">
-              with the sources behind them
-            </div>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.8 }}
-            className="flex-1 min-w-[180px] rounded-lg border border-brand/30 bg-brand/5 p-3"
-          >
-            <div className="flex items-center gap-2">
-              <HNIcon className="size-4" />
-              <span className="text-sm font-medium text-brand">Where to talk about it</span>
-            </div>
-            <div className="mt-1 text-[11px] text-muted-foreground">
-              threads where your future users already are
-            </div>
-          </motion.div>
-        </div>
-      </div>
-    </div>
+    <button
+      type="button"
+      onClick={onClick}
+      aria-label={label}
+      className="inline-flex items-center gap-1.5 rounded-full bg-black/60 px-2.5 py-1 text-xs text-white backdrop-blur-sm transition-colors hover:bg-black/80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60"
+    >
+      {children}
+      <span className="hidden sm:inline">{label}</span>
+    </button>
   );
 }
 
-function InteractiveInput() {
-  return (
-    <div className="group relative rounded-2xl border border-border/60 bg-card/50 backdrop-blur-sm">
-      <div className="flex items-center gap-3 border-b border-border/40 px-5 py-4">
-        <Search className="size-5 shrink-0 text-muted-foreground" />
-        <input
-          type="text"
-          readOnly
-          value="AI coding agent for solo founders"
-          className="flex-1 bg-transparent text-sm text-foreground outline-none placeholder:text-muted-foreground/50"
-          placeholder="What are you building?"
-        />
-        <div className="flex items-center gap-1.5 text-xs text-brand">
-          <span className="size-1.5 rounded-full bg-brand" />
-          Scanning
-        </div>
-      </div>
-      <div className="space-y-1 p-5 pt-4">
-        {[
-          { icon: Users, text: "Who else is building this", color: "text-foreground" },
-          { icon: MessageSquare, text: "Where people are already talking about the problem", color: "text-foreground" },
-          { icon: Target, text: "Ranked by how likely they are to want what you made", color: "text-brand" },
-        ].map((item, i) => (
-          <motion.div
-            key={item.text}
-            initial={{ opacity: 0, x: -10 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.4, delay: 0.6 + i * 0.15 }}
-            className="flex items-center gap-3 py-1.5"
-          >
-            <item.icon className={`size-3.5 shrink-0 ${item.color}`} />
-            <span className="text-sm text-foreground/80">{item.text}</span>
-          </motion.div>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-function DemoVideo({ onClose, location }: { onClose?: () => void; location: "hero" | "footer" }) {
+function DemoVideo({
+  location,
+  className,
+}: {
+  location: "hero" | "footer";
+  className?: string;
+}) {
   const [muted, setMuted] = useState(true);
+  const [isFullscreen, setIsFullscreen] = useState(false);
+  const wrapperRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const firedRef = useRef<Set<number>>(new Set());
 
@@ -190,6 +396,14 @@ function DemoVideo({ onClose, location }: { onClose?: () => void; location: "her
       videoRef.current.muted = muted;
     }
   }, [muted]);
+
+  useEffect(() => {
+    const onChange = () => {
+      setIsFullscreen(document.fullscreenElement === wrapperRef.current);
+    };
+    document.addEventListener("fullscreenchange", onChange);
+    return () => document.removeEventListener("fullscreenchange", onChange);
+  }, []);
 
   useEffect(() => {
     const video = videoRef.current;
@@ -210,8 +424,30 @@ function DemoVideo({ onClose, location }: { onClose?: () => void; location: "her
     return () => video.removeEventListener("timeupdate", onTimeUpdate);
   }, [location]);
 
+  const toggleFullscreen = async () => {
+    const wrapper = wrapperRef.current;
+    if (!wrapper) return;
+    try {
+      if (!document.fullscreenElement) {
+        await wrapper.requestFullscreen();
+        trackEvent({ name: "demo_fullscreen_enter", data: { location } });
+      } else {
+        await document.exitFullscreen();
+        trackEvent({ name: "demo_fullscreen_exit", data: { location } });
+      }
+    } catch {
+      // user denied or API unavailable — silently noop
+    }
+  };
+
   return (
-    <div className="group relative overflow-hidden rounded-2xl border border-border/60 bg-card/50 shadow-[0_30px_60px_-15px_oklch(0_0_0_/_0.5),0_0_0_1px_oklch(0.72_0.15_75_/_0.06)] backdrop-blur-sm">
+    <div
+      ref={wrapperRef}
+      className={cn(
+        "group relative overflow-hidden rounded-2xl border border-border/60 bg-card/50 shadow-[0_30px_60px_-15px_oklch(0_0_0_/_0.5),0_0_0_1px_oklch(0.72_0.15_75_/_0.06)] backdrop-blur-sm",
+        className,
+      )}
+    >
       <div className="flex items-center gap-3 border-b border-border/40 px-4 py-2.5">
         <span className="flex gap-1.5">
           <span className="size-2.5 rounded-full bg-red-500/70" />
@@ -224,7 +460,7 @@ function DemoVideo({ onClose, location }: { onClose?: () => void; location: "her
             <span className="absolute inline-flex size-full animate-ping rounded-full bg-brand opacity-60" />
             <span className="relative inline-flex size-1.5 rounded-full bg-brand" />
           </span>
-          Watch the demo
+          Live
         </div>
       </div>
       <div className="relative">
@@ -238,48 +474,191 @@ function DemoVideo({ onClose, location }: { onClose?: () => void; location: "her
           preload="metadata"
           className="aspect-video w-full bg-black"
         />
-        {onClose && (
-          <button
-            type="button"
-            onClick={onClose}
-            aria-label="Close demo"
-            className="absolute top-3 right-3 z-10 inline-flex size-8 items-center justify-center rounded-full bg-black/60 text-white backdrop-blur-sm transition-colors hover:bg-black/80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60"
+        <div className="absolute bottom-3 right-3 z-10 flex items-center gap-1.5">
+          <VideoControlButton
+            onClick={toggleFullscreen}
+            label={isFullscreen ? "Exit" : "Fullscreen"}
           >
-            <XIcon className="size-4" />
-          </button>
-        )}
-        <button
-          type="button"
-          onClick={() => setMuted((m) => !m)}
-          aria-label={muted ? "Unmute demo" : "Mute demo"}
-          className="absolute bottom-3 right-3 z-10 inline-flex items-center gap-1.5 rounded-full bg-black/60 px-2.5 py-1 text-xs text-white backdrop-blur-sm transition-colors hover:bg-black/80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60"
-        >
-          {muted ? (
-            <VolumeX className="size-3.5" />
-          ) : (
-            <Volume2 className="size-3.5" />
-          )}
-          {muted ? "Tap for sound" : "Sound on"}
-        </button>
+            {isFullscreen ? (
+              <Minimize2 className="size-3.5" />
+            ) : (
+              <Maximize2 className="size-3.5" />
+            )}
+          </VideoControlButton>
+          <VideoControlButton
+            onClick={() => setMuted((m) => !m)}
+            label={muted ? "Unmute" : "Mute"}
+          >
+            {muted ? (
+              <VolumeX className="size-3.5" />
+            ) : (
+              <Volume2 className="size-3.5" />
+            )}
+          </VideoControlButton>
+        </div>
       </div>
     </div>
   );
 }
 
+function RealOutput() {
+  return (
+    <section className="mx-auto max-w-6xl px-6 py-24">
+      <div className="grid items-start gap-12 lg:grid-cols-[1.1fr_1fr]">
+        <motion.div
+          initial={{ opacity: 0, y: 12 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-100px" }}
+          transition={{ duration: 0.5 }}
+        >
+          <div className="font-mono text-[10px] font-medium uppercase tracking-widest text-brand">
+            01 / output
+          </div>
+          <h2 className="mt-3 font-heading text-3xl leading-tight tracking-tight sm:text-4xl">
+            Here&apos;s what opencorp found for{" "}
+            <span className="text-brand">filler.live</span>.
+          </h2>
+          <p className="mt-4 max-w-md text-sm leading-relaxed text-muted-foreground">
+            The first product opencorp ran on was its own creator&apos;s. The
+            agent pulled competitors from across the web, surfaced the HN
+            threads where the people who would want this are already talking,
+            and handed back a report in under a minute.
+          </p>
+          <div className="mt-6 flex flex-wrap items-center gap-x-6 gap-y-2 font-mono text-xs text-muted-foreground/80">
+            <span>
+              <span className="text-foreground">●</span>{" "}
+              <span className="text-foreground">competitors</span> — sources
+              included
+            </span>
+            <span>
+              <span className="text-foreground">●</span>{" "}
+              <span className="text-foreground">HN threads</span> — sentiment
+              tagged
+            </span>
+          </div>
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 12 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-100px" }}
+          transition={{ duration: 0.5, delay: 0.1 }}
+        >
+          <LandingConsole data={RESULTS} />
+        </motion.div>
+      </div>
+    </section>
+  );
+}
+
+function FounderSection() {
+  return (
+    <section className="border-y border-border/50 bg-muted/20">
+      <div className="mx-auto max-w-4xl px-6 py-24">
+        <div className="font-mono text-[10px] font-medium uppercase tracking-widest text-brand">
+          03 / founder
+        </div>
+        <motion.div
+          initial={{ opacity: 0, y: 12 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-100px" }}
+          transition={{ duration: 0.5 }}
+          className="mt-6 grid items-start gap-8 sm:grid-cols-[auto_1fr]"
+        >
+          <div className="flex items-center gap-3">
+            <div className="grid size-14 place-items-center rounded-full border border-border/60 bg-gradient-to-br from-brand/30 to-brand/5 font-heading text-lg">
+              K
+            </div>
+            <div className="sm:hidden">
+              <div className="font-heading text-base">Founder</div>
+              <div className="font-mono text-[11px] text-muted-foreground">
+                {FOUNDER_HANDLE}
+              </div>
+            </div>
+          </div>
+          <div>
+            <div className="hidden sm:block">
+              <div className="font-heading text-base">Founder</div>
+              <div className="font-mono text-[11px] text-muted-foreground">
+                builder of filler.live
+              </div>
+            </div>
+            <h2 className="mt-3 font-heading text-2xl leading-snug tracking-tight sm:text-3xl">
+              I shipped filler.live last week and had no idea who my
+              competitors were. Perplexity didn&apos;t help. So I built
+              opencorp to do it for me — and then I built it for everyone else
+              who ships something new and has the same problem.
+            </h2>
+            <div className="mt-5 flex flex-wrap items-center gap-3">
+              <Button variant="outline" size="sm" asChild>
+                <Link href={`https://x.com/${FOUNDER_HANDLE}`} target="_blank">
+                  Read the build thread →
+                </Link>
+              </Button>
+              <span className="font-mono text-[11px] text-muted-foreground/70">
+                shipping in public since week 1
+              </span>
+            </div>
+          </div>
+        </motion.div>
+      </div>
+    </section>
+  );
+}
+
+function TryItWidget() {
+  const [value, setValue] = useState("");
+  return (
+    <section className="mx-auto max-w-3xl px-6 py-24">
+      <motion.div
+        initial={{ opacity: 0, y: 12 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "-100px" }}
+        transition={{ duration: 0.5 }}
+        className="text-center"
+      >
+        <div className="font-mono text-[10px] font-medium uppercase tracking-widest text-brand">
+          04 / try it
+        </div>
+        <h2 className="mt-3 font-heading text-3xl tracking-tight sm:text-4xl">
+          Drop a link. Get your competitors.
+        </h2>
+        <p className="mt-3 text-sm text-muted-foreground">
+          Paste a product URL. The agent runs the same workflow you just saw
+          and shows you the report.
+        </p>
+        <form
+          action="/dashboard"
+          method="get"
+          onSubmit={() => trackEvent({ name: "cta_try_with_link", data: { location: "footer" } })}
+          className="mx-auto mt-8 flex max-w-xl flex-col gap-2 sm:flex-row"
+        >
+          <div className="flex flex-1 items-center gap-2 rounded-lg border border-border/60 bg-card/50 px-3 py-2.5 backdrop-blur-sm">
+            <Search className="size-4 shrink-0 text-muted-foreground" />
+            <input
+              type="url"
+              name="url"
+              required
+              value={value}
+              onChange={(e) => setValue(e.target.value)}
+              placeholder="https://your-product.com"
+              className="flex-1 bg-transparent text-sm text-foreground outline-none placeholder:text-muted-foreground/50"
+            />
+          </div>
+          <Button type="submit" size="lg" className="w-full sm:w-auto">
+            Run agent
+            <ArrowRight className="size-4" />
+          </Button>
+        </form>
+        <p className="mt-3 font-mono text-[11px] text-muted-foreground/70">
+          no signup
+        </p>
+      </motion.div>
+    </section>
+  );
+}
+
 export default function Page() {
-  const [showDemo, setShowDemo] = useState(false);
-  const [demoLocation, setDemoLocation] = useState<"hero" | "footer">("hero");
-
-  const toggleDemo = (location: "hero" | "footer") => {
-    const willShow = !showDemo;
-    setShowDemo(willShow);
-    setDemoLocation(location);
-    trackEvent({ name: "cta_watch_demo", data: { location } });
-    if (location === "footer" && willShow) {
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    }
-  };
-
   return (
     <MarketingShell>
       <main className="flex-1">
@@ -292,17 +671,17 @@ export default function Page() {
             className="relative z-10 mx-auto flex max-w-3xl flex-col items-center text-center"
           >
             <Badge variant="secondary" className="mb-6">
+              <Sparkles className="size-3" />
               User Acquisition, Autonomous
             </Badge>
             <h1 className="font-heading text-4xl leading-tight tracking-tight sm:text-5xl md:text-6xl lg:text-7xl">
-              Find Your Users
+              Find Your Market
               <br />
               While You Build
             </h1>
             <p className="mt-6 max-w-xl text-balance text-lg text-muted-foreground">
-              Tell OpenCorp what you&apos;re building. It researches your
-              market, finds the people who need your product, and hands you a
-              pipeline of users — completely autonomously.
+              Drop a link. OpenCorp finds your competitors and the HackerNews
+              threads where your future users already are — automatically.
             </p>
             <div className="mt-8 flex flex-col items-center gap-4 sm:flex-row">
               <Button
@@ -310,197 +689,64 @@ export default function Page() {
                 className="w-full sm:w-auto"
                 asChild
                 onClick={() =>
-                  trackEvent({ name: "cta_open_dashboard", data: { location: "hero" } })
+                  trackEvent({ name: "cta_try_with_link", data: { location: "hero" } })
                 }
               >
                 <Link href="/dashboard">
-                  Open Dashboard
+                  Find your first competitors
                   <ArrowRight className="size-4" />
                 </Link>
-              </Button>
-              <Button
-                variant="outline"
-                size="lg"
-                className="w-full sm:w-auto"
-                onClick={() => toggleDemo("hero")}
-              >
-                {showDemo ? (
-                  <>
-                    <XIcon className="size-4" />
-                    Hide demo
-                  </>
-                ) : (
-                  <>
-                    <Play className="size-4" />
-                    Watch Demo
-                  </>
-                )}
               </Button>
             </div>
           </motion.div>
-          <AnimatePresence mode="wait" initial={false}>
-            <motion.div
-              key={showDemo ? "video" : "input"}
-              initial={{ opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -8 }}
-              transition={{ duration: 0.2 }}
-              className="mt-16 w-full max-w-lg"
-            >
-              {showDemo ? (
-                <DemoVideo onClose={() => setShowDemo(false)} location={demoLocation} />
-              ) : (
-                <InteractiveInput />
-              )}
-            </motion.div>
-          </AnimatePresence>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.3 }}
+            className="mt-16 w-full max-w-3xl"
+          >
+            <DemoVideo location="hero" />
+          </motion.div>
         </section>
 
-        <section className="mx-auto max-w-6xl px-6 py-24">
-          <div className="mb-16 text-center">
-            <h2 className="font-heading text-3xl tracking-tight sm:text-4xl">
-              What It Does
-            </h2>
-            <p className="mt-4 text-muted-foreground">
-              You build. OpenCorp finds the people who need it.
-            </p>
-          </div>
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {features.map((feature) => (
-              <div
-                key={feature.title}
-                className={cn(
-                  "group relative overflow-hidden rounded-xl border p-6 transition-all hover:border-brand/30",
-                  feature.span
-                )}
-              >
-                <div className="pointer-events-none absolute -inset-px rounded-xl opacity-0 transition-opacity group-hover:opacity-100">
-                  <div className="absolute inset-0 rounded-xl bg-[radial-gradient(ellipse_at_top_right,oklch(0.72_0.15_75_/_0.06),transparent_60%)]" />
-                </div>
-                <div className="relative">
-                  <div className="flex items-start justify-between">
-                    <feature.icon className="size-5 text-brand" />
-                    {"tags" in feature && feature.tags && (
-                      <div className="hidden gap-1.5 sm:flex">
-                        {feature.tags.map((tag) => (
-                          <span
-                            key={tag}
-                            className="rounded-md border bg-muted/50 px-2 py-0.5 text-[11px] text-muted-foreground"
-                          >
-                            {tag}
-                          </span>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                  <h3 className="mt-4 font-heading text-xl tracking-tight">
-                    {feature.title}
-                  </h3>
-                  <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-                    {feature.description}
-                  </p>
-                  <div className="mt-4 flex items-center gap-1.5 text-xs text-brand">
-                    <span className="inline-block size-1.5 rounded-full bg-brand" />
-                    {feature.stat}
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </section>
+        <RealOutput />
 
         <section className="border-y border-border/50 bg-muted/30">
-          <div className="mx-auto max-w-4xl px-6 py-24">
-            <div className="mb-12 text-center">
-              <Badge variant="secondary" className="mb-4">
-                How it works
-              </Badge>
-              <h2 className="font-heading text-3xl tracking-tight sm:text-4xl">
-                Drop a link. Get a plan.
-              </h2>
-              <p className="mt-4 text-muted-foreground">
-                OpenCorp reads what you made, figures out who needs it, and
-                hands you a list of competitors plus the conversations you
-                should join. You stay in your editor.
-              </p>
-            </div>
-            <PipelineDiagram />
-          </div>
-        </section>
-
-        <section className="mx-auto max-w-6xl px-6 py-24">
-          <div className="grid divide-x divide-border/50 text-center sm:grid-cols-3">
-            {[
-              { value: "1", label: "Link in" },
-              { value: "2", label: "Lists out" },
-              { value: "0", label: "Manual research" },
-            ].map((stat) => (
-              <div
-                key={stat.label}
-                className="flex flex-col items-center py-8"
-              >
-                <span className="font-heading text-4xl tracking-tight">
-                  {stat.value}
-                </span>
-                <span className="mt-1 text-sm text-muted-foreground">
-                  {stat.label}
-                </span>
+          <div className="mx-auto max-w-5xl px-6 py-24">
+            <motion.div
+              initial={{ opacity: 0, y: 12 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-100px" }}
+              transition={{ duration: 0.5 }}
+            >
+              <div className="font-mono text-[10px] font-medium uppercase tracking-widest text-brand">
+                02 / how it works
               </div>
-            ))}
+              <h2 className="mt-3 max-w-2xl font-heading text-3xl leading-tight tracking-tight sm:text-4xl">
+                Two agents. One URL. Your future users.
+              </h2>
+              <p className="mt-3 max-w-2xl text-sm leading-relaxed text-muted-foreground">
+                The product analyst reads your site. The discovery agent uses
+                that to find your competitors and the HackerNews threads where
+                your future users already are. While they work, play dino — by
+                design.
+              </p>
+            </motion.div>
+            <motion.div
+              initial={{ opacity: 0, y: 16 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-100px" }}
+              transition={{ duration: 0.5, delay: 0.1 }}
+              className="mt-10"
+            >
+              <AgentConsole />
+            </motion.div>
           </div>
         </section>
 
+        <FounderSection />
 
-
-        <section className="relative overflow-hidden px-6 py-24">
-          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,oklch(0.72_0.15_75_/_0.08),transparent_60%)]" />
-          <div className="mx-auto flex max-w-2xl flex-col items-center text-center">
-            <h2 className="font-heading text-3xl tracking-tight sm:text-4xl">
-              Your users are out there.
-              <br />
-              OpenCorp finds them.
-            </h2>
-            <p className="mt-4 text-muted-foreground">
-              Tell it what you&apos;re building. It scours every source, finds
-              the people who need your product, and hands you a ready pipeline
-              of users — so you can focus on what you do best.
-            </p>
-            <div className="mt-8 flex flex-col items-center gap-4 sm:flex-row">
-              <Button
-                size="lg"
-                className="w-full sm:w-auto"
-                asChild
-                onClick={() =>
-                  trackEvent({ name: "cta_open_dashboard", data: { location: "footer" } })
-                }
-              >
-                <Link href="/dashboard">
-                  Open Dashboard
-                  <ArrowRight className="size-4" />
-                </Link>
-              </Button>
-              <Button
-                variant="outline"
-                size="lg"
-                className="w-full sm:w-auto"
-                onClick={() => toggleDemo("footer")}
-              >
-                {showDemo ? (
-                  <>
-                    <XIcon className="size-4" />
-                    Hide demo
-                  </>
-                ) : (
-                  <>
-                    <Play className="size-4" />
-                    Watch Demo
-                  </>
-                )}
-              </Button>
-            </div>
-          </div>
-        </section>
-
+        <TryItWidget />
       </main>
     </MarketingShell>
   );

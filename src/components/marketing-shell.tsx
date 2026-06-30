@@ -75,10 +75,10 @@ function SiteNav() {
             size="sm"
             asChild
             onClick={() =>
-              trackEvent({ name: "cta_open_dashboard", data: { location: "hero" } })
+              trackEvent({ name: "cta_open_dashboard", data: { location: "nav" } })
             }
           >
-            <Link href="/dashboard">Dashboard</Link>
+            <Link href="/dashboard">Try for free</Link>
           </Button>
         </div>
       </div>

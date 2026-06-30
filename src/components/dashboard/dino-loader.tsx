@@ -111,6 +111,43 @@ export function DinoLoader({
     };
   }, [instanceKey]);
 
+  useEffect(() => {
+    const wrapper = wrapperRef.current;
+    if (!wrapper || typeof IntersectionObserver === "undefined") return;
+
+    let visible = false;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        visible = entry.isIntersecting;
+      },
+      { threshold: 0.1 },
+    );
+    observer.observe(wrapper);
+
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.code !== "Space" && e.key !== " ") return;
+      if (!visible) return;
+      const target = e.target as HTMLElement | null;
+      if (!target) return;
+      const tag = target.tagName;
+      if (
+        tag === "INPUT" ||
+        tag === "TEXTAREA" ||
+        tag === "SELECT" ||
+        target.isContentEditable
+      ) {
+        return;
+      }
+      e.preventDefault();
+    };
+    window.addEventListener("keydown", onKeyDown);
+
+    return () => {
+      observer.disconnect();
+      window.removeEventListener("keydown", onKeyDown);
+    };
+  }, [instanceKey]);
+
   if (!loading) return null;
 
   return (
