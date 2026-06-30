@@ -28,7 +28,7 @@ function MobileTopBar({ activeName }: { activeName: string | null }) {
         {activeName ?? "dashboard"}
       </span>
       <Link
-        href="/dashboard/new"
+        href="/dashboard"
         className="text-muted-foreground transition-colors hover:text-foreground"
         aria-label="New research"
       >
@@ -62,7 +62,7 @@ function Sidebar({
           size="sm"
           className="w-full justify-center shadow-[0_0_0_1px_oklch(0.72_0.15_75/0.4),0_8px_24px_-12px_oklch(0.72_0.15_75/0.6)]"
         >
-          <Link href="/dashboard/new">
+          <Link href="/dashboard">
             <Plus className="size-3.5" />
             New research
           </Link>
