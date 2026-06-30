@@ -7,6 +7,7 @@ export type AnalyticsEvent =
   | WithData<"cta_open_dashboard", { location: "hero" | "footer" }>
   | { name: "cta_watch_demo" }
   | WithData<"cta_watch_demo", { location: "hero" | "footer" }>
+  | WithData<"demo_progress", { pct: 25 | 50 | 75 | 100; location: "hero" | "footer" }>
   | { name: "auth_google_oauth_click" }
   | { name: "auth_signin_submit" }
   | { name: "auth_signup_submit" };

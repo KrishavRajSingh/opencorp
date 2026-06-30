@@ -173,9 +173,10 @@ function InteractiveInput() {
   );
 }
 
-function DemoVideo({ onClose }: { onClose?: () => void }) {
-  const [muted, setMuted] = useState(false);
+function DemoVideo({ onClose, location }: { onClose?: () => void; location: "hero" | "footer" }) {
+  const [muted, setMuted] = useState(true);
   const videoRef = useRef<HTMLVideoElement>(null);
+  const firedRef = useRef<Set<number>>(new Set());
 
   useEffect(() => {
     const video = videoRef.current;
@@ -189,6 +190,25 @@ function DemoVideo({ onClose }: { onClose?: () => void }) {
       videoRef.current.muted = muted;
     }
   }, [muted]);
+
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    const onTimeUpdate = () => {
+      if (!video.duration || !Number.isFinite(video.duration)) return;
+      const pct = Math.floor((video.currentTime / video.duration) * 100);
+      for (const t of [25, 50, 75, 100] as const) {
+        if (pct >= t && !firedRef.current.has(t)) {
+          firedRef.current.add(t);
+          trackEvent({ name: "demo_progress", data: { pct: t, location } });
+        }
+      }
+    };
+
+    video.addEventListener("timeupdate", onTimeUpdate);
+    return () => video.removeEventListener("timeupdate", onTimeUpdate);
+  }, [location]);
 
   return (
     <div className="group relative overflow-hidden rounded-2xl border border-border/60 bg-card/50 shadow-[0_30px_60px_-15px_oklch(0_0_0_/_0.5),0_0_0_1px_oklch(0.72_0.15_75_/_0.06)] backdrop-blur-sm">
@@ -204,7 +224,7 @@ function DemoVideo({ onClose }: { onClose?: () => void }) {
             <span className="absolute inline-flex size-full animate-ping rounded-full bg-brand opacity-60" />
             <span className="relative inline-flex size-1.5 rounded-full bg-brand" />
           </span>
-          Live demo
+          Watch the demo
         </div>
       </div>
       <div className="relative">
@@ -248,10 +268,12 @@ function DemoVideo({ onClose }: { onClose?: () => void }) {
 
 export default function Page() {
   const [showDemo, setShowDemo] = useState(false);
+  const [demoLocation, setDemoLocation] = useState<"hero" | "footer">("hero");
 
   const toggleDemo = (location: "hero" | "footer") => {
     const willShow = !showDemo;
     setShowDemo(willShow);
+    setDemoLocation(location);
     trackEvent({ name: "cta_watch_demo", data: { location } });
     if (location === "footer" && willShow) {
       window.scrollTo({ top: 0, behavior: "smooth" });
@@ -326,7 +348,7 @@ export default function Page() {
               className="mt-16 w-full max-w-lg"
             >
               {showDemo ? (
-                <DemoVideo onClose={() => setShowDemo(false)} />
+                <DemoVideo onClose={() => setShowDemo(false)} location={demoLocation} />
               ) : (
                 <InteractiveInput />
               )}
