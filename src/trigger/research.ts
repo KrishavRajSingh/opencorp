@@ -90,26 +90,82 @@ async function runWithRetry(
     toolResults?: Array<{ payload: unknown }>;
   }) => void,
 ): Promise<Record<string, unknown>> {
-  // First attempt — stream tool calls
-  let result = await agent.stream(prompt, { ...opts, onStepFinish: onToolCall });
-  let object = await result.object;
+  const MAX_STREAM_ATTEMPTS = 3;
+  const RATE_LIMIT_BACKOFF_MS = 30_000;
+  const TRANSIENT_BACKOFF_BASE_MS = 2_000;
+  const TRANSIENT_BACKOFF_MAX_MS = 30_000;
 
-  // Retry once without streaming tool calls (avoids duplicates)
-  if (!object) {
-    await researchStream.append(JSON.stringify({
-      type: "tool-call",
-      toolName: "structured-output-retry",
-      args: { url: "Retrying structured extraction..." },
-    }));
-    result = await agent.stream(prompt, opts);
-    object = await result.object;
+  function isRateLimitError(err: unknown): boolean {
+    if (!(err instanceof Error)) return false;
+    const msg = err.message.toLowerCase();
+    return (
+      msg.includes("rate limit") ||
+      msg.includes("429") ||
+      msg.includes("free-models-per-min")
+    );
   }
 
-  if (!object) {
-    throw new Error("Structured output extraction failed after retry");
+  function backoffMs(attempt: number, rateLimited: boolean): number {
+    if (rateLimited) return RATE_LIMIT_BACKOFF_MS;
+    const exp = Math.min(
+      TRANSIENT_BACKOFF_BASE_MS * 2 ** (attempt - 1),
+      TRANSIENT_BACKOFF_MAX_MS,
+    );
+    return Math.floor(exp / 2 + Math.random() * (exp / 2));
   }
 
-  return object as Record<string, unknown>;
+  let lastError: Error | null = null;
+
+  for (let attempt = 1; attempt <= MAX_STREAM_ATTEMPTS; attempt++) {
+    try {
+      const streamOpts =
+        attempt === 1
+          ? { ...opts, onStepFinish: onToolCall }
+          : opts;
+
+      const result = await agent.stream(prompt, streamOpts);
+      const object = await result.object;
+
+      if (object) {
+        return object as Record<string, unknown>;
+      }
+
+      lastError = new Error("Structured output returned null");
+      await researchStream.append(
+        JSON.stringify({
+          type: "tool-call",
+          toolName: "structured-output-retry",
+          args: { attempt, reason: "empty object" },
+        }),
+      );
+    } catch (err) {
+      lastError = err instanceof Error ? err : new Error(String(err));
+      const rateLimited = isRateLimitError(lastError);
+
+      await researchStream.append(
+        JSON.stringify({
+          type: "tool-call",
+          toolName: rateLimited ? "rate-limit-retry" : "stream-retry",
+          args: {
+            attempt,
+            reason: rateLimited ? "rate limit" : "stream error",
+            message: lastError.message.slice(0, 200),
+          },
+        }),
+      );
+    }
+
+    if (attempt < MAX_STREAM_ATTEMPTS) {
+      const rateLimited = isRateLimitError(lastError);
+      const wait = backoffMs(attempt, rateLimited);
+      await new Promise((r) => setTimeout(r, wait));
+    }
+  }
+
+  throw new Error(
+    `Structured output extraction failed after ${MAX_STREAM_ATTEMPTS} attempts. ` +
+      `Last error: ${lastError?.message ?? "no object returned"}`,
+  );
 }
 
 const productSchema = z.object({
@@ -140,7 +196,7 @@ export const productResearchTask = task({
         agent,
         `Research this product thoroughly: ${validatedUrl}`,
         {
-          structuredOutput: { schema: productSchema, model: "openrouter/owl-alpha" },
+          structuredOutput: { schema: productSchema, model: "openrouter/minimax/minimax-m3" },
           maxSteps: 6,
         },
         (step) => {
@@ -220,7 +276,7 @@ Features: ${payload.keyFeatures.join(", ")}`;
         agent,
         prompt,
         {
-          structuredOutput: { schema: competitorSchema, model: "openrouter/owl-alpha" },
+          structuredOutput: { schema: competitorSchema, model: "openrouter/minimax/minimax-m3" },
           maxSteps: 8,
         },
         (step) => {
@@ -319,7 +375,7 @@ ${competitorList || "(none provided)"}`;
         agent,
         prompt,
         {
-          structuredOutput: { schema: hnThreadsSchema, model: "openrouter/owl-alpha" },
+          structuredOutput: { schema: hnThreadsSchema, model: "openrouter/minimax/minimax-m3" },
           maxSteps: 6,
         },
         (step) => {

@@ -116,7 +116,7 @@ export default function PrivacyPage() {
               <p>
                 To generate a report, OpenCorp sends the following to our
                 model provider (OpenRouter, model{" "}
-                <span className="font-mono text-foreground">owl-alpha</span>):
+                <span className="font-mono text-foreground">minimax/minimax-m3</span>):
               </p>
               <ul className="list-disc space-y-2 pl-6 text-foreground/80">
                 <li>

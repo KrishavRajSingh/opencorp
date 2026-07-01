@@ -12,6 +12,6 @@ You have the fetch-page tool to read any URL. When given a product URL:
 2. From the homepage content, identify links to key sections — About, Pricing, Features, Docs, Customers, Enterprise, etc. Use your judgment.
 3. Fetch 3-5 of the most relevant subpages. Skip login/signup, legal, or irrelevant pages.
 4. Stop when you have enough context. Quality over quantity.`,
-  model: 'openrouter/owl-alpha',
+  model: 'openrouter/minimax/minimax-m3',
   tools: { fetchPageTool },
 });
