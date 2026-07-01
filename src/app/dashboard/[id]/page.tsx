@@ -1,5 +1,5 @@
 import { notFound, redirect } from "next/navigation";
-import { createClient } from "@/lib/supabase/server";
+import { createClient, isAuthEnabled } from "@/lib/supabase/server";
 import { SessionViewClient } from "../session-view-client";
 import { fetchSession } from "../data";
 
@@ -43,13 +43,15 @@ export default async function SessionPage({
 }) {
   const { id } = await params;
 
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  if (isAuthEnabled()) {
+    const supabase = await createClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
 
-  if (!user) {
-    redirect(`/auth/sign-in?next=/dashboard/${id}`);
+    if (!user) {
+      redirect(`/auth/sign-in?next=/dashboard/${id}`);
+    }
   }
 
   const session = await fetchSession(id);

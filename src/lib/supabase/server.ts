@@ -1,6 +1,11 @@
 import { cookies } from "next/headers";
 import { createServerClient as createSupabaseServerClient } from "@supabase/ssr";
+import { createClient as createSupabaseAdminClient } from "@supabase/supabase-js";
 import type { Database } from "./types";
+
+export function isAuthEnabled(): boolean {
+  return process.env.AUTH_ENABLED !== "false";
+}
 
 export async function createClient() {
   const cookieStore = await cookies();
@@ -26,4 +31,21 @@ export async function createClient() {
       },
     },
   );
+}
+
+export function createAdminClient() {
+  return createSupabaseAdminClient<Database>(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SECRET_KEY!,
+    {
+      auth: { autoRefreshToken: false, persistSession: false },
+    },
+  );
+}
+
+export async function getDbClient() {
+  if (isAuthEnabled()) {
+    return createClient();
+  }
+  return createAdminClient();
 }

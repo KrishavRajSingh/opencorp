@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { getAuthedUser } from "@/lib/supabase/auth";
-import { createClient } from "@/lib/supabase/server";
+import { getDbClient } from "@/lib/supabase/server";
 
 export async function GET(
   _request: Request,
@@ -11,7 +11,7 @@ export async function GET(
 
   const { id } = await params;
 
-  const supabase = await createClient();
+  const supabase = await getDbClient();
   const { data, error } = await supabase
     .from("research_sessions")
     .select("id, input, product_analyst_result, competitor_result, created_at, updated_at")

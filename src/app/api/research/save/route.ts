@@ -1,7 +1,7 @@
 import { z } from "zod/v4";
 import { NextResponse } from "next/server";
 import { getAuthedUser } from "@/lib/supabase/auth";
-import { createClient } from "@/lib/supabase/server";
+import { getDbClient } from "@/lib/supabase/server";
 
 const productAnalystResultSchema = z.object({
   url: z.string(),
@@ -58,7 +58,7 @@ export async function POST(request: Request) {
     );
   }
 
-  const supabase = await createClient();
+  const supabase = await getDbClient();
 
   if (!body.id) {
     if (!body.input || !body.product_analyst_result) {

@@ -1,10 +1,10 @@
 import { cache } from "react";
 import { redirect } from "next/navigation";
-import { createClient } from "@/lib/supabase/server";
+import { getDbClient } from "@/lib/supabase/server";
 import type { SessionSummary } from "./project-list";
 
 export const fetchSessions = cache(async (): Promise<SessionSummary[]> => {
-  const supabase = await createClient();
+  const supabase = await getDbClient();
   const { data, error } = await supabase
     .from("research_sessions")
     .select("id, input, product_analyst_result, competitor_result, hn_threads_result, updated_at")
@@ -31,7 +31,7 @@ export const fetchSessions = cache(async (): Promise<SessionSummary[]> => {
 });
 
 export const fetchMostRecentSession = cache(async (): Promise<string | null> => {
-  const supabase = await createClient();
+  const supabase = await getDbClient();
   const { data } = await supabase
     .from("research_sessions")
     .select("id")
@@ -49,7 +49,7 @@ export const fetchSession = cache(
     competitor_result: unknown;
     hn_threads_result: unknown;
   } | null> => {
-    const supabase = await createClient();
+    const supabase = await getDbClient();
     const { data } = await supabase
       .from("research_sessions")
       .select("id, input, product_analyst_result, competitor_result, hn_threads_result")
