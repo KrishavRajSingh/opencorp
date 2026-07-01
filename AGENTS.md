@@ -24,7 +24,7 @@ pnpm is the only package manager in use.
 
 ## Mastra
 
-- Uses `openrouter/minimax/minimax-m3` model through **OpenRouter** (requires `OPENROUTER_API_KEY` in `.env`). The `openrouter/` prefix triggers Mastra's OpenRouter provider which reads `OPENROUTER_API_KEY`.
+- Uses `openrouter/google/gemini-2.5-flash-lite` model through **OpenRouter** (requires `OPENROUTER_API_KEY` in `.env`). The `openrouter/` prefix triggers Mastra's OpenRouter provider which reads `OPENROUTER_API_KEY`. Automatic prompt caching reduces repeated-prefix cost by 60-80%.
 - Storage: LibSQL (default) + DuckDB (observability domain).
 - Agents, tools, and workflows live in `src/mastra/agents/`, `src/mastra/tools/`, `src/mastra/workflows/`.
 

@@ -196,7 +196,7 @@ export const productResearchTask = task({
         agent,
         `Research this product thoroughly: ${validatedUrl}`,
         {
-          structuredOutput: { schema: productSchema, model: "openrouter/minimax/minimax-m3" },
+          structuredOutput: { schema: productSchema, model: "openrouter/google/gemini-2.5-flash-lite" },
           maxSteps: 6,
         },
         (step) => {
@@ -276,7 +276,7 @@ Features: ${payload.keyFeatures.join(", ")}`;
         agent,
         prompt,
         {
-          structuredOutput: { schema: competitorSchema, model: "openrouter/minimax/minimax-m3" },
+          structuredOutput: { schema: competitorSchema, model: "openrouter/google/gemini-2.5-flash-lite" },
           maxSteps: 8,
         },
         (step) => {
@@ -375,7 +375,7 @@ ${competitorList || "(none provided)"}`;
         agent,
         prompt,
         {
-          structuredOutput: { schema: hnThreadsSchema, model: "openrouter/minimax/minimax-m3" },
+          structuredOutput: { schema: hnThreadsSchema, model: "openrouter/google/gemini-2.5-flash-lite" },
           maxSteps: 6,
         },
         (step) => {
