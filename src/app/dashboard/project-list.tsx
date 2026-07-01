@@ -4,6 +4,11 @@ import { useRouter, usePathname } from "next/navigation";
 import { useMemo } from "react";
 import { Circle } from "lucide-react";
 import { ProductFavicon } from "@/components/dashboard/product-favicon";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 
 export type SessionSummary = {
@@ -65,13 +70,16 @@ function StatusPulse({
 export function ProjectList({
   sessions,
   activeId,
+  collapsed = false,
 }: {
   sessions: SessionSummary[];
   activeId: string | null;
+  collapsed?: boolean;
 }) {
   const router = useRouter();
 
   if (sessions.length === 0) {
+    if (collapsed) return null;
     return (
       <div className="mt-3 px-3 text-xs leading-relaxed text-muted-foreground/60">
         No projects yet. Start one above.
@@ -80,10 +88,47 @@ export function ProjectList({
   }
 
   return (
-    <div className="mt-3 flex flex-col gap-0.5 overflow-y-auto px-2">
+    <div
+      className={cn(
+        "mt-3 flex min-h-0 flex-1 flex-col gap-0.5 overflow-y-auto",
+        collapsed ? "px-1.5" : "px-2",
+      )}
+    >
       {sessions.map((s) => {
         const isActive = s.id === activeId;
         const label = s.product_name ?? s.url ?? "Untitled";
+        if (collapsed) {
+          return (
+            <Tooltip key={s.id}>
+              <TooltipTrigger asChild>
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (!isActive) router.push(`/dashboard/${s.id}`);
+                  }}
+                  className={cn(
+                    "relative flex items-center justify-center rounded-md p-1.5 transition-colors",
+                    isActive
+                      ? "bg-brand/10 text-foreground"
+                      : "text-foreground/80 hover:bg-card/50",
+                  )}
+                >
+                  {isActive && (
+                    <span className="absolute inset-y-1 left-0 w-0.5 rounded-r bg-brand" />
+                  )}
+                  <ProductFavicon url={s.url} size={16} rounded="sm" />
+                  <span className="absolute top-1 right-1">
+                    <StatusPulse
+                      hasProduct={s.has_product}
+                      hasCompetitor={s.has_competitor}
+                    />
+                  </span>
+                </button>
+              </TooltipTrigger>
+              <TooltipContent side="right">{label}</TooltipContent>
+            </Tooltip>
+          );
+        }
         return (
           <button
             key={s.id}
