@@ -4,6 +4,7 @@ import { useState, useCallback, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import {
   AlertTriangle,
+  ArrowRight,
   ExternalLink,
   Users,
   Link2,
@@ -345,16 +346,19 @@ function Console({
                 "group/btn flex w-full items-center justify-between gap-3 rounded-xl border bg-card/60 px-4 py-2.5 text-left text-sm transition-all",
                 busy
                   ? "cursor-not-allowed border-border/40 text-muted-foreground/50"
-                  : "border-border/60 text-foreground/85 hover:border-orange-400/50 hover:bg-orange-400/5 hover:text-foreground",
+                  : "border-orange-400/30 text-foreground hover:border-orange-400/60 hover:bg-orange-400/10 hover:text-foreground",
               )}
             >
               <div className="flex items-center gap-2.5">
-                <HNIcon className="size-4" />
+                <HNIcon className="size-5" />
                 <span className="font-medium">Find HN threads</span>
               </div>
-              <span className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground/50 group-hover/btn:text-orange-400">
-                Stage 2
-              </span>
+              <div className="flex items-center gap-1.5">
+                <span className="font-mono text-[10px] uppercase tracking-widest text-orange-400/70 group-hover/btn:text-orange-400">
+                  Stage 2
+                </span>
+                <ArrowRight className="size-3.5 text-orange-400/50 transition-all group-hover/btn:translate-x-0.5 group-hover/btn:text-orange-400" />
+              </div>
             </button>
           )}
           {busy && (
