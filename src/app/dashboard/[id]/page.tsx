@@ -36,6 +36,18 @@ type HNResult = {
   }>;
 };
 
+type RedditScanResult = {
+  run_id?: string;
+  generated_at?: string;
+  top_threads?: Array<{
+    rank: number;
+    thread: { id: string; sub: string; title: string; link: string; author?: string; updated?: string; score?: number; num_comments?: number };
+    buyer_reason?: string;
+    top_quotes?: string[];
+  }>;
+  dropped?: Array<{ id: string; title: string; drop_reason: string }>;
+};
+
 export default async function SessionPage({
   params,
 }: {
@@ -67,6 +79,7 @@ export default async function SessionPage({
 
   const competitors = session.competitor_result as CompetitorResult | null;
   const hnThreads = session.hn_threads_result as HNResult | null;
+  const redditScan = session.reddit_scan_result as RedditScanResult | null;
 
   return (
     <SessionViewClient
@@ -74,6 +87,7 @@ export default async function SessionPage({
       product={product}
       competitors={competitors}
       hnResult={hnThreads}
+      redditScan={redditScan as never}
     />
   );
 }

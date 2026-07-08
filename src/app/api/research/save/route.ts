@@ -36,12 +36,20 @@ const hnThreadsResultSchema = z.object({
   }).passthrough()).optional().default([]),
 }).passthrough();
 
+const redditScanResultSchema = z.object({
+  run_id: z.string().optional(),
+  generated_at: z.string().optional(),
+  top_threads: z.array(z.any()).optional().default([]),
+  dropped: z.array(z.any()).optional().default([]),
+}).passthrough();
+
 const baseSchema = z.object({
   id: z.string().uuid().optional(),
   input: z.object({ url: z.string() }).passthrough().optional(),
   product_analyst_result: productAnalystResultSchema.optional(),
   competitor_result: competitorResultSchema.optional(),
   hn_threads_result: hnThreadsResultSchema.optional(),
+  reddit_scan_result: redditScanResultSchema.optional(),
 });
 
 export async function POST(request: Request) {
@@ -93,6 +101,9 @@ export async function POST(request: Request) {
   }
   if (body.hn_threads_result !== undefined) {
     update.hn_threads_result = body.hn_threads_result;
+  }
+  if (body.reddit_scan_result !== undefined) {
+    update.reddit_scan_result = body.reddit_scan_result;
   }
   if (body.input !== undefined) {
     update.input = body.input;

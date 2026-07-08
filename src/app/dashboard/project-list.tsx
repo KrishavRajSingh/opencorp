@@ -18,6 +18,7 @@ export type SessionSummary = {
   has_product: boolean;
   has_competitor: boolean;
   has_hn: boolean;
+  has_reddit: boolean;
   updated_at: string;
 };
 

@@ -413,3 +413,129 @@ ${competitorList || "(none provided)"}`;
     }
   },
 });
+
+const gtmRedditInputSchema = z.object({
+  url: z.string(),
+  productName: z.string(),
+  description: z.string(),
+  keyFeatures: z.array(z.string()).optional().default([]),
+  targetAudience: z.string().optional().default(""),
+  pricingModel: z.string().optional().default(""),
+  subsSearch: z.array(z.string()).optional().default([]),
+  competitors: z.array(
+    z.object({
+      name: z.string(),
+      url: z.string().optional().default(""),
+    }).passthrough(),
+  ).optional().default([]),
+});
+
+export const gtmRedditScanTask = task({
+  id: "gtm-reddit-scan",
+  maxDuration: 1800,
+  run: async (payload: z.infer<typeof gtmRedditInputSchema>) => {
+    const wf = mastra.getWorkflow("gtmRedditScanWorkflow") as unknown as {
+      createRun: (opts?: { runId?: string }) => Promise<{
+        runId: string;
+        start: (input: { inputData: {
+          userQuery: string;
+          productName: string;
+          description: string;
+          keyFeatures: string[];
+          targetAudience: string;
+          pricingModel: string;
+          subsSearch?: string[];
+          competitors?: Array<{ name: string; url: string }>;
+        } }) => Promise<{ result: unknown }>;
+      }>;
+    };
+    if (!wf) {
+      await researchStream.append(JSON.stringify({ type: "error", error: "Reddit workflow not registered" }));
+      throw new Error("Reddit workflow not registered");
+    }
+
+    const input = gtmRedditInputSchema.parse(payload);
+    const userQuery = `Find me users for ${input.productName}: ${input.description}. ` +
+      `Target audience: ${input.targetAudience}. Pricing: ${input.pricingModel}. ` +
+      `Look for potential users who match the target persona and exhibit the product's core pain points.`;
+
+    const subsSearch = input.subsSearch.filter((s) => s.trim().length > 0);
+
+    let competitors = input.competitors ?? [];
+    let discoveryRan = false;
+
+    if (competitors.length === 0) {
+      await researchStream.append(JSON.stringify({
+        type: "tool-call",
+        toolName: "competitor-discovery",
+        toolCallId: crypto.randomUUID(),
+        track: "reddit",
+        snippet: `Discovering competitors for ${input.productName}...`,
+      }));
+
+      try {
+        const discovered = await competitorResearchTask.triggerAndWait({
+          url: input.url,
+          productName: input.productName,
+          description: input.description,
+          keyFeatures: input.keyFeatures,
+        });
+        if (discovered?.ok) {
+          const out = (discovered.output ?? {}) as { competitors?: Array<{ name?: string; url?: string }> };
+          competitors = (out.competitors ?? [])
+            .map((c) => ({ name: c.name ?? "", url: c.url ?? "" }))
+            .filter((c) => c.name.length > 0)
+            .slice(0, 5);
+        }
+        discoveryRan = true;
+      } catch (err) {
+        const message = err instanceof Error ? err.message : "unknown";
+        await researchStream.append(JSON.stringify({
+          type: "tool-call",
+          toolName: "competitor-discovery",
+          track: "reddit",
+          snippet: `Competitor discovery skipped: ${message.slice(0, 120)}`,
+        }));
+      }
+    }
+
+    await researchStream.append(JSON.stringify({
+      type: "competitors",
+      track: "reddit",
+      competitors: competitors.map((c) => c.name),
+      discovered: discoveryRan,
+    }));
+
+    try {
+      await researchStream.append(JSON.stringify({
+        type: "tool-call",
+        toolName: "gtm-reddit-scan",
+        toolCallId: crypto.randomUUID(),
+        track: "reddit",
+        snippet: `Scanning Reddit for users of ${input.productName}...`,
+      }));
+
+      const run = await wf.createRun({ runId: `reddit_${Date.now().toString(36)}` });
+      const result = await run.start({
+        inputData: {
+          userQuery,
+          productName: input.productName,
+          description: input.description,
+          keyFeatures: input.keyFeatures,
+          targetAudience: input.targetAudience,
+          pricingModel: input.pricingModel,
+          subsSearch,
+          competitors,
+        },
+      });
+      const brief = (result as { result?: Record<string, unknown> }).result ?? {};
+
+      await researchStream.append(JSON.stringify({ type: "result", track: "reddit", ...brief }));
+      return brief;
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "Unknown error";
+      await researchStream.append(JSON.stringify({ type: "error", track: "reddit", error: message }));
+      throw err;
+    }
+  },
+});
