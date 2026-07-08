@@ -1,13 +1,22 @@
 "use client";
 
-import { useState, useCallback, useRef, useEffect } from "react";
+import {
+  useState,
+  useCallback,
+  useRef,
+  useEffect,
+  type ReactNode,
+} from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { motion, useReducedMotion } from "motion/react";
 import {
   AlertTriangle,
   ArrowRight,
   ChevronDown,
   ExternalLink,
   Link2,
+  Lock,
   Share2,
   Check,
 } from "lucide-react";
@@ -15,6 +24,7 @@ import { ProductFavicon } from "@/components/dashboard/product-favicon";
 import { DinoLoader } from "@/components/dashboard/dino-loader";
 import { HNIcon } from "@/components/dashboard/hn-icon";
 import { RedditIcon } from "@/components/dashboard/reddit-icon";
+import { Card, CardContent } from "@/components/ui/card";
 import { GtmBriefView, type GtmBrief } from "@/components/ai-elements/gtm-brief";
 import type { HNThread } from "@/app/dashboard/hn-threads-block";
 import { cn } from "@/lib/utils";
@@ -274,6 +284,194 @@ const SUB_PRESETS = [
   "microsaas, nocode, webdev, ProductManagement",
 ];
 
+/** Idle channel bay — radar lock waiting for the founder to fire. */
+/** Idle channel bay — radar lock waiting for the founder to fire. */
+function ChannelArmingBay({
+  channel,
+  label,
+  onRun,
+  busy,
+  badge,
+  footer,
+}: {
+  channel: "reddit" | "hn";
+  label: string;
+  onRun: () => void;
+  busy: boolean;
+  badge?: string;
+  footer?: ReactNode;
+}) {
+  const reduceMotion = useReducedMotion();
+  const isReddit = channel === "reddit";
+  // Reddit #FF4500 · HN official #FF6600
+  const accent = isReddit ? "#FF4500" : "#FF6600";
+  const accentSoft = isReddit
+    ? "rgba(255,69,0,0.12)"
+    : "rgba(255,102,0,0.12)";
+  const accentMid = isReddit
+    ? "rgba(255,69,0,0.35)"
+    : "rgba(255,102,0,0.35)";
+  const accentBorder = isReddit
+    ? "border-[#FF4500]/40"
+    : "border-[#FF6600]/40";
+  const accentBorderHover = isReddit
+    ? "hover:border-[#FF4500]/70 hover:bg-[#FF4500]/10"
+    : "hover:border-[#FF6600]/70 hover:bg-[#FF6600]/10";
+  const accentText = isReddit ? "text-[#FF4500]" : "text-[#FF6600]";
+  const accentRing = isReddit ? "ring-[#FF4500]/25" : "ring-[#FF6600]/25";
+
+  return (
+    <div className="relative flex flex-1 flex-col items-center justify-center overflow-hidden px-3 py-10">
+      {/* void field — crosshair grid, not decorative gradients */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 opacity-[0.35]"
+        style={{
+          backgroundImage: `
+            linear-gradient(to right, oklch(1 0 0 / 0.03) 1px, transparent 1px),
+            linear-gradient(to bottom, oklch(1 0 0 / 0.03) 1px, transparent 1px)
+          `,
+          backgroundSize: "24px 24px",
+          maskImage:
+            "radial-gradient(ellipse 70% 60% at 50% 42%, black 20%, transparent 75%)",
+        }}
+      />
+      <div
+        aria-hidden
+        className="pointer-events-none absolute left-1/2 top-[38%] size-44 -translate-x-1/2 -translate-y-1/2 rounded-full blur-3xl"
+        style={{ background: accentSoft }}
+      />
+
+      <div className="relative z-10 flex w-full max-w-[17.5rem] flex-col items-center">
+        {/* signature: idle radar lock */}
+        <div className="relative mb-5 grid size-[4.5rem] place-items-center">
+          <motion.div
+            aria-hidden
+            className="absolute inset-0 rounded-full border border-dashed"
+            style={{ borderColor: accentMid }}
+            animate={reduceMotion ? undefined : { rotate: 360 }}
+            transition={
+              reduceMotion
+                ? undefined
+                : { duration: 28, repeat: Infinity, ease: "linear" }
+            }
+          />
+          <motion.div
+            aria-hidden
+            className="absolute inset-1.5 rounded-full border"
+            style={{ borderColor: accentMid }}
+            animate={
+              reduceMotion
+                ? undefined
+                : { opacity: [0.35, 0.85, 0.35], scale: [0.96, 1, 0.96] }
+            }
+            transition={
+              reduceMotion
+                ? undefined
+                : { duration: 3.2, repeat: Infinity, ease: "easeInOut" }
+            }
+          />
+          {!reduceMotion && (
+            <motion.div
+              aria-hidden
+              className="absolute inset-0"
+              animate={{ rotate: 360 }}
+              transition={{ duration: 6.5, repeat: Infinity, ease: "linear" }}
+            >
+              <div
+                className="absolute left-1/2 top-0 h-1/2 w-px origin-bottom"
+                style={{
+                  background: `linear-gradient(to top, transparent, ${accent})`,
+                  opacity: 0.7,
+                }}
+              />
+            </motion.div>
+          )}
+          <div
+            className={cn(
+              "relative grid size-12 place-items-center overflow-hidden rounded-full border bg-card/80 shadow-[0_0_0_1px_oklch(1_0_0/0.04)] ring-4",
+              accentBorder,
+              accentRing,
+            )}
+          >
+            {isReddit ? (
+              <RedditIcon className="size-6" />
+            ) : (
+              <HNIcon className="size-6" />
+            )}
+          </div>
+        </div>
+
+        <div className="mb-1 flex items-center gap-2">
+          <span
+            className="size-1 rounded-full"
+            style={{ background: accent, boxShadow: `0 0 8px ${accent}` }}
+          />
+          <span className="font-mono text-[10px] uppercase tracking-[0.22em] text-muted-foreground/55">
+            signal · idle
+          </span>
+        </div>
+
+        <button
+          type="button"
+          onClick={onRun}
+          disabled={busy}
+          className={cn(
+            "group/arm relative mt-4 flex w-full items-center justify-between gap-3 overflow-hidden rounded-lg border px-4 py-3.5 text-left transition-all",
+            "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+            busy
+              ? "cursor-not-allowed border-border/40 bg-card/30 text-muted-foreground/50"
+              : cn(
+                  "bg-card/50 text-foreground",
+                  accentBorder,
+                  accentBorderHover,
+                  isReddit
+                    ? "focus-visible:ring-[#FF4500]/50"
+                    : "focus-visible:ring-[#FF6600]/50",
+                ),
+          )}
+        >
+          {!busy && (
+            <span
+              aria-hidden
+              className="pointer-events-none absolute inset-y-0 left-0 w-px"
+              style={{ background: accent, boxShadow: `0 0 12px ${accent}` }}
+            />
+          )}
+          <span className="min-w-0">
+            <span className="block font-heading text-[15px] leading-none tracking-tight">
+              {label}
+            </span>
+            {badge && (
+              <span
+                className={cn(
+                  "mt-1.5 inline-block font-mono text-[9px] uppercase tracking-wider",
+                  accentText,
+                )}
+              >
+                {badge}
+              </span>
+            )}
+          </span>
+          <ArrowRight
+            className={cn(
+              "size-4 shrink-0 transition-transform",
+              busy
+                ? "text-muted-foreground/40"
+                : cn(
+                    accentText,
+                    "opacity-70 group-hover/arm:translate-x-0.5 group-hover/arm:opacity-100",
+                  ),
+            )}
+          />
+        </button>
+
+        {footer && <div className="mt-3 w-full">{footer}</div>}
+      </div>
+    </div>
+  );
+}
+
 function SubsSearchInput({
   value,
   onChange,
@@ -285,7 +483,7 @@ function SubsSearchInput({
 }) {
   const text = value.join(", ");
   return (
-    <div className="space-y-1.5 rounded-md border border-[#FF4500]/20 bg-[#FF4500]/5 p-2">
+    <div className="space-y-1.5 rounded-md border border-[#FF4500]/20 bg-[#FF4500]/[0.04] p-2.5">
       <label className="block font-mono text-[10px] uppercase tracking-widest text-[#FF4500]/80">
         Target subreddits
       </label>
@@ -305,7 +503,7 @@ function SubsSearchInput({
       />
       <div className="flex flex-wrap items-center gap-1.5">
         <span className="font-mono text-[9px] uppercase tracking-wider text-muted-foreground/50">
-          presets:
+          presets
         </span>
         {SUB_PRESETS.map((preset) => (
           <button
@@ -331,9 +529,8 @@ function SubsSearchInput({
           </button>
         )}
       </div>
-      <p className="text-[10px] leading-snug text-muted-foreground/60">
-        Empty = LLM picks subs from product context. Pinned subs override and force
-        a cross-sub search via <code className="font-mono">/search?sr=A+B+...</code>.
+      <p className="text-[10px] leading-snug text-muted-foreground/55">
+        Leave empty to auto-pick subs from your product. Pin to force those only.
       </p>
     </div>
   );
@@ -405,8 +602,9 @@ function Console({
   })();
 
   const busy = status !== "idle";
+  // Independent channels — both unlock after competitors; neither waits on the other.
   const showRedditBtn = hasCompetitors && !hasReddit;
-  const showHNBtn = hasReddit && !hasHN;
+  const showHNBtn = hasCompetitors && !hasHN;
   const allDone = hasCompetitors && hasReddit && hasHN && !busy;
 
   const statusMeta = {
@@ -464,11 +662,22 @@ function Console({
             {statusMeta.label}
           </span>
         </div>
-        {busy && (
-          <span className="shrink-0 font-mono text-[10px] tabular-nums text-muted-foreground/60">
-            {elapsedDisplay}
-          </span>
-        )}
+        <div className="flex shrink-0 items-center gap-3">
+          {busy && (
+            <span className="font-mono text-[10px] tabular-nums text-muted-foreground/60">
+              {elapsedDisplay}
+            </span>
+          )}
+          {busy && !readOnly && (
+            <button
+              type="button"
+              onClick={onCancel}
+              className="text-[11px] text-muted-foreground transition-colors hover:text-foreground"
+            >
+              cancel
+            </button>
+          )}
+        </div>
       </div>
 
       {streamStatus && busy && (
@@ -478,102 +687,8 @@ function Console({
         </div>
       )}
 
-      {!readOnly && (showRedditBtn || showHNBtn) && (
-        <div className="space-y-2 border-b border-border/30 px-4 py-3">
-          {showRedditBtn && (
-            <>
-              <button
-                onClick={onFindReddit}
-                disabled={busy}
-                className={cn(
-                  "group/btn flex w-full items-center justify-between gap-3 rounded-xl border bg-card/60 px-4 py-2.5 text-left text-sm transition-all",
-                  busy
-                    ? "cursor-not-allowed border-border/40 text-muted-foreground/50"
-                    : "border-[#FF4500]/30 text-foreground hover:border-[#FF4500]/60 hover:bg-[#FF4500]/10 hover:text-foreground",
-                )}
-              >
-                <div className="flex items-center gap-2.5">
-                  <RedditIcon className="size-5" />
-                  <span className="font-medium">Find Reddit users</span>
-                  {subsSearch.length > 0 && (
-                    <span className="rounded-sm border border-[#FF4500]/40 px-1 font-mono text-[9px] uppercase tracking-wider text-[#FF4500]/80">
-                      {subsSearch.length} subs pinned
-                    </span>
-                  )}
-                </div>
-                <div className="flex items-center gap-1.5">
-                  <span className="font-mono text-[10px] uppercase tracking-widest text-[#FF4500]/70 group-hover/btn:text-[#FF4500]">
-                    Stage 2
-                  </span>
-                  <ArrowRight className="size-3.5 text-[#FF4500]/50 transition-all group-hover/btn:translate-x-0.5 group-hover/btn:text-[#FF4500]" />
-                </div>
-              </button>
-
-              <button
-                type="button"
-                onClick={onToggleSubsSearch}
-                disabled={busy}
-                className="flex w-full items-center justify-between gap-2 rounded-md px-1.5 py-1 font-mono text-[10px] uppercase tracking-widest text-muted-foreground/60 transition-colors hover:text-foreground/80 disabled:cursor-not-allowed disabled:opacity-50"
-              >
-                <span>
-                  {subsSearch.length > 0
-                    ? `${subsSearch.length} pinned · edit`
-                    : "pin specific subreddits (optional)"}
-                </span>
-                <ChevronDown
-                  className={cn(
-                    "size-3 transition-transform",
-                    subsSearchOpen && "rotate-180",
-                  )}
-                />
-              </button>
-
-              {subsSearchOpen && (
-                <SubsSearchInput
-                  value={subsSearch}
-                  onChange={onChangeSubsSearch}
-                  disabled={busy || !!redditScan}
-                />
-              )}
-            </>
-          )}
-          {showHNBtn && (
-            <button
-              onClick={onFindHN}
-              disabled={busy}
-              className={cn(
-                "group/btn flex w-full items-center justify-between gap-3 rounded-xl border bg-card/60 px-4 py-2.5 text-left text-sm transition-all",
-                busy
-                  ? "cursor-not-allowed border-border/40 text-muted-foreground/50"
-                  : "border-orange-400/30 text-foreground hover:border-orange-400/60 hover:bg-orange-400/10 hover:text-foreground",
-              )}
-            >
-              <div className="flex items-center gap-2.5">
-                <HNIcon className="size-5" />
-                <span className="font-medium">Find HN threads</span>
-              </div>
-              <div className="flex items-center gap-1.5">
-                <span className="font-mono text-[10px] uppercase tracking-widest text-orange-400/70 group-hover/btn:text-orange-400">
-                  Stage 3
-                </span>
-                <ArrowRight className="size-3.5 text-orange-400/50 transition-all group-hover/btn:translate-x-0.5 group-hover/btn:text-orange-400" />
-              </div>
-            </button>
-          )}
-          {busy && (
-            <button
-              onClick={onCancel}
-              className="block w-full py-1 text-center text-[11px] text-muted-foreground transition-colors hover:text-foreground"
-            >
-              cancel
-            </button>
-          )}
-        </div>
-      )}
-
-
-      <div className="flex-1 overflow-y-auto">
-        <div className="m-3 flex items-center rounded-lg border border-border/30 bg-card/30 p-0.5">
+      <div className="flex min-h-0 flex-1 flex-col overflow-y-auto">
+        <div className="m-3 flex shrink-0 items-center rounded-lg border border-border/30 bg-card/30 p-0.5">
           <button
             onClick={() => onSwitchResult("reddit")}
             className={cn(
@@ -619,21 +734,11 @@ function Console({
                 {hnCount}
               </span>
             )}
-           </button>
-         </div>
+          </button>
+        </div>
 
         {activeResult === "reddit" ? (
-          <div className="border-t border-border/30 px-4 py-4">
-            <div className="mb-3 flex items-center justify-between">
-              <span className="font-heading text-[10px] tracking-widest uppercase text-muted-foreground/60">
-                Stage 2 · Reddit market scan
-              </span>
-              {redditCount > 0 && (
-                <span className="font-mono text-[10px] tabular-nums text-muted-foreground/60">
-                  {redditCount}
-                </span>
-              )}
-            </div>
+          <div className="flex min-h-0 flex-1 flex-col px-4 pb-4">
             {redditScan && (redditScan.top_threads?.length ?? 0) > 0 ? (
               <GtmBriefView
                 brief={redditScan}
@@ -641,85 +746,90 @@ function Console({
                 signupHref={signupHref}
               />
             ) : loadingReddit ? (
-              <DinoLoader
-                instanceKey="reddit"
-                label="Scanning Reddit for your market..."
-                loading={loadingReddit}
-                sublabel="This usually takes 20-40 seconds. We're running 3-5 sharp search terms against the target subs and curating the best threads."
-                tone="brand"
-              />
-            ) : (
-              <div className="space-y-3 py-2">
-                <p className="text-xs text-muted-foreground/60">
-                  Click <span className="text-foreground/70">Find Reddit users</span> above to scan the subreddits where your future users are talking.
-                </p>
-                <div className="rounded-md border border-dashed border-border/40 bg-card/20 p-3 text-[11px] text-muted-foreground/60">
-                  <p className="font-medium text-foreground/75">What this finds</p>
-                  <p className="mt-1">Top threads ranked by signal, with pinned customer quotes. Click any thread to open it on Reddit and DM the author.</p>
-                </div>
+              <div className="flex flex-1 flex-col items-center justify-center py-8">
+                <DinoLoader
+                  instanceKey="reddit"
+                  label="Scanning Reddit for your market..."
+                  loading={loadingReddit}
+                  sublabel="This usually takes 20-40 seconds. We're running 3-5 sharp search terms against the target subs and curating the best threads."
+                  tone="brand"
+                />
               </div>
-            )}
+            ) : showRedditBtn && !readOnly ? (
+              <ChannelArmingBay
+                channel="reddit"
+                label="Find Reddit users"
+                onRun={onFindReddit}
+                busy={busy}
+                badge={
+                  subsSearch.length > 0
+                    ? `${subsSearch.length} subs pinned`
+                    : undefined
+                }
+                footer={
+                  <>
+                    <button
+                      type="button"
+                      onClick={onToggleSubsSearch}
+                      disabled={busy}
+                      className="flex w-full items-center justify-center gap-1.5 rounded-md py-1 font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground/50 transition-colors hover:text-foreground/75 disabled:cursor-not-allowed disabled:opacity-50"
+                    >
+                      <span>
+                        {subsSearch.length > 0
+                          ? `${subsSearch.length} pinned · edit`
+                          : "pin subreddits"}
+                      </span>
+                      <ChevronDown
+                        className={cn(
+                          "size-3 transition-transform",
+                          subsSearchOpen && "rotate-180",
+                        )}
+                      />
+                    </button>
+                    {subsSearchOpen && (
+                      <div className="mt-2">
+                        <SubsSearchInput
+                          value={subsSearch}
+                          onChange={onChangeSubsSearch}
+                          disabled={busy || !!redditScan}
+                        />
+                      </div>
+                    )}
+                  </>
+                }
+              />
+            ) : null}
           </div>
         ) : (
-          <div className="border-t border-border/30 px-4 py-4">
-            <div className="mb-3 flex items-center justify-between">
-              <span className="font-heading text-[10px] tracking-widest uppercase text-muted-foreground/60">
-                Stage 3 · Hacker News
-              </span>
-              <span className="font-mono text-[10px] tabular-nums text-muted-foreground/60">
-                {hnCount}
-              </span>
-            </div>
+          <div className="flex min-h-0 flex-1 flex-col px-4 pb-4">
             {hnResult && hnResult.threads.length > 0 ? (
-              <div className="space-y-0.5">
-                {hnResult.threads.map((t, i) => {
-                  const rank = String(i + 1).padStart(2, "0");
-                  const hnUrl = `https://news.ycombinator.com/item?id=${t.objectID}`;
-                  return (
-                    <a
-                      key={t.objectID}
-                      href={hnUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="group/row flex items-start gap-2 rounded-md px-2 py-1.5 transition-colors hover:bg-card/60"
-                    >
-                      <span className="mt-0.5 w-5 shrink-0 text-right font-mono text-[10px] tabular-nums text-orange-400/80">
-                        {rank}
-                      </span>
-                      <div className="min-w-0 flex-1">
-                        <p className="line-clamp-2 text-xs text-foreground/85 group-hover/row:text-foreground">
-                          {t.title}
-                        </p>
-                        <p className="mt-0.5 text-[11px] italic text-muted-foreground/70">
-                          {t.whyRelevant}
-                        </p>
-                        <div className="mt-0.5 flex items-center gap-1.5 font-mono text-[10px] text-muted-foreground/50">
-                          <span>▲ {t.points}</span>
-                          <span className="text-muted-foreground/30">·</span>
-                          <span>{t.comments} comments</span>
-                        </div>
-                      </div>
-                    </a>
-                  );
-                })}
-              </div>
-            ) : loadingHN ? (
-              <DinoLoader
-                instanceKey="hn"
-                label="Searching Hacker News…"
-                loading={loadingHN}
-                sublabel="This usually takes 1–2 minutes. We're searching Hacker News for threads where your future users are already talking — hang tight."
-                tone="orange"
+              <HNResultView
+                result={hnResult}
+                isAuthed={isAuthed}
+                signupHref={signupHref}
               />
-            ) : (
-              <p className="py-2 text-xs text-muted-foreground/50">
-                Click <span className="text-foreground/70">Find HN threads</span> above
-              </p>
-            )}
+            ) : loadingHN ? (
+              <div className="flex flex-1 flex-col items-center justify-center py-8">
+                <DinoLoader
+                  instanceKey="hn"
+                  label="Searching Hacker News…"
+                  loading={loadingHN}
+                  sublabel="This usually takes 1–2 minutes. We're searching Hacker News for threads where your future users are already talking — hang tight."
+                  tone="orange"
+                />
+              </div>
+            ) : showHNBtn && !readOnly ? (
+              <ChannelArmingBay
+                channel="hn"
+                label="Find HN threads"
+                onRun={onFindHN}
+                busy={busy}
+              />
+            ) : null}
           </div>
         )}
 
-        <div className="px-4 py-4">
+        <div className="mt-auto shrink-0 border-t border-border/20 px-4 py-4">
           <div className="mb-2 flex items-center gap-2">
             <span className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground/50">
               session
@@ -1298,5 +1408,165 @@ export function SessionViewClient({
         </div>
       </div>
     </div>
+  );
+}
+
+const HN_PREVIEW_COUNT = 5;
+
+function relativeHNDate(iso: string): string {
+  if (!iso) return "";
+  const then = new Date(iso).getTime();
+  if (Number.isNaN(then)) return "";
+  const diff = Math.max(0, Date.now() - then);
+  const day = Math.floor(diff / 86_400_000);
+  if (day < 1) {
+    const hr = Math.floor(diff / 3_600_000);
+    if (hr < 1) {
+      const min = Math.floor(diff / 60_000);
+      return min < 1 ? "now" : `${min}m ago`;
+    }
+    return `${hr}h ago`;
+  }
+  if (day < 30) return `${day}d ago`;
+  const mo = Math.floor(day / 30);
+  if (mo < 12) return `${mo}mo ago`;
+  return `${Math.floor(mo / 12)}y ago`;
+}
+
+function HNCardHeader({ count }: { count: number }) {
+  return (
+    <div className="flex items-center justify-between gap-3 px-(--card-spacing) pt-1">
+      <div className="flex min-w-0 items-center gap-1.5">
+        <span className="font-heading text-[10px] tracking-widest uppercase text-muted-foreground/60">
+          Signal
+        </span>
+        <span className="font-heading text-[10px] tracking-widest uppercase text-muted-foreground/30">
+          ·
+        </span>
+        <span className="font-heading text-[10px] tracking-widest uppercase text-muted-foreground/60">
+          Hacker News
+        </span>
+        <HNIcon className="ml-1 size-3.5 opacity-80" />
+      </div>
+      <span className="shrink-0 font-mono text-[10px] tabular-nums text-muted-foreground/60">
+        {count} threads
+      </span>
+    </div>
+  );
+}
+
+function HNLiveRow({ t, rank }: { t: HNThread; rank: number }) {
+  const hnUrl = `https://news.ycombinator.com/item?id=${t.objectID}`;
+  return (
+    <a
+      href={hnUrl}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="group/row flex items-start gap-2 rounded-md px-1.5 py-1.5 transition-colors hover:bg-card/60"
+    >
+      <span className="mt-0.5 w-5 shrink-0 text-right font-mono text-[10px] tabular-nums text-orange-400/80 group-hover/row:text-orange-400">
+        {String(rank).padStart(2, "0")}
+      </span>
+      <div className="min-w-0 flex-1">
+        <p className="line-clamp-2 text-xs text-foreground/85 group-hover/row:text-foreground">
+          {t.title}
+        </p>
+        {t.whyRelevant && (
+          <p className="mt-0.5 text-[11px] italic leading-snug text-muted-foreground/70">
+            {t.whyRelevant}
+          </p>
+        )}
+        <div className="mt-1 flex flex-wrap items-center gap-1.5 font-mono text-[10px] text-muted-foreground/50">
+          <span className="text-foreground/70">@{t.author || "unknown"}</span>
+          {t.date && (
+            <>
+              <span className="text-muted-foreground/30">·</span>
+              <span>{relativeHNDate(t.date)}</span>
+            </>
+          )}
+          <span className="text-muted-foreground/30">·</span>
+          <span>▲ {t.points}</span>
+          <span className="text-muted-foreground/30">·</span>
+          <span>{t.comments} cmts</span>
+        </div>
+      </div>
+      <ExternalLink className="mt-1 size-3 shrink-0 text-muted-foreground/40 opacity-0 transition-opacity group-hover/row:opacity-100" />
+    </a>
+  );
+}
+
+function HNLockedRow({ rank, title }: { rank: number; title: string }) {
+  return (
+    <div className="flex items-start gap-2 rounded-md px-1.5 py-1.5 opacity-55">
+      <span className="mt-0.5 w-5 shrink-0 text-right font-mono text-[10px] tabular-nums text-muted-foreground/40">
+        {String(rank).padStart(2, "0")}
+      </span>
+      <div className="min-w-0 flex-1">
+        <p className="line-clamp-2 text-xs text-foreground/55">{title}</p>
+      </div>
+      <Lock className="mt-1 size-3 shrink-0 text-muted-foreground/40" />
+    </div>
+  );
+}
+
+function HNResultView({
+  result,
+  isAuthed,
+  signupHref,
+}: {
+  result: HNResult | null;
+  isAuthed: boolean;
+  signupHref: string;
+}) {
+  const totalCount = result?.threads.length ?? 0;
+  const hiddenCount = Math.max(0, totalCount - HN_PREVIEW_COUNT);
+  const visibleThreads = isAuthed
+    ? (result?.threads ?? [])
+    : (result?.threads ?? []).slice(0, HN_PREVIEW_COUNT);
+
+  return (
+    <Card>
+      <HNCardHeader count={totalCount} />
+      <CardContent className="space-y-0.5">
+        {visibleThreads.map((t, i) => (
+          <HNLiveRow key={t.objectID} t={t} rank={i + 1} />
+        ))}
+
+        {!isAuthed && hiddenCount > 0 && (
+          <div className="mt-4 flex items-center justify-between gap-3 border-t border-dashed border-border/60 pt-3.5">
+            <p className="flex min-w-0 items-center gap-1.5 text-xs text-muted-foreground/75">
+              <Lock className="size-3.5 shrink-0 text-brand/80" />
+              <span className="truncate">
+                <span className="font-medium text-foreground/85">
+                  {hiddenCount} more threads
+                </span>{" "}
+                behind signup
+              </span>
+            </p>
+            <Link
+              href={signupHref}
+              className="inline-flex shrink-0 items-center gap-1 text-xs font-medium text-brand hover:underline"
+            >
+              Sign up to unlock
+              <span aria-hidden>→</span>
+            </Link>
+          </div>
+        )}
+
+        {!isAuthed && result && hiddenCount > 0 && (
+          <>
+            {result.threads
+              .slice(HN_PREVIEW_COUNT)
+              .map((t, i) => (
+                <HNLockedRow
+                  key={t.objectID}
+                  rank={i + 1 + HN_PREVIEW_COUNT}
+                  title={t.title}
+                />
+              ))}
+          </>
+        )}
+      </CardContent>
+    </Card>
   );
 }
