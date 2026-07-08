@@ -15,6 +15,40 @@ function extractReddit(url: string): { redditId: string; sub: string } | null {
   return { redditId: m[2]!, sub: m[1]! };
 }
 
+/** Serper returns human-relative strings ("2 days ago"); convert to ISO or omit. */
+function normalizeSerperDate(raw?: string): string | undefined {
+  if (!raw) return undefined;
+  const s = raw.trim();
+  if (!s) return undefined;
+
+  const rel = s.match(
+    /^(?:(\d+)|an?)\s+(second|minute|hour|day|week|month|year)s?\s+ago$/i,
+  );
+  if (rel) {
+    const n = rel[1] ? Number(rel[1]) : 1;
+    const unit = rel[2]!.toLowerCase();
+    const ms =
+      unit === "second"
+        ? n * 1000
+        : unit === "minute"
+          ? n * 60_000
+          : unit === "hour"
+            ? n * 3_600_000
+            : unit === "day"
+              ? n * 86_400_000
+              : unit === "week"
+                ? n * 7 * 86_400_000
+                : unit === "month"
+                  ? n * 30 * 86_400_000
+                  : n * 365 * 86_400_000;
+    return new Date(Date.now() - ms).toISOString();
+  }
+
+  const abs = new Date(s);
+  if (!Number.isNaN(abs.getTime())) return abs.toISOString();
+  return undefined;
+}
+
 export type SerperRedditOpts = {
   num?: number;
   time?: "d" | "w" | "m" | "y";
@@ -64,12 +98,13 @@ export async function serperRedditSearch(
   for (const hit of j.organic ?? []) {
     const ex = extractReddit(hit.link);
     if (!ex) continue;
+    const date = normalizeSerperDate(hit.date);
     out.push({
       url: hit.link,
       redditId: ex.redditId,
       title: hit.title,
       snippet: hit.snippet ?? "",
-      date: hit.date,
+      ...(date ? { date } : {}),
       sub: ex.sub,
     });
   }

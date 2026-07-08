@@ -54,7 +54,7 @@ const statsSchema = z.object({
   top_threads: z.number(),
   runtime_s: z.number(),
   queries: z.number(),
-  subs_source: z.string(),
+  subs_source: z.enum(['override', 'classifier']),
 });
 
 const classifyIntentSchema = z.object({
@@ -74,8 +74,7 @@ const PRE_RANK_CAP = 60;
 const DEMOTE_PATTERNS: RegExp[] = [
   /^(I|we)\s+(built|launched|created|made|shipped|released)\b/i,
   /show\s*h(n|r)\b/i,
-  /\b(my|our)\s+(startup|saas|tool|app|product|side\s*project)\b/i,
-  /\b(hacked|scam|fraud|phishing)\b/i,
+  /\b(my|our)\s+(startup|saas|tool|app|product|side\s*project)\s+(just\s+)?(launched|released|is\s+live)\b/i,
   /\b(hiring|looking|searching)\s+(a\s+|an\s+|for\s+(a\s+|an\s+)?)?(co-?founder|partner)\b/i,
   /\b(freelance|for\s*hire|available\s*for)\b/i,
   /\b(we|our\s+team)\s+(are|is)\s+(hiring|recruiting)\b/i,
@@ -236,7 +235,7 @@ const fetchThreads = createStep({
         top_threads: ranked.length,
         runtime_s: elapsed,
         queries: validQueries.length,
-        subs_source: inputData.target_subs.join(', '),
+        subs_source: inputData.subsSource,
       },
     };
   },

@@ -26,32 +26,22 @@ async function main() {
   console.log("\n=== Workflow result ===");
   console.log("intent.product_name:", r?.intent && (r.intent as { product_name?: string }).product_name);
 
+  // Matches workflowOutputSchema.top_threads: flat threadSchema[] (not rank/thread wrapper).
   const threads = (r?.top_threads ?? []) as Array<{
-    rank: number;
-    thread: { id: string; sub: string; title: string; author?: string; score?: number; num_comments?: number };
-    buyer_reason?: string;
-    top_quotes?: string[];
+    id: string;
+    sub: string;
+    title: string;
+    author?: string;
+    score?: number;
+    num_comments?: number;
   }>;
-  const dropped = (r?.dropped ?? []) as Array<{ id: string; title: string; drop_reason: string }>;
 
-  console.log("\n--- KEPT (real buyers) ---");
-  for (const t of threads) {
-    console.log(`[${t.rank}] r/${t.thread.sub} score=${t.thread.score} u/${t.thread.author ?? "?"}`);
-    console.log(`    "${t.thread.title.slice(0, 80)}"`);
-    if (t.buyer_reason) console.log(`    why: ${t.buyer_reason}`);
-    if (t.top_quotes) {
-      for (const q of t.top_quotes.slice(0, 2)) {
-        console.log(`    > "${q.slice(0, 100)}${q.length > 100 ? "..." : ""}"`);
-      }
-    }
+  console.log("\n--- TOP THREADS ---");
+  for (const [i, t] of threads.entries()) {
+    const rank = String(i + 1).padStart(2, "0");
+    console.log(`[${rank}] r/${t.sub} score=${t.score ?? "?"} u/${t.author ?? "?"}`);
+    console.log(`    "${t.title.slice(0, 80)}"`);
   }
-
-  console.log(`\n--- DROPPED (${dropped.length}) ---`);
-  for (const d of dropped.slice(0, 10)) {
-    console.log(`  - ${d.title.slice(0, 60)}`);
-    console.log(`    reason: ${d.drop_reason}`);
-  }
-  if (dropped.length > 10) console.log(`  ... +${dropped.length - 10} more`);
 
   console.log("\nstats:", JSON.stringify(r?.stats, null, 2));
 }

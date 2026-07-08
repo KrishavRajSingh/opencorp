@@ -28,35 +28,31 @@ async function main() {
       subsSearch: ["jobs", "jobsearchhacks", "careerguidance", "cscareerquestions", "ExperiencedDevs", "recruitinghell", "AskHR", "jobboard"],
     },
   });
+  // Matches workflowOutputSchema.top_threads: flat threadSchema[] (not rank/thread wrapper).
   const r = out.result as {
     top_threads: Array<{
-      rank: number;
-      thread: { id: string; sub: string; title: string; author?: string; score?: number };
-      buyer_reason?: string;
-      top_quotes?: string[];
+      id: string;
+      sub: string;
+      title: string;
+      author?: string;
+      score?: number;
+      num_comments?: number;
     }>;
-    dropped: Array<{ id: string; title: string; drop_reason: string }>;
-    stats: { threads_scanned: number; top_threads: number; dropped: number };
+    stats: {
+      threads_scanned: number;
+      top_threads: number;
+      runtime_s: number;
+      queries: number;
+      subs_source: string;
+    };
   };
 
-  console.log("\n=== KEPT (real buyers) ===");
-  for (const t of r.top_threads) {
-    console.log(`[${t.rank}] r/${t.thread.sub} score=${t.thread.score} u/${t.thread.author ?? "?"}`);
-    console.log(`    "${t.thread.title.slice(0, 80)}"`);
-    if (t.buyer_reason) console.log(`    why: ${t.buyer_reason}`);
-    if (t.top_quotes) {
-      for (const q of t.top_quotes.slice(0, 1)) {
-        console.log(`    > "${q.slice(0, 100)}${q.length > 100 ? "..." : ""}"`);
-      }
-    }
+  console.log("\n=== TOP THREADS ===");
+  for (const [i, t] of (r.top_threads ?? []).entries()) {
+    const rank = String(i + 1).padStart(2, "0");
+    console.log(`[${rank}] r/${t.sub} score=${t.score ?? "?"} u/${t.author ?? "?"}`);
+    console.log(`    "${t.title.slice(0, 80)}"`);
   }
-
-  console.log(`\n=== DROPPED (${r.dropped.length}) ===`);
-  for (const d of r.dropped.slice(0, 15)) {
-    console.log(`  - ${d.title.slice(0, 60)}`);
-    console.log(`    reason: ${d.drop_reason}`);
-  }
-  if (r.dropped.length > 15) console.log(`  ... +${r.dropped.length - 15} more`);
 
   console.log("\nstats:", JSON.stringify(r.stats, null, 2));
 }
