@@ -60,6 +60,28 @@ const classifyIntentSchema = z.object({
   competitors: z.array(z.object({ name: z.string(), url: z.string().optional().default('') })).optional().default([]).describe('Discovered competitors for deflection queries'),
 });
 
+const topThreadItemSchema = z.object({
+  rank: z.number(),
+  thread: threadSchema,
+  buyer_reason: z.string(),
+  top_quotes: z.array(z.string()),
+});
+
+const droppedItemSchema = z.object({
+  id: z.string(),
+  title: z.string(),
+  drop_reason: z.string(),
+});
+
+const statsSchema = z.object({
+  threads_scanned: z.number(),
+  top_threads: z.number(),
+  dropped: z.number(),
+  runtime_s: z.number(),
+  queries: z.number(),
+  subs_source: z.string(),
+});
+
 const classifyIntent = createStep({
   id: 'classify-intent',
   description: 'Generate 3-5 sharp query angles + pain signals + subs from product context',
@@ -234,29 +256,9 @@ const curateThreads = createStep({
     generated_at: z.string(),
     pipeline_cost_usd: z.number(),
     intent: intentSchema,
-    top_threads: z.array(
-      z.object({
-        rank: z.number(),
-        thread: threadSchema,
-        buyer_reason: z.string(),
-        top_quotes: z.array(z.string()),
-      }),
-    ),
-    dropped: z.array(
-      z.object({
-        id: z.string(),
-        title: z.string(),
-        drop_reason: z.string(),
-      }),
-    ),
-    stats: z.object({
-      threads_scanned: z.number(),
-      top_threads: z.number(),
-      dropped: z.number(),
-      runtime_s: z.number(),
-      queries: z.number(),
-      subs_source: z.string(),
-    }),
+    top_threads: z.array(topThreadItemSchema),
+    dropped: z.array(droppedItemSchema),
+    stats: statsSchema,
   }),
   execute: async ({ inputData, mastra }) => {
     if (!inputData) throw new Error('input required');
@@ -339,8 +341,7 @@ Output strict JSON: { top_threads: [{ rank, thread_id, buyer_reason, top_quotes:
 
     const findThread = (id: string) =>
       threads.find((ot) => ot.id === id) ??
-      threads.find((ot) => ot.link.includes(id)) ??
-      threads[0];
+      threads.find((ot) => ot.link.includes(id));
 
     const curatedThreads = (parsed.top_threads ?? []).map((t) => {
       const orig = findThread(t.thread_id);
@@ -390,9 +391,9 @@ const gtmRedditScanWorkflow = createWorkflow({
     generated_at: z.string(),
     pipeline_cost_usd: z.number(),
     intent: intentSchema,
-    top_threads: z.array(z.any()),
-    dropped: z.array(z.any()),
-    stats: z.any(),
+    top_threads: z.array(topThreadItemSchema),
+    dropped: z.array(droppedItemSchema),
+    stats: statsSchema,
   }),
 })
   .then(classifyIntent)
