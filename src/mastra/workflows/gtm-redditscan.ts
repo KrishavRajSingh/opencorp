@@ -49,6 +49,14 @@ const threadSchema = z.object({
   fullname: z.string().optional(),
 });
 
+const statsSchema = z.object({
+  threads_scanned: z.number(),
+  top_threads: z.number(),
+  runtime_s: z.number(),
+  queries: z.number(),
+  subs_source: z.string(),
+});
+
 const classifyIntentSchema = z.object({
   userQuery: z.string(),
   productName: z.string(),
@@ -60,31 +68,27 @@ const classifyIntentSchema = z.object({
   competitors: z.array(z.object({ name: z.string(), url: z.string().optional().default('') })).optional().default([]).describe('Discovered competitors for deflection queries'),
 });
 
-const topThreadItemSchema = z.object({
-  rank: z.number(),
-  thread: threadSchema,
-  buyer_reason: z.string(),
-  top_quotes: z.array(z.string()),
-});
+const PRE_RANK_CAP = 60;
 
-const droppedItemSchema = z.object({
-  id: z.string(),
-  title: z.string(),
-  drop_reason: z.string(),
-});
+// Regex patterns for obvious non-buyer threads that engagement may miss
+const DEMOTE_PATTERNS: RegExp[] = [
+  /^(I|we)\s+(built|launched|created|made|shipped|released)\b/i,
+  /show\s*h(n|r)\b/i,
+  /\b(my|our)\s+(startup|saas|tool|app|product|side\s*project)\b/i,
+  /\b(hacked|scam|fraud|phishing)\b/i,
+  /\b(hiring|looking|searching)\s+(a\s+|an\s+|for\s+(a\s+|an\s+)?)?(co-?founder|partner)\b/i,
+  /\b(freelance|for\s*hire|available\s*for)\b/i,
+  /\b(we|our\s+team)\s+(are|is)\s+(hiring|recruiting)\b/i,
+];
 
-const statsSchema = z.object({
-  threads_scanned: z.number(),
-  top_threads: z.number(),
-  dropped: z.number(),
-  runtime_s: z.number(),
-  queries: z.number(),
-  subs_source: z.string(),
-});
+function isBuyerThread(t: z.infer<typeof threadSchema>): boolean {
+  const text = `${t.title} ${t.content ?? ''}`;
+  return !DEMOTE_PATTERNS.some((re) => re.test(text));
+}
 
 const classifyIntent = createStep({
   id: 'classify-intent',
-  description: 'Generate 3-5 sharp query angles + pain signals + subs from product context',
+  description: 'Generate pain signals + target subs + deflection queries from product context',
   inputSchema: classifyIntentSchema,
   outputSchema: intentSchema.extend({
     subsSource: z.enum(['override', 'classifier']),
@@ -158,26 +162,26 @@ Output strict JSON with EXACTLY 4 fields: pain_signals, target_subs, exclude_pat
   },
 });
 
+const workflowOutputSchema = z.object({
+  run_id: z.string(),
+  generated_at: z.string(),
+  pipeline_cost_usd: z.number(),
+  intent: intentSchema,
+  top_threads: z.array(threadSchema),
+  stats: statsSchema,
+});
+
 const fetchThreads = createStep({
   id: 'fetch-threads',
-  description: 'Run pain_signals + competitor_deflection_queries in parallel against Google site:reddit.com, scoped to target_subs',
+  description: 'Run pain_signals + competitor_deflection_queries in parallel against Google site:reddit.com, dedupe, apply regex demote, sort by engagement',
   inputSchema: intentSchema.extend({
     subsSource: z.enum(['override', 'classifier']),
     usedQueries: z.array(z.string()),
   }),
-  outputSchema: z.object({
-    intent: intentSchema,
-    threads: z.array(threadSchema),
-    fetchedSubs: z.array(z.string()),
-    failedQueries: z.array(z.object({ query: z.string(), status: z.number() })),
-    validQueries: z.array(z.string()),
-    fetchDurationMs: z.number(),
-  }),
+  outputSchema: workflowOutputSchema,
   execute: async ({ inputData }) => {
     if (!inputData) throw new Error('intent required');
     const t0 = Date.now();
-    const acc: z.infer<typeof threadSchema>[] = [];
-    const failedQueries: Array<{ query: string; status: number }> = [];
 
     const validPainSignals = inputData.pain_signals.filter(isValidQueryPhrase);
     const validDeflections = (inputData.competitor_deflection_queries ?? []).filter(isValidQueryPhrase);
@@ -192,7 +196,7 @@ const fetchThreads = createStep({
     }
     const validQueries = allQueries.slice(0, 12);
 
-    const threads = await fetchGoogleRedditThreads({
+    const rawThreads = await fetchGoogleRedditThreads({
       queries: validQueries,
       subs: inputData.target_subs,
       limit: 5,
@@ -202,13 +206,19 @@ const fetchThreads = createStep({
       return [];
     });
 
-    if (threads.length === 0 && validQueries.length > 0) {
-      failedQueries.push({ query: validQueries[0]!, status: 500 });
-    }
+    const deduped = dedupe(rawThreads);
+    const buyers = deduped.filter(isBuyerThread);
 
-    for (const t of threads) acc.push(t as z.infer<typeof threadSchema>);
+    // Order preserved from dedupe: per-query Google's site:reddit.com ranking,
+    // grouped by query, deduped by reddit_id. Cap at PRE_RANK_CAP.
+    const ranked = buyers.slice(0, PRE_RANK_CAP);
+
+    const elapsed = (Date.now() - t0) / 1000;
 
     return {
+      run_id: `run_${Date.now().toString(36)}`,
+      generated_at: new Date().toISOString(),
+      pipeline_cost_usd: 0,
       intent: {
         product_name: inputData.product_name,
         product_context: inputData.product_context,
@@ -220,11 +230,14 @@ const fetchThreads = createStep({
         exclude_patterns: inputData.exclude_patterns,
         competitor_deflection_queries: inputData.competitor_deflection_queries ?? [],
       },
-      threads: dedupe(acc),
-      fetchedSubs: inputData.target_subs,
-      failedQueries,
-      validQueries,
-      fetchDurationMs: Date.now() - t0,
+      top_threads: ranked,
+      stats: {
+        threads_scanned: deduped.length,
+        top_threads: ranked.length,
+        runtime_s: elapsed,
+        queries: validQueries.length,
+        subs_source: inputData.target_subs.join(', '),
+      },
     };
   },
 });
@@ -240,165 +253,13 @@ function dedupe(threads: z.infer<typeof threadSchema>[]): z.infer<typeof threadS
   return out;
 }
 
-const curateThreads = createStep({
-  id: 'curate-threads',
-  description: 'Single LLM call: decide is_buyer per thread, drop non-buyers, pin 2-3 quotes per kept, write headline',
-  inputSchema: z.object({
-    intent: intentSchema,
-    threads: z.array(threadSchema),
-    fetchedSubs: z.array(z.string()),
-    failedQueries: z.array(z.object({ query: z.string(), status: z.number() })),
-    validQueries: z.array(z.string()),
-    fetchDurationMs: z.number(),
-  }),
-  outputSchema: z.object({
-    run_id: z.string(),
-    generated_at: z.string(),
-    pipeline_cost_usd: z.number(),
-    intent: intentSchema,
-    top_threads: z.array(topThreadItemSchema),
-    dropped: z.array(droppedItemSchema),
-    stats: statsSchema,
-  }),
-  execute: async ({ inputData, mastra }) => {
-    if (!inputData) throw new Error('input required');
-    const { intent, threads, validQueries } = inputData;
-    const agent = mastra?.getAgent('gtmSynth');
-    if (!agent) throw new Error('gtmSynth not registered');
-
-    if (threads.length === 0) {
-      return {
-        run_id: `run_${Date.now().toString(36)}`,
-        generated_at: new Date().toISOString(),
-        pipeline_cost_usd: 0,
-        intent,
-        top_threads: [],
-        dropped: [],
-        stats: {
-          threads_scanned: 0,
-          top_threads: 0,
-          dropped: 0,
-          runtime_s: 0,
-          queries: validQueries.length,
-          subs_source: intent.target_subs.join(', '),
-        },
-      };
-    }
-
-    const PRE_RANK_CAP = 60;
-    const rankedThreads = [...threads]
-      .map((t) => ({
-        t,
-        engagement: (t.score ?? 0) + 0.5 * (t.num_comments ?? 0),
-      }))
-      .sort((a, b) => b.engagement - a.engagement)
-      .slice(0, PRE_RANK_CAP)
-      .map((x) => x.t);
-
-    const threadTable = rankedThreads
-      .map(
-        (t, i) =>
-          `[T${i}] [id=${t.id}] [r/${t.sub}] [score=${t.score ?? '?'} comments=${t.num_comments ?? '?'}] [u/${t.author ?? '?'}]\nTitle: ${t.title}\nBody: ${(t.content ?? '').slice(0, 500)}`,
-      )
-      .join('\n\n');
-
-    const prompt = `PRODUCT: ${intent.product_name}
-AUDIENCE: ${intent.personas.join(', ') || intent.product_context}
-PAIN SIGNALS: ${intent.pain_signals.join(', ')}
-SUBS: ${intent.target_subs.join(', ')}
-
-THREADS (${threads.length} fetched across ${validQueries.length} queries):
-${threadTable}
-
-For each thread, decide is_buyer (true if OP is shopping/comparing or expressing pain the product solves; false if pitching service, freelance for hire, own product launch, venting without need, recruiting, off-topic).
-
-Keep best 5-10 buyers. Drop the rest with a one-line reason.
-
-Output strict JSON: { top_threads: [{ rank, thread_id, buyer_reason, top_quotes: [verbatim1, verbatim2] }], dropped: [{ thread_id, drop_reason }] }`;
-
-    const t0 = Date.now();
-    const response = await agent.stream([{ role: 'user', content: prompt }]);
-    let text = '';
-    for await (const chunk of response.textStream) text += chunk;
-    const elapsed = (Date.now() - t0) / 1000;
-
-    let parsed: {
-      top_threads: Array<{
-        rank: number;
-        thread_id: string;
-        buyer_reason: string;
-        top_quotes: string[];
-      }>;
-      dropped: Array<{ thread_id: string; drop_reason: string }>;
-    };
-    try {
-      parsed = JSON.parse(text);
-    } catch {
-      const m = text.match(/\{[\s\S]*\}/);
-      if (!m) throw new Error('Curator returned no JSON');
-      parsed = JSON.parse(m[0]);
-    }
-
-    const findThread = (id: string) =>
-      threads.find((ot) => ot.id === id) ??
-      threads.find((ot) => ot.link.includes(id));
-
-    const curatedThreads = (parsed.top_threads ?? []).map((t) => {
-      const orig = findThread(t.thread_id);
-      return {
-        rank: t.rank,
-        thread: orig ?? { id: t.thread_id, sub: 'unknown', title: 'Unknown', link: '' },
-        buyer_reason: t.buyer_reason ?? '',
-        top_quotes: (t.top_quotes ?? []).filter((q) => q && q !== 'N/A'),
-      };
-    });
-
-    const dropped = (parsed.dropped ?? [])
-      .map((d) => {
-        const orig = findThread(d.thread_id);
-        return {
-          id: d.thread_id,
-          title: orig?.title ?? '(unknown)',
-          drop_reason: d.drop_reason ?? '',
-        };
-      })
-      .filter((d) => !curatedThreads.some((c) => c.thread.id === d.id));
-
-    return {
-      run_id: `run_${Date.now().toString(36)}`,
-      generated_at: new Date().toISOString(),
-      pipeline_cost_usd: 0,
-      intent,
-      top_threads: curatedThreads,
-      dropped,
-      stats: {
-        threads_scanned: threads.length,
-        top_threads: curatedThreads.length,
-        dropped: dropped.length,
-        runtime_s: elapsed,
-        queries: validQueries.length,
-        subs_source: intent.target_subs.join(', '),
-      },
-    };
-  },
-});
-
 const gtmRedditScanWorkflow = createWorkflow({
   id: 'gtm-redditscan',
   inputSchema: classifyIntentSchema,
-  outputSchema: z.object({
-    run_id: z.string(),
-    generated_at: z.string(),
-    pipeline_cost_usd: z.number(),
-    intent: intentSchema,
-    top_threads: z.array(topThreadItemSchema),
-    dropped: z.array(droppedItemSchema),
-    stats: statsSchema,
-  }),
+  outputSchema: workflowOutputSchema,
 })
   .then(classifyIntent)
-  .then(fetchThreads)
-  .then(curateThreads);
+  .then(fetchThreads);
 
 gtmRedditScanWorkflow.commit();
 

@@ -40,7 +40,6 @@ const redditScanResultSchema = z.object({
   run_id: z.string().optional(),
   generated_at: z.string().optional(),
   top_threads: z.array(z.any()).optional().default([]),
-  dropped: z.array(z.any()).optional().default([]),
 }).passthrough();
 
 const baseSchema = z.object({

@@ -1,32 +1,26 @@
 "use client";
 
-import { useState } from "react";
-import { ChevronDown, ExternalLink, Target } from "lucide-react";
+import { Lock, ExternalLink, Mail, Target } from "lucide-react";
+import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 
 export type GtmBriefThread = {
-  rank: number;
-  thread: {
-    id: string;
-    sub: string;
-    title: string;
-    link: string;
-    author?: string;
-    updated?: string;
-    score?: number;
-    num_comments?: number;
-  };
-  buyer_reason?: string;
-  top_quotes?: string[];
+  id: string;
+  sub: string;
+  title: string;
+  link: string;
+  author?: string;
+  updated?: string;
+  score?: number;
+  num_comments?: number;
 };
 
 export type GtmBrief = {
   run_id?: string;
   generated_at?: string;
   top_threads: GtmBriefThread[];
-  dropped?: Array<{ id: string; title: string; drop_reason: string }>;
 };
 
 function ageLabel(updated?: string): string {
@@ -40,125 +34,143 @@ function ageLabel(updated?: string): string {
   return `${Math.round(days / 7)}w`;
 }
 
-export function GtmBriefView({ brief }: { brief: GtmBrief }) {
-  const droppedCount = brief.dropped?.length ?? 0;
-  const [droppedOpen, setDroppedOpen] = useState(false);
+const ANON_PREVIEW_COUNT = 5;
+
+function ThreadRow({ t, rank }: { t: GtmBriefThread; rank: number }) {
+  return (
+    <article className="rounded-md border border-border/40 bg-card/30 p-3">
+      <div className="flex items-start gap-2">
+        <span className="mt-0.5 grid size-6 shrink-0 place-items-center rounded bg-[#FF4500]/10 font-mono text-[10px] font-semibold text-[#FF4500]">
+          {rank}
+        </span>
+        <div className="min-w-0 flex-1">
+          <a
+            href={t.link}
+            target="_blank"
+            rel="noreferrer"
+            className="group flex items-start gap-1 text-sm font-medium leading-tight hover:text-[#FF4500]"
+          >
+            <span className="line-clamp-2">{t.title}</span>
+            <ExternalLink className="mt-0.5 size-3 shrink-0 opacity-0 transition-opacity group-hover:opacity-100" />
+          </a>
+          <div className="mt-1.5 flex flex-wrap items-center gap-1.5 font-mono text-[10px] text-muted-foreground">
+            <Badge variant="outline" className="h-4 px-1 text-[10px]">
+              r/{t.sub}
+            </Badge>
+            {t.author && <span>u/{t.author}</span>}
+            {t.updated && <span>· {ageLabel(t.updated)} ago</span>}
+            {typeof t.score === "number" && (
+              <span>· {t.score} pts</span>
+            )}
+            {typeof t.num_comments === "number" && (
+              <span>· {t.num_comments} comments</span>
+            )}
+          </div>
+        </div>
+      </div>
+    </article>
+  );
+}
+
+function LockedRow({ rank, title }: { rank: number; title: string }) {
+  return (
+    <div className="flex items-start gap-2 rounded-md border border-dashed border-border/30 bg-card/10 px-3 py-2 opacity-60">
+      <span className="mt-0.5 grid size-6 shrink-0 place-items-center rounded bg-muted-foreground/10 font-mono text-[10px] font-semibold text-muted-foreground/50">
+        {String(rank).padStart(2, "0")}
+      </span>
+      <div className="min-w-0 flex-1">
+        <p className="line-clamp-2 text-xs font-medium text-muted-foreground/70">
+          {title}
+        </p>
+      </div>
+      <Lock className="mt-0.5 size-3 shrink-0 text-muted-foreground/40" />
+    </div>
+  );
+}
+
+export function GtmBriefView({
+  brief,
+  isAuthed = true,
+  signupHref = "/auth/sign-up",
+}: {
+  brief: GtmBrief;
+  isAuthed?: boolean;
+  signupHref?: string;
+}) {
+  const totalCount = brief.top_threads.length;
+  const hiddenCount = Math.max(0, totalCount - ANON_PREVIEW_COUNT);
+  const visibleThreads = isAuthed
+    ? brief.top_threads
+    : brief.top_threads.slice(0, ANON_PREVIEW_COUNT);
 
   return (
     <div className="space-y-6">
-      {brief.top_threads.length > 0 && (
+      {totalCount > 0 && (
         <Card>
           <CardHeader className="pb-3">
             <CardTitle className="flex items-center gap-2 text-base">
               <Target className="size-4 text-[#FF4500]" />
-              Top threads ({brief.top_threads.length})
+              <span>
+                {totalCount} threads found, ranked by relevance
+              </span>
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
-            {brief.top_threads.map((t) => (
-              <article
-                key={t.thread.id}
-                className="rounded-md border border-border/40 bg-card/30 p-3"
-              >
-                <div className="flex items-start gap-2">
-                  <span className="mt-0.5 grid size-6 shrink-0 place-items-center rounded bg-[#FF4500]/10 font-mono text-[10px] font-semibold text-[#FF4500]">
-                    {t.rank}
-                  </span>
-                  <div className="min-w-0 flex-1">
-                    <a
-                      href={t.thread.link}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="group flex items-start gap-1 text-sm font-medium leading-tight hover:text-[#FF4500]"
-                    >
-                      <span className="line-clamp-2">{t.thread.title}</span>
-                      <ExternalLink className="mt-0.5 size-3 shrink-0 opacity-0 transition-opacity group-hover:opacity-100" />
-                    </a>
-                    <div className="mt-1.5 flex flex-wrap items-center gap-1.5 font-mono text-[10px] text-muted-foreground">
-                      <Badge variant="outline" className="h-4 px-1 text-[10px]">
-                        r/{t.thread.sub}
-                      </Badge>
-                      {t.thread.author && <span>u/{t.thread.author}</span>}
-                      {t.thread.updated && <span>· {ageLabel(t.thread.updated)} ago</span>}
-                      {typeof t.thread.score === "number" && (
-                        <span>· {t.thread.score} pts</span>
-                      )}
-                      {typeof t.thread.num_comments === "number" && (
-                        <span>· {t.thread.num_comments} comments</span>
-                      )}
-                    </div>
-                  </div>
-                </div>
-
-                {t.top_quotes && t.top_quotes.length > 0 && (
-                  <div className="mt-2 space-y-1.5">
-                    {t.top_quotes.slice(0, 3).map((q, qi) => (
-                      <blockquote
-                        key={qi}
-                        className="border-l-2 border-[#FF4500]/40 pl-2 text-xs italic text-muted-foreground"
-                      >
-                        &ldquo;{q}&rdquo;
-                      </blockquote>
-                    ))}
-                  </div>
-                )}
-
-                {t.buyer_reason && (
-                  <p className="mt-2 text-[11px] text-foreground/70">
-                    <span className="font-mono uppercase tracking-wider text-[#FF4500]/80">why</span>{" "}
-                    {t.buyer_reason}
-                  </p>
-                )}
-              </article>
+            {visibleThreads.map((t, i) => (
+              <ThreadRow key={t.id} t={t} rank={i + 1} />
             ))}
+
+            {!isAuthed && hiddenCount > 0 && (
+              <>
+                {brief.top_threads
+                  .slice(ANON_PREVIEW_COUNT)
+                  .map((t, i) => (
+                    <LockedRow
+                      key={t.id}
+                      rank={i + 1 + ANON_PREVIEW_COUNT}
+                      title={t.title}
+                    />
+                  ))}
+              </>
+            )}
           </CardContent>
         </Card>
       )}
 
-      {droppedCount > 0 && (
-        <div className="rounded-md border border-border/30 bg-card/20">
-          <button
-            type="button"
-            onClick={() => setDroppedOpen((p) => !p)}
-            className="flex w-full items-center justify-between px-3 py-2 font-mono text-[11px] text-muted-foreground/80 transition-colors hover:text-foreground/90"
-          >
-            <span>
-              <span className="text-foreground/80">{droppedCount}</span> dropped
-              threads
-            </span>
-            <ChevronDown
+      {!isAuthed && hiddenCount > 0 && (
+        <Card className="border-[#FF4500]/30 bg-[#FF4500]/5">
+          <CardContent className="space-y-2 py-4">
+            <div className="flex items-start gap-2">
+              <Lock className="mt-0.5 size-4 shrink-0 text-[#FF4500]/80" />
+              <div className="min-w-0 flex-1">
+                <p className="text-sm font-medium text-foreground/90">
+                  {hiddenCount} more threads behind signup
+                </p>
+                <p className="mt-0.5 text-xs text-muted-foreground/75">
+                  Sign up to see all {totalCount} ranked threads, full
+                  conversation context, and a list of target subreddits to track.
+                </p>
+              </div>
+            </div>
+            <Link
+              href={signupHref}
               className={cn(
-                "size-3.5 transition-transform",
-                droppedOpen && "rotate-180",
+                "mt-2 inline-flex w-full items-center justify-center gap-1.5 rounded-md border bg-background/60 px-3 py-2 text-xs font-medium transition-all",
+                "border-[#FF4500]/40 text-foreground hover:border-[#FF4500]/70 hover:bg-[#FF4500]/10",
               )}
-            />
-          </button>
-          {droppedOpen && (
-            <ul className="space-y-1.5 border-t border-border/30 px-3 py-2.5 text-[11px]">
-              {brief.dropped!.map((d) => (
-                <li
-                  key={d.id}
-                  className="flex items-start gap-2 leading-snug text-muted-foreground/85"
-                >
-                  <span className="mt-1 inline-block size-1 shrink-0 rounded-full bg-muted-foreground/40" />
-                  <div className="min-w-0 flex-1">
-                    <p className="truncate text-foreground/80">
-                      &ldquo;{d.title.slice(0, 80)}
-                      {d.title.length > 80 ? "..." : ""}&rdquo;
-                    </p>
-                    <p className="mt-0.5 text-muted-foreground/60">
-                      {d.drop_reason}
-                    </p>
-                  </div>
-                </li>
-              ))}
-            </ul>
-          )}
-        </div>
+            >
+              <Mail className="size-3.5" />
+              Sign up to unlock {hiddenCount} more threads
+            </Link>
+          </CardContent>
+        </Card>
       )}
 
       <p className="text-center font-mono text-[10px] text-muted-foreground/60">
-        Generated by opencorp{brief.generated_at ? ` · ${new Date(brief.generated_at).toLocaleString()}` : ""}
+        Generated by opencorp
+        {brief.generated_at
+          ? ` · ${new Date(brief.generated_at).toLocaleString()}`
+          : ""}
       </p>
     </div>
   );

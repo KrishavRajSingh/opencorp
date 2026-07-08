@@ -364,6 +364,8 @@ type ConsoleProps = {
   onToggleSubsSearch: () => void;
   onChangeSubsSearch: (next: string[]) => void;
   readOnly?: boolean;
+  isAuthed: boolean;
+  signupHref: string;
 };
 
 function Console({
@@ -391,6 +393,8 @@ function Console({
   onToggleSubsSearch,
   onChangeSubsSearch,
   readOnly = false,
+  isAuthed,
+  signupHref,
 }: ConsoleProps) {
   const domain = (() => {
     try {
@@ -631,7 +635,11 @@ function Console({
               )}
             </div>
             {redditScan && (redditScan.top_threads?.length ?? 0) > 0 ? (
-              <GtmBriefView brief={redditScan} />
+              <GtmBriefView
+                brief={redditScan}
+                isAuthed={isAuthed}
+                signupHref={signupHref}
+              />
             ) : loadingReddit ? (
               <DinoLoader
                 instanceKey="reddit"
@@ -747,6 +755,8 @@ export function SessionViewClient({
   hnResult: initialHNResult,
   redditScan: initialRedditScan = null,
   readOnly = false,
+  isAuthed = !readOnly,
+  signupHref = "/auth/sign-up",
 }: {
   sessionId: string;
   product: ProductResult;
@@ -754,6 +764,8 @@ export function SessionViewClient({
   hnResult: HNResult | null;
   redditScan?: RedditScanResult | null;
   readOnly?: boolean;
+  isAuthed?: boolean;
+  signupHref?: string;
 }) {
   const router = useRouter();
   const [competitors, setCompetitors] = useState<CompetitorResult | null>(
@@ -1280,6 +1292,8 @@ export function SessionViewClient({
             onToggleSubsSearch={() => setSubsSearchOpen((p) => !p)}
             onChangeSubsSearch={setSubsSearch}
             readOnly={readOnly}
+            isAuthed={isAuthed}
+            signupHref={signupHref}
           />
         </div>
       </div>

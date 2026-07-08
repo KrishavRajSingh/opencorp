@@ -1,5 +1,6 @@
 import { notFound, redirect } from "next/navigation";
 import { createClient, isAuthEnabled } from "@/lib/supabase/server";
+import { getAuthedUser } from "@/lib/supabase/auth";
 import { SessionViewClient } from "../session-view-client";
 import { fetchSession } from "../data";
 
@@ -40,12 +41,15 @@ type RedditScanResult = {
   run_id?: string;
   generated_at?: string;
   top_threads?: Array<{
-    rank: number;
-    thread: { id: string; sub: string; title: string; link: string; author?: string; updated?: string; score?: number; num_comments?: number };
-    buyer_reason?: string;
-    top_quotes?: string[];
+    id: string;
+    sub: string;
+    title: string;
+    link: string;
+    author?: string;
+    updated?: string;
+    score?: number;
+    num_comments?: number;
   }>;
-  dropped?: Array<{ id: string; title: string; drop_reason: string }>;
 };
 
 export default async function SessionPage({
@@ -79,7 +83,13 @@ export default async function SessionPage({
 
   const competitors = session.competitor_result as CompetitorResult | null;
   const hnThreads = session.hn_threads_result as HNResult | null;
-  const redditScan = session.reddit_scan_result as RedditScanResult | null;
+  const rawRedditScan = session.reddit_scan_result as (RedditScanResult & { dropped?: unknown }) | null;
+  const redditScan: RedditScanResult | null = rawRedditScan
+    ? { run_id: rawRedditScan.run_id, generated_at: rawRedditScan.generated_at, top_threads: rawRedditScan.top_threads }
+    : null;
+
+  const auth = await getAuthedUser();
+  const isAuthed = "user" in auth ? auth.user.email !== null : false;
 
   return (
     <SessionViewClient
@@ -88,6 +98,7 @@ export default async function SessionPage({
       competitors={competitors}
       hnResult={hnThreads}
       redditScan={redditScan as never}
+      isAuthed={isAuthed}
     />
   );
 }

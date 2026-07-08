@@ -99,6 +99,15 @@ async function main() {
     "competitor_deflection_queries:",
     JSON.stringify(r.intent.competitor_deflection_queries, null, 2),
   );
+
+  const brief = (out as { result?: { top_threads?: Array<{ id: string; title: string; sub: string }> } }).result;
+  if (brief?.top_threads) {
+    console.log(`\n=== Top threads (Google per-query, deduped) ===`);
+    console.log(`showing ${brief.top_threads.length} threads (grouped by query, dedupe by id):`);
+    for (const [i, t] of brief.top_threads.entries()) {
+      console.log(`  #${String(i + 1).padStart(2, "0")} [r/${t.sub}] ${t.title.slice(0, 70)}`);
+    }
+  }
 }
 
 main().catch((err) => {
