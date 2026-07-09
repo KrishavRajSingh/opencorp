@@ -47,10 +47,10 @@ export async function POST(request: Request) {
       { status: 200, headers: { "Content-Type": "application/json" } },
     );
   } catch (err) {
-    const message = err instanceof Error ? err.message : "Failed to trigger task";
-    return new Response(JSON.stringify({ error: message }), {
+    console.error("[api/research/reddit] trigger failed:", err);
+    return new Response(JSON.stringify({ error: "Failed to trigger task" }), {
       status: 500,
-      headers: { "Content-Type": "application/json" } },
-    );
+      headers: { "Content-Type": "application/json" },
+    });
   }
 }

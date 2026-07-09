@@ -1,10 +1,14 @@
 "use client";
 
-import { Lock, ExternalLink } from "lucide-react";
-import Link from "next/link";
+import { ExternalLink } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { RedditIcon } from "@/components/dashboard/reddit-icon";
+import {
+  ANON_PREVIEW_COUNT,
+  LockedThreadRow,
+  SignupUnlockBar,
+} from "@/components/dashboard/thread-gate";
 
 export type GtmBriefThread = {
   id: string;
@@ -33,8 +37,6 @@ function ageLabel(updated?: string): string {
   if (days < 7) return `${Math.round(days)}d`;
   return `${Math.round(days / 7)}w`;
 }
-
-const ANON_PREVIEW_COUNT = 5;
 
 function ThreadRow({ t, rank }: { t: GtmBriefThread; rank: number }) {
   return (
@@ -68,20 +70,6 @@ function ThreadRow({ t, rank }: { t: GtmBriefThread; rank: number }) {
       </div>
       <ExternalLink className="mt-1 size-3 shrink-0 text-muted-foreground/40 opacity-0 transition-opacity group-hover/thread:opacity-100" />
     </a>
-  );
-}
-
-function LockedRow({ rank, title }: { rank: number; title: string }) {
-  return (
-    <div className="flex items-start gap-2 rounded-md px-1.5 py-1.5 opacity-55">
-      <span className="mt-0.5 w-5 shrink-0 text-right font-mono text-[10px] tabular-nums text-muted-foreground/40">
-        {String(rank).padStart(2, "0")}
-      </span>
-      <div className="min-w-0 flex-1">
-        <p className="line-clamp-2 text-xs text-foreground/55">{title}</p>
-      </div>
-      <Lock className="mt-1 size-3 shrink-0 text-muted-foreground/40" />
-    </div>
   );
 }
 
@@ -133,24 +121,10 @@ export function GtmBriefView({
             ))}
 
             {!isAuthed && hiddenCount > 0 && (
-              <div className="mt-4 flex items-center justify-between gap-3 border-t border-dashed border-border/60 pt-3.5">
-                <p className="flex min-w-0 items-center gap-1.5 text-xs text-muted-foreground/75">
-                  <Lock className="size-3.5 shrink-0 text-brand/80" />
-                  <span className="truncate">
-                    <span className="font-medium text-foreground/85">
-                      {hiddenCount} more threads
-                    </span>{" "}
-                    behind signup
-                  </span>
-                </p>
-                <Link
-                  href={signupHref}
-                  className="inline-flex shrink-0 items-center gap-1 text-xs font-medium text-brand hover:underline"
-                >
-                  Sign up to unlock
-                  <span aria-hidden>→</span>
-                </Link>
-              </div>
+              <SignupUnlockBar
+                hiddenCount={hiddenCount}
+                signupHref={signupHref}
+              />
             )}
 
             {!isAuthed && hiddenCount > 0 && (
@@ -158,7 +132,7 @@ export function GtmBriefView({
                 {brief.top_threads
                   .slice(ANON_PREVIEW_COUNT)
                   .map((t, i) => (
-                    <LockedRow
+                    <LockedThreadRow
                       key={t.id}
                       rank={i + 1 + ANON_PREVIEW_COUNT}
                       title={t.title}

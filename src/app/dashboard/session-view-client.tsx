@@ -8,7 +8,6 @@ import {
   type ReactNode,
 } from "react";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
 import { motion, useReducedMotion } from "motion/react";
 import {
   AlertTriangle,
@@ -16,7 +15,6 @@ import {
   ChevronDown,
   ExternalLink,
   Link2,
-  Lock,
   Share2,
   Check,
 } from "lucide-react";
@@ -26,6 +24,11 @@ import { HNIcon } from "@/components/dashboard/hn-icon";
 import { RedditIcon } from "@/components/dashboard/reddit-icon";
 import { Card, CardContent } from "@/components/ui/card";
 import { GtmBriefView, type GtmBrief } from "@/components/ai-elements/gtm-brief";
+import {
+  ANON_PREVIEW_COUNT,
+  LockedThreadRow,
+  SignupUnlockBar,
+} from "@/components/dashboard/thread-gate";
 import type { HNThread } from "@/app/dashboard/hn-threads-block";
 import { cn } from "@/lib/utils";
 
@@ -139,6 +142,9 @@ function ProductHeader({
   loadingCompetitors: boolean;
   onReFindCompetitors: () => void;
 }) {
+  const reduceMotion = useReducedMotion();
+  const alts = competitors?.competitors ?? [];
+
   return (
     <div className="space-y-5">
       <div className="flex items-start gap-3.5">
@@ -219,10 +225,17 @@ function ProductHeader({
 
       <div className="border-t border-dashed border-border/40 pt-4">
         <div className="mb-2.5 flex items-center justify-between gap-2">
-          <span className="font-heading text-[10px] tracking-widest uppercase text-muted-foreground/60">
-            Alternatives on the market
-          </span>
-          {!loadingCompetitors && competitors && competitors.competitors.length > 0 && (
+          <div className="flex items-baseline gap-2">
+            <span className="font-heading text-[10px] tracking-widest uppercase text-muted-foreground/60">
+              Alternatives on the market
+            </span>
+            {alts.length > 0 && (
+              <span className="font-mono text-[10px] tabular-nums text-brand/70">
+                {String(alts.length).padStart(2, "0")}
+              </span>
+            )}
+          </div>
+          {!loadingCompetitors && competitors && (
             <button
               type="button"
               onClick={onReFindCompetitors}
@@ -240,34 +253,71 @@ function ProductHeader({
             sublabel="Searching the web for products that overlap with this one. Usually 3–5 minutes."
             tone="brand"
           />
-        ) : competitors && competitors.competitors.length > 0 ? (
-          <div className="grid grid-cols-1 gap-1.5 sm:grid-cols-2">
-            {competitors.competitors.slice(0, 10).map((c, i) => (
-              <a
-                key={i}
-                href={c.url || "#"}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="group/alt flex items-center gap-2 rounded-md border border-border/40 bg-card/30 px-2.5 py-1.5 transition-all hover:border-brand/40 hover:bg-card/60"
-              >
-                <ProductFavicon
-                  url={c.url}
-                  size={14}
-                  rounded="sm"
-                  className="ring-1 ring-border/30"
-                />
-                <span className="min-w-0 flex-1 truncate text-xs text-foreground/85 group-hover/alt:text-foreground">
-                  {c.name}
-                </span>
-                <ExternalLink className="size-2.5 shrink-0 text-muted-foreground/30 group-hover/alt:text-brand/60" />
-              </a>
-            ))}
-            {competitors.competitors.length > 10 && (
-              <div className="col-span-full px-2.5 font-mono text-[10px] text-muted-foreground/60">
-                +{competitors.competitors.length - 10} more
-              </div>
+        ) : alts.length > 0 ? (
+          <div
+            className={cn(
+              "relative max-h-[min(28rem,55vh)] overflow-y-auto overscroll-contain pr-0.5",
+              // soft fade so a long stack still feels intentional, not endless
+              alts.length > 6 &&
+                "mask-[linear-gradient(to_bottom,black_0%,black_88%,transparent_100%)]",
             )}
+          >
+            <ul className="grid grid-cols-1 gap-1.5 sm:grid-cols-2">
+              {alts.map((c, i) => (
+                <motion.li
+                  key={`${c.url || c.name}-${i}`}
+                  initial={reduceMotion ? false : { opacity: 0, y: 6 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={
+                    reduceMotion
+                      ? { duration: 0 }
+                      : { delay: Math.min(i * 0.03, 0.36), duration: 0.28 }
+                  }
+                >
+                  <a
+                    href={c.url || "#"}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="group/alt flex h-full items-start gap-2.5 rounded-md border border-border/40 bg-card/30 px-2.5 py-2 transition-all hover:border-brand/40 hover:bg-card/60"
+                  >
+                    <span className="mt-0.5 w-4 shrink-0 font-mono text-[9px] tabular-nums text-muted-foreground/35 group-hover/alt:text-brand/50">
+                      {String(i + 1).padStart(2, "0")}
+                    </span>
+                    <ProductFavicon
+                      url={c.url}
+                      size={16}
+                      rounded="sm"
+                      className="mt-0.5 ring-1 ring-border/30"
+                    />
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-center gap-1.5">
+                        <span className="min-w-0 flex-1 truncate text-xs font-medium text-foreground/90 group-hover/alt:text-foreground">
+                          {c.name}
+                        </span>
+                        <ExternalLink className="size-2.5 shrink-0 text-muted-foreground/30 opacity-0 transition-opacity group-hover/alt:opacity-100 group-hover/alt:text-brand/60" />
+                      </div>
+                      {c.description && (
+                        <p className="mt-0.5 line-clamp-2 text-[11px] leading-snug text-muted-foreground/65">
+                          {c.description}
+                        </p>
+                      )}
+                    </div>
+                  </a>
+                </motion.li>
+              ))}
+            </ul>
           </div>
+        ) : competitors ? (
+          <p className="px-1 font-mono text-[11px] text-muted-foreground/50">
+            No alternatives found.{" "}
+            <button
+              type="button"
+              onClick={onReFindCompetitors}
+              className="text-foreground/70 underline-offset-2 transition-colors hover:text-brand hover:underline"
+            >
+              re-run
+            </button>
+          </p>
         ) : (
           <p className="px-1 font-mono text-[11px] text-muted-foreground/50">
             Click <span className="text-foreground/70">Find alternatives</span> in the panel to the right
@@ -278,10 +328,23 @@ function ProductHeader({
   );
 }
 
-const SUB_PRESETS = [
-  "SaaS, startups, sideproject, indiehackers, bootstrapmarked",
-  "Entrepreneur, smallbusiness, sysorai, growmybusiness",
-  "microsaas, nocode, webdev, ProductManagement",
+// Distinct markets: two large consumer verticals + indie SaaS founders.
+const SUB_PRESETS: { label: string; subs: string[] }[] = [
+  {
+    // huge consumer money market: budgeting, investing, debt
+    label: "finance",
+    subs: ["personalfinance", "povertyfinance", "investing", "FinancialPlanning", "ynab"],
+  },
+  {
+    // huge consumer health market
+    label: "fitness",
+    subs: ["fitness", "loseit", "bodyweightfitness", "xxfitness", "nutrition"],
+  },
+  {
+    // peer founders / indie software
+    label: "indie SaaS",
+    subs: ["SaaS", "startups", "sideproject", "indiehackers", "bootstrapping"],
+  },
 ];
 
 /** Idle channel bay — radar lock waiting for the founder to fire. */
@@ -507,15 +570,14 @@ function SubsSearchInput({
         </span>
         {SUB_PRESETS.map((preset) => (
           <button
-            key={preset}
+            key={preset.label}
             type="button"
             disabled={disabled}
-            onClick={() =>
-              onChange(preset.split(",").map((s) => s.trim()).filter(Boolean))
-            }
+            title={preset.subs.join(", ")}
+            onClick={() => onChange(preset.subs)}
             className="rounded border border-border/40 bg-card/40 px-1.5 py-0.5 font-mono text-[10px] text-foreground/70 transition-colors hover:border-[#FF4500]/40 hover:text-foreground disabled:opacity-50"
           >
-            {preset.split(",").length} subs
+            {preset.label}
           </button>
         ))}
         {value.length > 0 && (
@@ -543,7 +605,6 @@ type ConsoleProps = {
   hasHN: boolean;
   redditCount: number;
   hnCount: number;
-  url: string;
   onFindReddit: () => void;
   onFindHN: () => void;
   onCancel: () => void;
@@ -572,7 +633,6 @@ function Console({
   hasHN,
   redditCount,
   hnCount,
-  url,
   onFindReddit,
   onFindHN,
   onCancel,
@@ -593,14 +653,6 @@ function Console({
   isAuthed,
   signupHref,
 }: ConsoleProps) {
-  const domain = (() => {
-    try {
-      return new URL(url).host.replace(/^www\./, "");
-    } catch {
-      return url;
-    }
-  })();
-
   const busy = status !== "idle";
   // Independent channels — both unlock after competitors; neither waits on the other.
   const showRedditBtn = hasCompetitors && !hasReddit;
@@ -687,7 +739,8 @@ function Console({
         </div>
       )}
 
-      <div className="flex min-h-0 flex-1 flex-col overflow-y-auto">
+      {/* Tabs stay put; results pane is the only scroll region (flex min-h-0 chain). */}
+      <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
         <div className="m-3 flex shrink-0 items-center rounded-lg border border-border/30 bg-card/30 p-0.5">
           <button
             onClick={() => onSwitchResult("reddit")}
@@ -738,7 +791,7 @@ function Console({
         </div>
 
         {activeResult === "reddit" ? (
-          <div className="flex min-h-0 flex-1 flex-col px-4 pb-4">
+          <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-4 pb-4">
             {redditScan && (redditScan.top_threads?.length ?? 0) > 0 ? (
               <GtmBriefView
                 brief={redditScan}
@@ -746,7 +799,7 @@ function Console({
                 signupHref={signupHref}
               />
             ) : loadingReddit ? (
-              <div className="flex flex-1 flex-col items-center justify-center py-8">
+              <div className="flex min-h-full flex-col items-center justify-center py-8">
                 <DinoLoader
                   instanceKey="reddit"
                   label="Scanning Reddit for your market..."
@@ -754,6 +807,22 @@ function Console({
                   sublabel="This usually takes 20-40 seconds. We're running 3-5 sharp search terms against the target subs and curating the best threads."
                   tone="brand"
                 />
+              </div>
+            ) : redditScan ? (
+              <div className="flex min-h-full flex-col items-center justify-center gap-2 py-10 text-center">
+                <p className="font-mono text-[11px] text-muted-foreground/60">
+                  No Reddit threads found.
+                </p>
+                {!readOnly && (
+                  <button
+                    type="button"
+                    onClick={onFindReddit}
+                    disabled={busy}
+                    className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground/50 transition-colors hover:text-[#FF4500] disabled:opacity-50"
+                  >
+                    re-run
+                  </button>
+                )}
               </div>
             ) : showRedditBtn && !readOnly ? (
               <ChannelArmingBay
@@ -801,7 +870,7 @@ function Console({
             ) : null}
           </div>
         ) : (
-          <div className="flex min-h-0 flex-1 flex-col px-4 pb-4">
+          <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-4 pb-4">
             {hnResult && hnResult.threads.length > 0 ? (
               <HNResultView
                 result={hnResult}
@@ -809,7 +878,7 @@ function Console({
                 signupHref={signupHref}
               />
             ) : loadingHN ? (
-              <div className="flex flex-1 flex-col items-center justify-center py-8">
+              <div className="flex min-h-full flex-col items-center justify-center py-8">
                 <DinoLoader
                   instanceKey="hn"
                   label="Searching Hacker News…"
@@ -817,6 +886,22 @@ function Console({
                   sublabel="This usually takes 1–2 minutes. We're searching Hacker News for threads where your future users are already talking — hang tight."
                   tone="orange"
                 />
+              </div>
+            ) : hnResult ? (
+              <div className="flex min-h-full flex-col items-center justify-center gap-2 py-10 text-center">
+                <p className="font-mono text-[11px] text-muted-foreground/60">
+                  No HN threads found.
+                </p>
+                {!readOnly && (
+                  <button
+                    type="button"
+                    onClick={onFindHN}
+                    disabled={busy}
+                    className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground/50 transition-colors hover:text-orange-400 disabled:opacity-50"
+                  >
+                    re-run
+                  </button>
+                )}
               </div>
             ) : showHNBtn && !readOnly ? (
               <ChannelArmingBay
@@ -828,24 +913,6 @@ function Console({
             ) : null}
           </div>
         )}
-
-        <div className="mt-auto shrink-0 border-t border-border/20 px-4 py-4">
-          <div className="mb-2 flex items-center gap-2">
-            <span className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground/50">
-              session
-            </span>
-          </div>
-          <dl className="space-y-2">
-            <div className="flex items-center justify-between gap-3">
-              <dt className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground/50">
-                domain
-              </dt>
-              <dd className="truncate text-xs text-foreground/80" title={domain}>
-                {domain || "—"}
-              </dd>
-            </div>
-          </dl>
-        </div>
       </div>
 
       {error && (
@@ -1384,7 +1451,6 @@ export function SessionViewClient({
             hasHN={!!hnResult}
             redditCount={redditScan?.top_threads?.length ?? 0}
             hnCount={hnResult?.threads.length ?? 0}
-            url={product.url}
             onFindReddit={runReddit}
             onFindHN={runHN}
             onCancel={cancelCurrent}
@@ -1410,8 +1476,6 @@ export function SessionViewClient({
     </div>
   );
 }
-
-const HN_PREVIEW_COUNT = 5;
 
 function relativeHNDate(iso: string): string {
   if (!iso) return "";
@@ -1495,20 +1559,6 @@ function HNLiveRow({ t, rank }: { t: HNThread; rank: number }) {
   );
 }
 
-function HNLockedRow({ rank, title }: { rank: number; title: string }) {
-  return (
-    <div className="flex items-start gap-2 rounded-md px-1.5 py-1.5 opacity-55">
-      <span className="mt-0.5 w-5 shrink-0 text-right font-mono text-[10px] tabular-nums text-muted-foreground/40">
-        {String(rank).padStart(2, "0")}
-      </span>
-      <div className="min-w-0 flex-1">
-        <p className="line-clamp-2 text-xs text-foreground/55">{title}</p>
-      </div>
-      <Lock className="mt-1 size-3 shrink-0 text-muted-foreground/40" />
-    </div>
-  );
-}
-
 function HNResultView({
   result,
   isAuthed,
@@ -1519,10 +1569,10 @@ function HNResultView({
   signupHref: string;
 }) {
   const totalCount = result?.threads.length ?? 0;
-  const hiddenCount = Math.max(0, totalCount - HN_PREVIEW_COUNT);
+  const hiddenCount = Math.max(0, totalCount - ANON_PREVIEW_COUNT);
   const visibleThreads = isAuthed
     ? (result?.threads ?? [])
-    : (result?.threads ?? []).slice(0, HN_PREVIEW_COUNT);
+    : (result?.threads ?? []).slice(0, ANON_PREVIEW_COUNT);
 
   return (
     <Card>
@@ -1533,34 +1583,20 @@ function HNResultView({
         ))}
 
         {!isAuthed && hiddenCount > 0 && (
-          <div className="mt-4 flex items-center justify-between gap-3 border-t border-dashed border-border/60 pt-3.5">
-            <p className="flex min-w-0 items-center gap-1.5 text-xs text-muted-foreground/75">
-              <Lock className="size-3.5 shrink-0 text-brand/80" />
-              <span className="truncate">
-                <span className="font-medium text-foreground/85">
-                  {hiddenCount} more threads
-                </span>{" "}
-                behind signup
-              </span>
-            </p>
-            <Link
-              href={signupHref}
-              className="inline-flex shrink-0 items-center gap-1 text-xs font-medium text-brand hover:underline"
-            >
-              Sign up to unlock
-              <span aria-hidden>→</span>
-            </Link>
-          </div>
+          <SignupUnlockBar
+            hiddenCount={hiddenCount}
+            signupHref={signupHref}
+          />
         )}
 
         {!isAuthed && result && hiddenCount > 0 && (
           <>
             {result.threads
-              .slice(HN_PREVIEW_COUNT)
+              .slice(ANON_PREVIEW_COUNT)
               .map((t, i) => (
-                <HNLockedRow
+                <LockedThreadRow
                   key={t.objectID}
-                  rank={i + 1 + HN_PREVIEW_COUNT}
+                  rank={i + 1 + ANON_PREVIEW_COUNT}
                   title={t.title}
                 />
               ))}
