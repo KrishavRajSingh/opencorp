@@ -1,4 +1,4 @@
-import { task } from "@trigger.dev/sdk";
+import { task } from "@trigger.dev/sdk/v3";
 import { mastra } from "@/mastra";
 import { z } from "zod/v4";
 import type { Agent } from "@mastra/core/agent";
@@ -255,21 +255,53 @@ const productContextSchema = z.object({
   keyFeatures: z.array(z.string()),
 });
 
+const competitorTaskPayloadSchema = productContextSchema.extend({
+  /** When set, result is written to research_sessions server-side. */
+  sessionId: z.string().uuid().optional(),
+});
+
+async function persistCompetitorResult(
+  sessionId: string,
+  result: { competitors: unknown; searchQueriesUsed: string[] },
+) {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const key = process.env.SUPABASE_SECRET_KEY;
+  if (!url || !key) {
+    throw new Error("Missing Supabase admin env for competitor persist");
+  }
+  // Inline admin client — avoid importing next/headers via @/lib/supabase/server.
+  const { createClient } = await import("@supabase/supabase-js");
+  const supabase = createClient(url, key, {
+    auth: { autoRefreshToken: false, persistSession: false },
+  });
+  const { error } = await supabase
+    .from("research_sessions")
+    .update({
+      competitor_result: result,
+      updated_at: new Date().toISOString(),
+    })
+    .eq("id", sessionId);
+  if (error) {
+    throw new Error(`Failed to persist competitors: ${error.message}`);
+  }
+}
+
 export const competitorResearchTask = task({
   id: "competitor-research",
   maxDuration: 3600,
-  run: async (payload: z.infer<typeof productContextSchema>) => {
+  run: async (payload: z.infer<typeof competitorTaskPayloadSchema>) => {
+    const input = competitorTaskPayloadSchema.parse(payload);
     const agent = mastra.getAgent("discoveryAgent");
     if (!agent) {
       await researchStream.append(JSON.stringify({ type: "error", error: "Discovery agent not found" }));
       throw new Error("Discovery agent not found");
     }
 
-    const prompt = `Find competitors for: ${payload.url}
+    const prompt = `Find competitors for: ${input.url}
 
-Product name: ${payload.productName}
-Description: ${payload.description}
-Features: ${payload.keyFeatures.join(", ")}`;
+Product name: ${input.productName}
+Description: ${input.description}
+Features: ${input.keyFeatures.join(", ")}`;
 
     try {
       const object = await runWithRetry(
@@ -306,6 +338,19 @@ Features: ${payload.keyFeatures.join(", ")}`;
         competitors: obj.competitors,
         searchQueriesUsed: obj.searchQueriesUsed ?? [],
       };
+
+      if (input.sessionId) {
+        try {
+          await persistCompetitorResult(input.sessionId, result);
+        } catch (persistErr) {
+          const msg =
+            persistErr instanceof Error ? persistErr.message : "persist failed";
+          await researchStream.append(
+            JSON.stringify({ type: "error", error: msg }),
+          );
+          throw persistErr;
+        }
+      }
 
       await researchStream.append(JSON.stringify({ type: "result", ...result }));
       return result;
@@ -460,51 +505,11 @@ export const gtmRedditScanTask = task({
       `Look for potential users who match the target persona and exhibit the product's core pain points.`;
 
     const subsSearch = input.subsSearch.filter((s) => s.trim().length > 0);
-
-    let competitors = input.competitors ?? [];
-    let discoveryRan = false;
-
-    if (competitors.length === 0) {
-      await researchStream.append(JSON.stringify({
-        type: "tool-call",
-        toolName: "competitor-discovery",
-        toolCallId: crypto.randomUUID(),
-        track: "reddit",
-        snippet: `Discovering competitors for ${input.productName}...`,
-      }));
-
-      try {
-        const discovered = await competitorResearchTask.triggerAndWait({
-          url: input.url,
-          productName: input.productName,
-          description: input.description,
-          keyFeatures: input.keyFeatures,
-        });
-        if (discovered?.ok) {
-          const out = (discovered.output ?? {}) as { competitors?: Array<{ name?: string; url?: string }> };
-          competitors = (out.competitors ?? [])
-            .map((c) => ({ name: c.name ?? "", url: c.url ?? "" }))
-            .filter((c) => c.name.length > 0)
-            .slice(0, 5);
-        }
-        discoveryRan = true;
-      } catch (err) {
-        const message = err instanceof Error ? err.message : "unknown";
-        await researchStream.append(JSON.stringify({
-          type: "tool-call",
-          toolName: "competitor-discovery",
-          track: "reddit",
-          snippet: `Competitor discovery skipped: ${message.slice(0, 120)}`,
-        }));
-      }
-    }
-
-    await researchStream.append(JSON.stringify({
-      type: "competitors",
-      track: "reddit",
-      competitors: competitors.map((c) => c.name),
-      discovered: discoveryRan,
-    }));
+    // Optional enrichment only — never discover competitors here. 0 is fine:
+    // workflow emits competitor_deflection_queries: [] and still ranks pain/user threads.
+    const competitors = (input.competitors ?? [])
+      .map((c) => ({ name: c.name, url: c.url ?? "" }))
+      .filter((c) => c.name.trim().length > 0);
 
     try {
       await researchStream.append(JSON.stringify({
@@ -512,7 +517,10 @@ export const gtmRedditScanTask = task({
         toolName: "gtm-reddit-scan",
         toolCallId: crypto.randomUUID(),
         track: "reddit",
-        snippet: `Scanning Reddit for users of ${input.productName}...`,
+        snippet:
+          competitors.length > 0
+            ? `Scanning Reddit for users of ${input.productName} (${competitors.length} alts for deflection)…`
+            : `Scanning Reddit for users of ${input.productName}…`,
       }));
 
       const run = await wf.createRun({ runId: `reddit_${Date.now().toString(36)}` });

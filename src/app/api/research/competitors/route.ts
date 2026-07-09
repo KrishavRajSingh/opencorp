@@ -1,9 +1,10 @@
 import type { competitorResearchTask } from "@/trigger/research";
-import { tasks } from "@trigger.dev/sdk";
+import { tasks } from "@trigger.dev/sdk/v3";
 import { z } from "zod/v4";
 import { getAuthedUser } from "@/lib/supabase/auth";
 
 const inputSchema = z.object({
+  sessionId: z.string().uuid(),
   url: z.string(),
   productName: z.string(),
   description: z.string(),
@@ -20,7 +21,9 @@ export async function POST(request: Request) {
     input = inputSchema.parse(body);
   } catch {
     return new Response(
-      JSON.stringify({ error: "Invalid body — product context required" }),
+      JSON.stringify({
+        error: "Invalid body — sessionId and product context required",
+      }),
       { status: 400, headers: { "Content-Type": "application/json" } },
     );
   }
@@ -41,7 +44,7 @@ export async function POST(request: Request) {
     const message = err instanceof Error ? err.message : "Failed to trigger task";
     return new Response(JSON.stringify({ error: message }), {
       status: 500,
-      headers: { "Content-Type": "application/json" } },
-    );
+      headers: { "Content-Type": "application/json" },
+    });
   }
 }

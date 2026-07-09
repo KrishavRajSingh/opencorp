@@ -1,5 +1,5 @@
 import type { productResearchTask } from "@/trigger/research";
-import { tasks } from "@trigger.dev/sdk";
+import { tasks } from "@trigger.dev/sdk/v3";
 import { getAuthedUser } from "@/lib/supabase/auth";
 
 export async function POST(request: Request) {

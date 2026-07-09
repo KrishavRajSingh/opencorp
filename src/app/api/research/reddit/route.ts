@@ -1,5 +1,5 @@
 import type { gtmRedditScanTask } from "@/trigger/research";
-import { tasks } from "@trigger.dev/sdk";
+import { tasks } from "@trigger.dev/sdk/v3";
 import { z } from "zod/v4";
 import { getAuthedUser } from "@/lib/supabase/auth";
 

@@ -1,5 +1,7 @@
 import { z } from "zod/v4";
 import { NextResponse } from "next/server";
+import { tasks } from "@trigger.dev/sdk/v3";
+import type { competitorResearchTask } from "@/trigger/research";
 import { getAuthedUser } from "@/lib/supabase/auth";
 import { getDbClient } from "@/lib/supabase/server";
 
@@ -88,7 +90,37 @@ export async function POST(request: Request) {
     if (error) {
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
-    return NextResponse.json({ id: data.id }, { status: 201 });
+
+    // Backend stage: product done → kick off competitors; task persists result.
+    const product = body.product_analyst_result;
+    let competitorRunId: string | undefined;
+    let publicAccessToken: string | undefined;
+    try {
+      const handle = await tasks.trigger<typeof competitorResearchTask>(
+        "competitor-research",
+        {
+          sessionId: data.id,
+          url: product.url,
+          productName: product.productName,
+          description: product.description ?? "",
+          keyFeatures: product.keyFeatures ?? [],
+        },
+      );
+      competitorRunId = handle.id;
+      publicAccessToken = handle.publicAccessToken;
+    } catch (triggerErr) {
+      // Session exists; competitors can be re-run from the session UI.
+      console.error("Failed to chain competitor-research:", triggerErr);
+    }
+
+    return NextResponse.json(
+      {
+        id: data.id,
+        competitorRunId,
+        publicAccessToken,
+      },
+      { status: 201 },
+    );
   }
 
   const update: Record<string, unknown> = { updated_at: new Date().toISOString() };

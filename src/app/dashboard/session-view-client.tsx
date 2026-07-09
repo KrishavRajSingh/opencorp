@@ -17,6 +17,7 @@ import {
   Link2,
   Share2,
   Check,
+  Radar,
 } from "lucide-react";
 import { ProductFavicon } from "@/components/dashboard/product-favicon";
 import { DinoLoader } from "@/components/dashboard/dino-loader";
@@ -31,6 +32,15 @@ import {
 } from "@/components/dashboard/thread-gate";
 import type { HNThread } from "@/app/dashboard/hn-threads-block";
 import { cn } from "@/lib/utils";
+import {
+  createCompetitorStage,
+  readSSEStream as readSseUrl,
+  shouldStartCompetitorLoading,
+  writeCompetitorStageMarker,
+  readCompetitorStageMarker,
+  type CompetitorResult as StageCompetitorResult,
+  type StreamEvent,
+} from "@/lib/competitor-stage";
 
 type ProductResult = {
   url: string;
@@ -77,73 +87,137 @@ function readSSEStream(
   onData: (data: string) => void,
   onError: (err: string) => void,
   signal: AbortSignal,
+  onEnd?: () => void,
 ) {
   const url = `https://api.trigger.dev/realtime/v1/streams/${runId}/${streamKey}`;
-  fetch(url, {
-    headers: {
-      Accept: "text/event-stream",
-      Authorization: `Bearer ${accessToken}`,
-      "Timeout-Seconds": "600",
-    },
-    signal,
-  })
-    .then(async (res) => {
-      if (!res.ok) {
-        const text = await res.text().catch(() => "");
-        throw new Error(`HTTP ${res.status}: ${text.slice(0, 200)}`);
-      }
-      const reader = res.body?.getReader();
-      if (!reader) throw new Error("No response body");
-      const decoder = new TextDecoder();
-      let buf = "";
-      while (true) {
-        const { done, value } = await reader.read();
-        if (value) {
-          buf += decoder.decode(value, { stream: !done });
-        }
-        const parts = buf.split("\n\n");
-        buf = parts.pop() ?? "";
-        for (const part of parts) {
-          if (!part.trim()) continue;
-          let eventType = "";
-          let data = "";
-          for (const line of part.split("\n")) {
-            if (line.startsWith("event: ")) eventType = line.slice(7);
-            else if (line.startsWith("data: ")) data = line.slice(6);
-          }
-          if (!data) continue;
-          try {
-            const obj = JSON.parse(data);
-            if (eventType === "batch" && obj.records) {
-              for (const r of obj.records) {
-                const body = JSON.parse(r.body);
-                onData(body.data);
-              }
-            }
-          } catch { /* skip */ }
-        }
-        if (done) break;
-      }
-    })
-    .catch((err) => {
-      if (err instanceof DOMException && err.name === "AbortError") return;
-      onError(err.message ?? String(err));
-    });
+  readSseUrl(url, accessToken, onData, onError, signal, onEnd);
+}
+
+function toUiCompetitors(
+  r: StageCompetitorResult | null,
+): CompetitorResult | null {
+  if (!r) return null;
+  return {
+    competitors: (r.competitors ?? []).map((c) => ({
+      name: c.name,
+      url: c.url,
+      description: c.description ?? "",
+      mentionSources: c.mentionSources ?? [],
+    })),
+    searchQueriesUsed: r.searchQueriesUsed,
+  };
+}
+
+/** Idle / aborted / empty alternatives panel — simple card, plain language. */
+function AlternativesStageCard({
+  tone,
+  eyebrow,
+  title,
+  body,
+  actionLabel,
+  onAction,
+  readOnly,
+}: {
+  tone: "idle" | "aborted" | "empty";
+  eyebrow: string;
+  title: string;
+  body: string;
+  actionLabel?: string;
+  onAction?: () => void;
+  readOnly?: boolean;
+}) {
+  const isAborted = tone === "aborted";
+  const isEmpty = tone === "empty";
+
+  return (
+    <div
+      className={cn(
+        "relative overflow-hidden rounded-xl border",
+        isAborted
+          ? "border-red-400/25 bg-red-400/[0.04]"
+          : isEmpty
+            ? "border-border/50 bg-card/25"
+            : "border-brand/25 bg-brand/[0.04]",
+      )}
+    >
+      <div className="relative flex flex-col gap-4 p-4 sm:flex-row sm:items-center sm:gap-5 sm:p-5">
+        <div
+          className={cn(
+            "grid size-10 shrink-0 place-items-center rounded-full border bg-card/80",
+            isAborted
+              ? "border-red-400/40 text-red-400/90"
+              : "border-brand/40 text-brand",
+          )}
+        >
+          {isAborted ? (
+            <AlertTriangle className="size-4" strokeWidth={1.75} />
+          ) : (
+            <Radar className="size-4" strokeWidth={1.75} />
+          )}
+        </div>
+
+        <div className="min-w-0 flex-1 space-y-1.5">
+          <span
+            className={cn(
+              "font-mono text-[10px] uppercase tracking-[0.2em]",
+              isAborted ? "text-red-400/80" : "text-brand/75",
+            )}
+          >
+            {eyebrow}
+          </span>
+          <p className="font-heading text-base tracking-tight text-foreground/90 sm:text-[17px]">
+            {title}
+          </p>
+          <p className="max-w-md text-[12px] leading-relaxed text-muted-foreground/70">
+            {body}
+          </p>
+        </div>
+
+        {!readOnly && actionLabel && onAction && (
+          <button
+            type="button"
+            onClick={onAction}
+            className={cn(
+              "group/alt-cta inline-flex shrink-0 items-center justify-center gap-2 rounded-lg border px-4 py-2.5 text-left transition-all",
+              "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40 focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+              isAborted
+                ? "border-red-400/35 bg-red-400/10 text-foreground hover:border-red-400/55 hover:bg-red-400/15"
+                : "border-brand/40 bg-brand/10 text-foreground hover:border-brand/60 hover:bg-brand/15",
+            )}
+          >
+            <span className="font-mono text-[11px] uppercase tracking-[0.16em]">
+              {actionLabel}
+            </span>
+            <ArrowRight className="size-3.5 shrink-0 text-muted-foreground/50 transition-transform group-hover/alt-cta:translate-x-0.5 group-hover/alt-cta:text-foreground/80" />
+          </button>
+        )}
+      </div>
+    </div>
+  );
 }
 
 function ProductHeader({
   result,
   competitors,
-  loadingCompetitors,
+  competitorsPending,
+  competitorsError,
   onReFindCompetitors,
+  readOnly = false,
 }: {
   result: ProductResult;
   competitors: CompetitorResult | null;
-  loadingCompetitors: boolean;
+  /** True while backend stage is running or we are waiting for it. */
+  competitorsPending: boolean;
+  /** Cancel / fail message from stage machine (null = clean idle). */
+  competitorsError: string | null;
   onReFindCompetitors: () => void;
+  readOnly?: boolean;
 }) {
   const reduceMotion = useReducedMotion();
   const alts = competitors?.competitors ?? [];
+  const aborted =
+    !!competitorsError &&
+    /cancel|abort|stopped|fail/i.test(competitorsError);
 
   return (
     <div className="space-y-5">
@@ -224,7 +298,7 @@ function ProductHeader({
       )}
 
       <div className="border-t border-dashed border-border/40 pt-4">
-        <div className="mb-2.5 flex items-center justify-between gap-2">
+        <div className="mb-3 flex items-center justify-between gap-2">
           <div className="flex items-baseline gap-2">
             <span className="font-heading text-[10px] tracking-widest uppercase text-muted-foreground/60">
               Alternatives on the market
@@ -235,7 +309,7 @@ function ProductHeader({
               </span>
             )}
           </div>
-          {!loadingCompetitors && competitors && (
+          {!readOnly && alts.length > 0 && (
             <button
               type="button"
               onClick={onReFindCompetitors}
@@ -244,20 +318,29 @@ function ProductHeader({
               re-run
             </button>
           )}
+          {!readOnly && competitorsPending && (
+            <button
+              type="button"
+              onClick={onReFindCompetitors}
+              className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground/50 transition-colors hover:text-brand"
+            >
+              restart
+            </button>
+          )}
         </div>
-        {loadingCompetitors ? (
+
+        {competitorsPending ? (
           <DinoLoader
             instanceKey="competitors-header"
-            label="Finding alternatives..."
-            loading={loadingCompetitors}
-            sublabel="Searching the web for products that overlap with this one. Usually 3–5 minutes."
+            label="Finding alternatives…"
+            loading
+            sublabel="Searching the web for products that overlap with yours. Usually 3–5 minutes — Reddit and HN unlock when this finishes."
             tone="brand"
           />
         ) : alts.length > 0 ? (
           <div
             className={cn(
               "relative max-h-[min(28rem,55vh)] overflow-y-auto overscroll-contain pr-0.5",
-              // soft fade so a long stack still feels intentional, not endless
               alts.length > 6 &&
                 "mask-[linear-gradient(to_bottom,black_0%,black_88%,transparent_100%)]",
             )}
@@ -308,20 +391,44 @@ function ProductHeader({
             </ul>
           </div>
         ) : competitors ? (
-          <p className="px-1 font-mono text-[11px] text-muted-foreground/50">
-            No alternatives found.{" "}
-            <button
-              type="button"
-              onClick={onReFindCompetitors}
-              className="text-foreground/70 underline-offset-2 transition-colors hover:text-brand hover:underline"
-            >
-              re-run
-            </button>
-          </p>
+          <AlternativesStageCard
+            tone="empty"
+            eyebrow="no results"
+            title="No alternatives found"
+            body="Nothing clear came back. Try again, or run Reddit and HN with product context only."
+            actionLabel={readOnly ? undefined : "Try again"}
+            onAction={readOnly ? undefined : onReFindCompetitors}
+            readOnly={readOnly}
+          />
+        ) : readOnly ? (
+          <AlternativesStageCard
+            tone="empty"
+            eyebrow="not in report"
+            title="No alternatives in this report"
+            body="This shared report has product analysis only."
+            readOnly
+          />
+        ) : aborted ? (
+          <AlternativesStageCard
+            tone="aborted"
+            eyebrow="stopped"
+            title="Alternatives didn’t finish"
+            body={
+              competitorsError ??
+              "This step stopped before results were saved. Run it again to unlock Reddit and HN."
+            }
+            actionLabel="Find alternatives"
+            onAction={onReFindCompetitors}
+          />
         ) : (
-          <p className="px-1 font-mono text-[11px] text-muted-foreground/50">
-            Click <span className="text-foreground/70">Find alternatives</span> in the panel to the right
-          </p>
+          <AlternativesStageCard
+            tone="idle"
+            eyebrow="next step"
+            title="Find alternatives"
+            body="Discover products that compete with yours. Reddit and Hacker News unlock after this finishes."
+            actionLabel="Find alternatives"
+            onAction={onReFindCompetitors}
+          />
         )}
       </div>
     </div>
@@ -347,7 +454,100 @@ const SUB_PRESETS: { label: string; subs: string[] }[] = [
   },
 ];
 
-/** Idle channel bay — radar lock waiting for the founder to fire. */
+/** Locked channel — simple disabled state until alternatives finish. */
+function ChannelWaitingBay({
+  channel,
+  active,
+}: {
+  channel: "reddit" | "hn";
+  /** True while alternatives are still running. */
+  active: boolean;
+}) {
+  const reduceMotion = useReducedMotion();
+  const isReddit = channel === "reddit";
+  const channelName = isReddit ? "Reddit" : "Hacker News";
+  const accent = isReddit ? "#FF4500" : "#FF6600";
+
+  return (
+    <div className="relative flex flex-1 flex-col items-center justify-center overflow-hidden px-3 py-10">
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 opacity-[0.28]"
+        style={{
+          backgroundImage: `
+            linear-gradient(to right, oklch(1 0 0 / 0.03) 1px, transparent 1px),
+            linear-gradient(to bottom, oklch(1 0 0 / 0.03) 1px, transparent 1px)
+          `,
+          backgroundSize: "24px 24px",
+          maskImage:
+            "radial-gradient(ellipse 70% 60% at 50% 42%, black 20%, transparent 75%)",
+        }}
+      />
+
+      <div className="relative z-10 flex w-full max-w-[17.5rem] flex-col items-center text-center">
+        <div className="relative mb-5 grid size-[4.5rem] place-items-center">
+          <motion.div
+            aria-hidden
+            className="absolute inset-0 rounded-full border border-dashed border-border/40"
+            animate={
+              reduceMotion || !active ? undefined : { rotate: 360 }
+            }
+            transition={
+              reduceMotion || !active
+                ? undefined
+                : { duration: 36, repeat: Infinity, ease: "linear" }
+            }
+          />
+          <div className="relative grid size-12 place-items-center overflow-hidden rounded-full border border-border/50 bg-card/80 opacity-50 grayscale ring-4 ring-border/20">
+            {isReddit ? (
+              <RedditIcon className="size-6" />
+            ) : (
+              <HNIcon className="size-6" />
+            )}
+          </div>
+        </div>
+
+        <div className="mb-1 flex items-center gap-2">
+          <span
+            className={cn(
+              "size-1 rounded-full",
+              active ? "animate-pulse bg-brand" : "bg-muted-foreground/40",
+            )}
+          />
+          <span className="font-mono text-[10px] uppercase tracking-[0.22em] text-muted-foreground/55">
+            {active ? "locked · waiting" : "locked"}
+          </span>
+        </div>
+
+        <p className="mt-3 font-heading text-[15px] leading-snug tracking-tight text-foreground/80">
+          {channelName} unlocks after alternatives
+        </p>
+        <p className="mt-1.5 max-w-[15rem] text-[11px] leading-relaxed text-muted-foreground/55">
+          {active
+            ? "Still finding alternatives. This channel stays locked until that finishes."
+            : "Find alternatives on the left, then run this channel."}
+        </p>
+
+        <div
+          aria-disabled
+          className="mt-5 flex w-full cursor-not-allowed items-center justify-between gap-3 rounded-lg border border-border/35 bg-card/20 px-4 py-3 opacity-70"
+        >
+          <span className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground/50">
+            <span
+              className="size-1.5 rounded-full"
+              style={{ background: accent, opacity: 0.35 }}
+            />
+            disabled
+          </span>
+          <span className="font-mono text-[10px] tabular-nums text-muted-foreground/40">
+            —
+          </span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 /** Idle channel bay — radar lock waiting for the founder to fire. */
 function ChannelArmingBay({
   channel,
@@ -601,6 +801,8 @@ function SubsSearchInput({
 type ConsoleProps = {
   status: "idle" | "competitors" | "reddit" | "hn";
   hasCompetitors: boolean;
+  /** Alternatives stage actively running (for wait-bay motion/copy). */
+  competitorsRunning: boolean;
   hasReddit: boolean;
   hasHN: boolean;
   redditCount: number;
@@ -629,6 +831,7 @@ type ConsoleProps = {
 function Console({
   status,
   hasCompetitors,
+  competitorsRunning,
   hasReddit,
   hasHN,
   redditCount,
@@ -655,6 +858,7 @@ function Console({
 }: ConsoleProps) {
   const busy = status !== "idle";
   // Independent channels — both unlock after competitors; neither waits on the other.
+  const waitingOnCompetitors = !hasCompetitors;
   const showRedditBtn = hasCompetitors && !hasReddit;
   const showHNBtn = hasCompetitors && !hasHN;
   const allDone = hasCompetitors && hasReddit && hasHN && !busy;
@@ -792,7 +996,12 @@ function Console({
 
         {activeResult === "reddit" ? (
           <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-4 pb-4">
-            {redditScan && (redditScan.top_threads?.length ?? 0) > 0 ? (
+            {waitingOnCompetitors && !readOnly ? (
+              <ChannelWaitingBay
+                channel="reddit"
+                active={competitorsRunning}
+              />
+            ) : redditScan && (redditScan.top_threads?.length ?? 0) > 0 ? (
               <GtmBriefView
                 brief={redditScan}
                 isAuthed={isAuthed}
@@ -867,11 +1076,17 @@ function Console({
                   </>
                 }
               />
+            ) : readOnly && !redditScan ? (
+              <p className="py-10 text-center font-mono text-[11px] text-muted-foreground/50">
+                No Reddit scan in this report.
+              </p>
             ) : null}
           </div>
         ) : (
           <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-4 pb-4">
-            {hnResult && hnResult.threads.length > 0 ? (
+            {waitingOnCompetitors && !readOnly ? (
+              <ChannelWaitingBay channel="hn" active={competitorsRunning} />
+            ) : hnResult && hnResult.threads.length > 0 ? (
               <HNResultView
                 result={hnResult}
                 isAuthed={isAuthed}
@@ -910,6 +1125,10 @@ function Console({
                 onRun={onFindHN}
                 busy={busy}
               />
+            ) : readOnly && !hnResult ? (
+              <p className="py-10 text-center font-mono text-[11px] text-muted-foreground/50">
+                No HN threads in this report.
+              </p>
             ) : null}
           </div>
         )}
@@ -945,6 +1164,20 @@ export function SessionViewClient({
   signupHref?: string;
 }) {
   const router = useRouter();
+  const startLoadingRef = useRef(
+    shouldStartCompetitorLoading({
+      sessionId,
+      hasResult: !!initialCompetitors,
+      readOnly,
+    }),
+  );
+  const stageRef = useRef(
+    createCompetitorStage({
+      initial: initialCompetitors as StageCompetitorResult | null,
+      readOnly,
+      startLoading: startLoadingRef.current,
+    }),
+  );
   const [competitors, setCompetitors] = useState<CompetitorResult | null>(
     initialCompetitors,
   );
@@ -952,13 +1185,71 @@ export function SessionViewClient({
   const [redditScan, setRedditScan] = useState<RedditScanResult | null>(
     initialRedditScan,
   );
-  const [loadingCompetitors, setLoadingCompetitors] = useState(false);
+  /** Backend product→competitors stage in flight (or handoff/poll wait). */
+  const [loadingCompetitors, setLoadingCompetitors] = useState(
+    () => startLoadingRef.current,
+  );
   const [loadingHN, setLoadingHN] = useState(false);
   const [loadingReddit, setLoadingReddit] = useState(false);
   const [streamStatus, setStreamStatus] = useState<string | null>(null);
   const [streamError, setStreamError] = useState<string | null>(null);
   const [elapsed, setElapsed] = useState(0);
   const [error, setError] = useState<string | null>(null);
+  const streamAbortRef = useRef<AbortController | null>(null);
+  const [runId, setRunId] = useState<string | null>(null);
+  const [token, setToken] = useState<string | null>(null);
+
+  const flushCompetitorStage = useCallback(() => {
+    const s = stageRef.current.getSnapshot();
+    setCompetitors(toUiCompetitors(s.competitors));
+    setLoadingCompetitors(s.loading);
+    setError(s.error);
+    setStreamStatus(s.streamStatus);
+    setStreamError(s.streamError);
+  }, []);
+
+  /** Hard stop: stage + React + drop stream handles. Dino must disappear. */
+  const stopCompetitorsUi = useCallback(
+    (opts?: {
+      canceled?: boolean;
+      /** omit or undefined = no banner on idle */
+      message?: string | null;
+      idle?: boolean;
+    }) => {
+      if (opts?.canceled) {
+        stageRef.current.cancel();
+        writeCompetitorStageMarker(sessionId, { status: "canceled" });
+      } else if (opts?.idle) {
+        stageRef.current.markIdle(opts.message ?? null);
+        writeCompetitorStageMarker(sessionId, { status: "idle" });
+      } else if (opts?.message) {
+        stageRef.current.stopBecauseRunEnded("stopped", opts.message);
+        writeCompetitorStageMarker(sessionId, { status: "idle" });
+      } else {
+        stageRef.current.stopBecauseRunEnded("stopped");
+        writeCompetitorStageMarker(sessionId, { status: "idle" });
+      }
+      const s = stageRef.current.getSnapshot();
+      // Force React state — never leave dino up because flush was skipped.
+      setLoadingCompetitors(false);
+      setCompetitors(toUiCompetitors(s.competitors));
+      setError(
+        opts?.idle
+          ? (opts.message ?? null)
+          : (opts?.message ??
+            s.error ??
+            "Alternatives stage cancelled. Try again."),
+      );
+      setStreamStatus(null);
+      setStreamError(null);
+      setRunId(null);
+      setToken(null);
+      streamAbortRef.current?.abort();
+      streamAbortRef.current = null;
+    },
+    [sessionId],
+  );
+
   const [hnStreamStatus, setHNStreamStatus] = useState<string | null>(null);
   const [hnElapsed, setHNElapsed] = useState(0);
   const [hnError, setHNError] = useState<string | null>(null);
@@ -969,8 +1260,6 @@ export function SessionViewClient({
   const hnTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const redditTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
-  const [runId, setRunId] = useState<string | null>(null);
-  const [token, setToken] = useState<string | null>(null);
   const [hnRunId, setHNRunId] = useState<string | null>(null);
   const [hnToken, setHNToken] = useState<string | null>(null);
   const [redditRunId, setRedditRunId] = useState<string | null>(null);
@@ -1064,72 +1353,145 @@ export function SessionViewClient({
   useEffect(() => {
     if (!runId || !token) return;
     const controller = new AbortController();
-    const done = { current: false };
+    streamAbortRef.current = controller;
+    const stage = stageRef.current;
+    const gen = stage.getSnapshot().gen;
+    let finished = false;
 
-    readSSEStream(runId, "research", token, (data) => {
-      try {
-        const event = JSON.parse(data) as { type: string } & Record<string, unknown>;
-        switch (event.type) {
-          case "tool-call": {
-            const chunk = event as unknown as ToolCallChunk;
-            const label = chunk.title
-              ? `Read: ${chunk.title}`
-              : chunk.query
-                ? `Searching "${chunk.query}"`
-                : chunk.url
-                  ? `Reading ${chunk.url}...`
-                  : chunk.toolName;
-            setStreamStatus(label);
-            break;
-          }
-          case "result": {
+    readSSEStream(
+      runId,
+      "research",
+      token,
+      (data) => {
+        if (finished) return;
+        try {
+          const event = JSON.parse(data) as StreamEvent;
+          const done = stage.handleEvent(event, gen);
+          flushCompetitorStage();
+          if (done) {
+            finished = true;
             controller.abort();
-            if (done.current) break;
-            done.current = true;
-            const r = event as unknown as CompetitorResult;
-            setCompetitors(r);
-            setLoadingCompetitors(false);
-            setStreamStatus("Saved");
-            fetch("/api/research/save", {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({
-                id: sessionId,
-                competitor_result: r,
-              }),
-            })
-              .then((res) => {
-                if (res.ok) router.refresh();
-              })
-              .catch(() => {});
-            break;
+            if (event.type === "result") {
+              writeCompetitorStageMarker(sessionId, { status: "done" });
+              router.refresh();
+            }
           }
-          case "error": {
-            controller.abort();
-            setError((event as unknown as { error: string }).error);
-            setLoadingCompetitors(false);
-            break;
-          }
+        } catch {
+          /* skip */
         }
-      } catch { /* skip */ }
-    }, (err) => setStreamError(`Competitors: ${err}`), controller.signal);
+      },
+      (err) => {
+        if (finished) return;
+        finished = true;
+        stage.applyStreamTransportError(err, gen);
+        flushCompetitorStage();
+        // Force loader off even if stage gen mismatched
+        setLoadingCompetitors(false);
+      },
+      controller.signal,
+      () => {
+        if (finished) return;
+        finished = true;
+        stage.applyStreamEnd(gen);
+        flushCompetitorStage();
+        setLoadingCompetitors(false);
+      },
+    );
 
-    return () => controller.abort();
-  }, [runId, token, sessionId, router]);
+    return () => {
+      controller.abort();
+      if (streamAbortRef.current === controller) {
+        streamAbortRef.current = null;
+      }
+    };
+  }, [runId, token, router, flushCompetitorStage, sessionId]);
+
+  // Trigger cancel does NOT close SSE (onEnd never fires). Poll run status
+  // so a canceled/failed backend run always clears the dino.
+  useEffect(() => {
+    if (!runId || !loadingCompetitors) return;
+
+    let stopped = false;
+    const tick = async () => {
+      try {
+        const res = await fetch(
+          `/api/research/run-status?runId=${encodeURIComponent(runId)}`,
+        );
+        if (!res.ok || stopped) return;
+        const body = (await res.json()) as {
+          canceled?: boolean;
+          failed?: boolean;
+          completed?: boolean;
+          status?: string;
+        };
+        if (stopped) return;
+        if (body.canceled) {
+          stopCompetitorsUi({
+            canceled: true,
+            message: "Alternatives stage cancelled. Try again.",
+          });
+          return;
+        }
+        if (body.failed) {
+          stopCompetitorsUi({
+            message: `Alternatives stage failed (${body.status ?? "FAILED"}). Try again.`,
+          });
+          return;
+        }
+        // COMPLETED without UI result yet: keep polling session for payload;
+        // don't spin forever if stream missed the result event.
+        if (body.completed && !competitors) {
+          // session poll effect handles result; give it a few cycles, then stop
+        }
+      } catch {
+        /* next tick */
+      }
+    };
+
+    void tick();
+    const interval = setInterval(() => {
+      void tick();
+    }, 2000);
+    return () => {
+      stopped = true;
+      clearInterval(interval);
+    };
+  }, [runId, loadingCompetitors, competitors, stopCompetitorsUi]);
+
+  const cancelCompetitors = useCallback(() => {
+    const id = runId;
+    // Hide dino immediately — do not wait for SSE or cancel API.
+    stopCompetitorsUi({ canceled: true });
+    if (id) {
+      void fetch("/api/research/cancel", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ runId: id }),
+      });
+    }
+  }, [runId, stopCompetitorsUi]);
 
   const runCompetitors = useCallback(async () => {
-    setLoadingCompetitors(true);
-    setError(null);
+    const prevId = runId;
+    if (prevId) {
+      void fetch("/api/research/cancel", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ runId: prevId }),
+      });
+    }
+
+    stageRef.current.beginRun();
+    flushCompetitorStage();
     setRunId(null);
     setToken(null);
-    setStreamStatus(null);
-    setStreamError(null);
 
     try {
       const res = await fetch("/api/research/competitors", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
+          sessionId,
           url: product.url,
           productName: product.productName,
           description: product.description,
@@ -1143,41 +1505,155 @@ export function SessionViewClient({
         throw new Error(body.error ?? `Request failed (${res.status})`);
       }
 
+      writeCompetitorStageMarker(sessionId, {
+        status: "running",
+        runId: body.runId,
+      });
       setRunId(body.runId);
       setToken(body.publicAccessToken);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Something went wrong");
-      setLoadingCompetitors(false);
+      stageRef.current.applyError(
+        err instanceof Error ? err.message : "Something went wrong",
+        stageRef.current.getSnapshot().gen,
+      );
+      writeCompetitorStageMarker(sessionId, { status: "idle" });
+      flushCompetitorStage();
     }
-  }, [product]);
+  }, [product, sessionId, runId, flushCompetitorStage]);
 
-  const cancelCompetitors = useCallback(() => {
-    const id = runId;
-    setRunId(null);
-    setToken(null);
-    setLoadingCompetitors(false);
-    if (id) {
-      void fetch("/api/research/cancel", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ runId: id }),
-      });
-    }
-  }, [runId]);
-
-  // Auto-fire competitor scan on mount if missing
-  const autoFiredRef = useRef(false);
+  // Resume stream from new-research handoff, or recover running runId from marker.
+  // Never leave the dino spinning after cancel/refresh with nothing in flight.
+  const competitorHandoffRef = useRef(false);
   useEffect(() => {
-    if (readOnly) return;
-    if (autoFiredRef.current) return;
-    if (initialCompetitors) return;
-    if (loadingCompetitors || runId) return;
-    autoFiredRef.current = true;
-    const t = setTimeout(() => {
-      void runCompetitors();
-    }, 0);
-    return () => clearTimeout(t);
-  }, [readOnly, initialCompetitors, loadingCompetitors, runId, runCompetitors]);
+    if (readOnly || initialCompetitors || competitorHandoffRef.current) return;
+    competitorHandoffRef.current = true;
+
+    const marker = readCompetitorStageMarker(sessionId);
+
+    // Refresh after cancel / idle — show try-again, not dino.
+    if (marker?.status === "canceled") {
+      stopCompetitorsUi({
+        canceled: true,
+        message: "Alternatives stage cancelled. Try again.",
+      });
+      return;
+    }
+    if (marker?.status === "idle" || marker?.status === "done") {
+      stopCompetitorsUi({
+        idle: true,
+        message: null,
+      });
+      return;
+    }
+
+    let handoff: { runId?: string; publicAccessToken?: string } | null = null;
+    try {
+      const raw = sessionStorage.getItem(`competitor-stream:${sessionId}`);
+      if (raw) {
+        handoff = JSON.parse(raw) as {
+          runId?: string;
+          publicAccessToken?: string;
+        };
+        sessionStorage.removeItem(`competitor-stream:${sessionId}`);
+      }
+    } catch {
+      /* ignore */
+    }
+
+    if (handoff?.runId && handoff.publicAccessToken) {
+      writeCompetitorStageMarker(sessionId, {
+        status: "running",
+        runId: handoff.runId,
+      });
+      setStreamStatus("Connecting…");
+      setLoadingCompetitors(true);
+      stageRef.current.beginRun();
+      flushCompetitorStage();
+      setRunId(handoff.runId);
+      setToken(handoff.publicAccessToken);
+      return;
+    }
+
+    // Marker says running but we only have runId (no stream token) — poll status + session.
+    if (marker?.status === "running" && marker.runId) {
+      setStreamStatus("Waiting for alternatives stage…");
+      setLoadingCompetitors(true);
+      setRunId(marker.runId);
+      return;
+    }
+
+    // No in-flight signal at all (e.g. refresh after cancel without marker, or old session).
+    // Do not spin forever — idle with try-again.
+    stopCompetitorsUi({
+      idle: true,
+      message: null,
+    });
+  }, [
+    readOnly,
+    initialCompetitors,
+    sessionId,
+    stopCompetitorsUi,
+    flushCompetitorStage,
+  ]);
+
+  useEffect(() => {
+    if (readOnly || competitors || !loadingCompetitors) return;
+    // Streaming path owns completion when we have a run handle + token.
+    if (runId && token) return;
+
+    let cancelled = false;
+    const started = Date.now();
+    // Without a live stream, only wait briefly for a persisted result.
+    const GRACE_MS = 15_000;
+
+    const poll = async () => {
+      try {
+        const res = await fetch(`/api/research/sessions/${sessionId}`);
+        if (!res.ok || cancelled) return;
+        const body = (await res.json()) as {
+          session?: { competitor_result?: CompetitorResult | null };
+        };
+        const next = body.session?.competitor_result ?? null;
+        if (next && !cancelled) {
+          stageRef.current.applyResult(
+            next as StageCompetitorResult,
+            stageRef.current.getSnapshot().gen,
+          );
+          writeCompetitorStageMarker(sessionId, { status: "done" });
+          flushCompetitorStage();
+          router.refresh();
+          return;
+        }
+        if (!cancelled && Date.now() - started > GRACE_MS && !runId) {
+          stopCompetitorsUi({
+            idle: true,
+            message: null,
+          });
+        }
+      } catch {
+        /* next tick */
+      }
+    };
+
+    void poll();
+    const interval = setInterval(() => {
+      void poll();
+    }, 3000);
+    return () => {
+      cancelled = true;
+      clearInterval(interval);
+    };
+  }, [
+    readOnly,
+    competitors,
+    loadingCompetitors,
+    runId,
+    token,
+    sessionId,
+    router,
+    flushCompetitorStage,
+    stopCompetitorsUi,
+  ]);
 
   useEffect(() => {
     if (!hnRunId || !hnToken) return;
@@ -1394,6 +1870,9 @@ export function SessionViewClient({
     }
   }, [redditRunId]);
 
+  // Channels stay locked until we have a competitor payload (incl. empty list).
+  const channelsLocked = !competitors;
+  const competitorsPending = !readOnly && !competitors && loadingCompetitors;
   const status: "idle" | "competitors" | "reddit" | "hn" = loadingCompetitors
     ? "competitors"
     : loadingReddit
@@ -1402,7 +1881,7 @@ export function SessionViewClient({
         ? "hn"
         : "idle";
   const activeStreamStatus = loadingCompetitors
-    ? streamStatus
+    ? streamStatus ?? "Waiting for alternatives stage…"
     : loadingReddit
       ? redditStreamStatus
       : loadingHN
@@ -1425,9 +1904,15 @@ export function SessionViewClient({
   }, []);
 
   const cancelCurrent = () => {
-    if (loadingCompetitors) cancelCompetitors();
-    else if (loadingReddit) cancelReddit();
-    else if (loadingHN) cancelHN();
+    // Prefer explicit competitor cancel whenever that stage owns the UI,
+    // even if a race flipped loadingCompetitors already.
+    if (loadingCompetitors || (!competitors && !loadingReddit && !loadingHN)) {
+      cancelCompetitors();
+    } else if (loadingReddit) {
+      cancelReddit();
+    } else if (loadingHN) {
+      cancelHN();
+    }
   };
 
   return (
@@ -1462,15 +1947,18 @@ export function SessionViewClient({
           <ProductHeader
             result={product}
             competitors={competitors}
-            loadingCompetitors={loadingCompetitors}
+            competitorsPending={competitorsPending}
+            competitorsError={error}
             onReFindCompetitors={runCompetitors}
+            readOnly={readOnly}
           />
         </div>
 
         <div className="lg:sticky lg:top-10 lg:h-[calc(100vh-5rem)]">
           <Console
             status={status}
-            hasCompetitors={!!competitors}
+            hasCompetitors={!channelsLocked}
+            competitorsRunning={loadingCompetitors}
             hasReddit={!!redditScan}
             hasHN={!!hnResult}
             redditCount={redditScan?.top_threads?.length ?? 0}

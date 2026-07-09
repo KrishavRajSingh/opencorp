@@ -272,15 +272,42 @@ export function NewResearchClient({
               }),
             })
               .then((res) => res.json())
-              .then((body: { id?: string; error?: string }) => {
-                if (body.id) {
-                  setStreamStatus("Saved. Opening project…");
-                  router.push(`/dashboard/${body.id}`);
-                } else {
-                  setError(body.error ?? "Failed to save");
-                  setStatus("error");
-                }
-              })
+              .then(
+                (body: {
+                  id?: string;
+                  error?: string;
+                  competitorRunId?: string;
+                  publicAccessToken?: string;
+                }) => {
+                  if (body.id) {
+                    if (body.competitorRunId && body.publicAccessToken) {
+                      try {
+                        sessionStorage.setItem(
+                          `competitor-stream:${body.id}`,
+                          JSON.stringify({
+                            runId: body.competitorRunId,
+                            publicAccessToken: body.publicAccessToken,
+                          }),
+                        );
+                        sessionStorage.setItem(
+                          `competitor-stage:${body.id}`,
+                          JSON.stringify({
+                            status: "running",
+                            runId: body.competitorRunId,
+                          }),
+                        );
+                      } catch {
+                        /* private mode / quota — session view will poll */
+                      }
+                    }
+                    setStreamStatus("Saved. Opening project…");
+                    router.push(`/dashboard/${body.id}`);
+                  } else {
+                    setError(body.error ?? "Failed to save");
+                    setStatus("error");
+                  }
+                },
+              )
               .catch((err) => {
                 setError(err instanceof Error ? err.message : "Save failed");
                 setStatus("error");
