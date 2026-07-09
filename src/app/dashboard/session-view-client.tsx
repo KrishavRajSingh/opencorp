@@ -1152,10 +1152,18 @@ export function SessionViewClient({
   }, [product]);
 
   const cancelCompetitors = useCallback(() => {
+    const id = runId;
     setRunId(null);
     setToken(null);
     setLoadingCompetitors(false);
-  }, []);
+    if (id) {
+      void fetch("/api/research/cancel", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ runId: id }),
+      });
+    }
+  }, [runId]);
 
   // Auto-fire competitor scan on mount if missing
   const autoFiredRef = useRef(false);
@@ -1266,10 +1274,18 @@ export function SessionViewClient({
   }, [product, competitors]);
 
   const cancelHN = useCallback(() => {
+    const id = hnRunId;
     setHNRunId(null);
     setHNToken(null);
     setLoadingHN(false);
-  }, []);
+    if (id) {
+      void fetch("/api/research/cancel", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ runId: id }),
+      });
+    }
+  }, [hnRunId]);
 
   // Reddit SSE reader
   useEffect(() => {
@@ -1365,10 +1381,18 @@ export function SessionViewClient({
   }, [product, subsSearch, competitors]);
 
   const cancelReddit = useCallback(() => {
+    const id = redditRunId;
     setRedditRunId(null);
     setRedditToken(null);
     setLoadingReddit(false);
-  }, []);
+    if (id) {
+      void fetch("/api/research/cancel", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ runId: id }),
+      });
+    }
+  }, [redditRunId]);
 
   const status: "idle" | "competitors" | "reddit" | "hn" = loadingCompetitors
     ? "competitors"

@@ -362,10 +362,18 @@ export function NewResearchClient({
   }, [url, isAuthed, router]);
 
   const handleCancel = useCallback(() => {
+    const id = runId;
     setRunId(null);
     setToken(null);
     setStatus("idle");
-  }, []);
+    if (id) {
+      void fetch("/api/research/cancel", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ runId: id }),
+      });
+    }
+  }, [runId]);
 
   const handleReset = useCallback(() => {
     setStatus("idle");
@@ -495,7 +503,8 @@ export function NewResearchClient({
             <div className="pointer-events-none absolute -inset-4 rounded-3xl bg-[radial-gradient(ellipse_at_center,oklch(0.72_0.15_75_/_0.06),transparent_70%)]" />
             <div className="relative rounded-2xl border border-brand/30 bg-card/50 backdrop-blur-sm">
               <motion.div
-                className="absolute inset-0 rounded-2xl border border-brand/40"
+                aria-hidden
+                className="pointer-events-none absolute inset-0 rounded-2xl border border-brand/40"
                 animate={{ opacity: [0.2, 0.6, 0.2] }}
                 transition={{
                   duration: 2,
@@ -503,7 +512,7 @@ export function NewResearchClient({
                   ease: "easeInOut",
                 }}
               />
-              <div className="flex items-center gap-3 px-5 py-4">
+              <div className="relative z-10 flex items-center gap-3 px-5 py-4">
                 <ProductFavicon url={url} size={20} rounded="sm" />
                 <Loader2 className="size-5 shrink-0 animate-spin text-brand" />
                 <span className="flex-1 truncate bg-transparent text-sm text-foreground/60">
@@ -513,8 +522,9 @@ export function NewResearchClient({
                   {elapsedDisplay}
                 </span>
                 <button
+                  type="button"
                   onClick={handleCancel}
-                  className="text-xs text-muted-foreground transition-colors hover:text-foreground"
+                  className="relative z-10 shrink-0 px-1 text-xs text-muted-foreground transition-colors hover:text-foreground"
                 >
                   cancel
                 </button>
