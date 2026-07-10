@@ -1466,10 +1466,10 @@ export function SessionViewClient({
       void fetch("/api/research/cancel", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ runId: id }),
+        body: JSON.stringify({ runId: id, sessionId }),
       });
     }
-  }, [runId, stopCompetitorsUi]);
+  }, [runId, sessionId, stopCompetitorsUi]);
 
   const runCompetitors = useCallback(async () => {
     const prevId = runId;
@@ -1477,7 +1477,7 @@ export function SessionViewClient({
       void fetch("/api/research/cancel", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ runId: prevId }),
+        body: JSON.stringify({ runId: prevId, sessionId }),
       });
     }
 
@@ -1758,10 +1758,10 @@ export function SessionViewClient({
       void fetch("/api/research/cancel", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ runId: id }),
+        body: JSON.stringify({ runId: id, sessionId }),
       });
     }
-  }, [hnRunId]);
+  }, [hnRunId, sessionId]);
 
   // Reddit SSE reader
   useEffect(() => {
@@ -1865,10 +1865,10 @@ export function SessionViewClient({
       void fetch("/api/research/cancel", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ runId: id }),
+        body: JSON.stringify({ runId: id, sessionId }),
       });
     }
-  }, [redditRunId]);
+  }, [redditRunId, sessionId]);
 
   // Channels stay locked until we have a competitor payload (incl. empty list).
   const channelsLocked = !competitors;
