@@ -20,8 +20,7 @@ const inputSchema = z.object({
 });
 
 export async function POST(request: Request) {
-  const auth = await getAuthedUser();
-  if ("response" in auth) return auth.response;
+  await getAuthedUser();
 
   let input: z.infer<typeof inputSchema>;
   try {

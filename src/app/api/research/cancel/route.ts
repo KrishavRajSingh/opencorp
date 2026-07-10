@@ -2,8 +2,7 @@ import { runs } from "@trigger.dev/sdk/v3";
 import { getAuthedUser } from "@/lib/supabase/auth";
 
 export async function POST(request: Request) {
-  const auth = await getAuthedUser();
-  if ("response" in auth) return auth.response;
+  await getAuthedUser();
 
   let runId: string;
   try {

@@ -59,8 +59,8 @@ export default async function SharedSessionPage({
   const competitors = session.competitor_result as CompetitorResult | null;
   const hnThreads = session.hn_threads_result as HNResult | null;
 
-  const auth = await getAuthedUser();
-  const isAuthed = "user" in auth ? auth.user.email !== null : false;
+  const { user } = await getAuthedUser();
+  const isAuthed = user.email !== null;
 
   return (
     <div className="flex min-h-svh flex-col">

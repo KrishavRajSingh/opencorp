@@ -1,4 +1,4 @@
-import { createClient, isAuthEnabled } from "@/lib/supabase/server";
+import { createClient } from "@/lib/supabase/server";
 import { DashboardShell } from "./dashboard-shell";
 import { fetchSessions } from "./data";
 
@@ -12,14 +12,13 @@ export default async function DashboardLayout({
     data: { user },
   } = await supabase.auth.getUser();
 
-  const publicMode = !isAuthEnabled();
-  const sessions = publicMode || user ? await fetchSessions() : [];
+  const sessions = await fetchSessions();
 
   return (
     <DashboardShell
       sessions={sessions}
       activeName={null}
-      user={publicMode ? null : user ? { email: user.email ?? null } : null}
+      user={user ? { email: user.email ?? null } : null}
     >
       {children}
     </DashboardShell>

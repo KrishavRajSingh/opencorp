@@ -11,8 +11,7 @@ type SessionRow = {
 };
 
 export async function GET() {
-  const auth = await getAuthedUser();
-  if ("response" in auth) return auth.response;
+  await getAuthedUser();
 
   const supabase = await getDbClient();
   const { data, error } = await supabase

@@ -1,6 +1,5 @@
-import { notFound, redirect } from "next/navigation";
-import { createClient, isAuthEnabled } from "@/lib/supabase/server";
-import { getAuthedUser } from "@/lib/supabase/auth";
+import { notFound } from "next/navigation";
+import { createClient } from "@/lib/supabase/server";
 import type { GtmBrief } from "@/components/ai-elements/gtm-brief";
 import { SessionViewClient } from "../session-view-client";
 import { fetchSession } from "../data";
@@ -45,16 +44,10 @@ export default async function SessionPage({
 }) {
   const { id } = await params;
 
-  if (isAuthEnabled()) {
-    const supabase = await createClient();
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-
-    if (!user) {
-      redirect(`/auth/sign-in?next=/dashboard/${id}`);
-    }
-  }
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
   const session = await fetchSession(id);
 
@@ -81,8 +74,7 @@ export default async function SessionPage({
       }
     : null;
 
-  const auth = await getAuthedUser();
-  const isAuthed = "user" in auth ? auth.user.email !== null : false;
+  const isAuthed = user?.email != null;
 
   return (
     <SessionViewClient

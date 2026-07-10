@@ -173,10 +173,8 @@ function ProductResultCard({ result }: { result: ProductResult }) {
 }
 
 export function NewResearchClient({
-  isAuthed = false,
   initialUrl = "",
 }: {
-  isAuthed?: boolean;
   initialUrl?: string;
 } = {}) {
   const router = useRouter();
@@ -353,12 +351,6 @@ export function NewResearchClient({
       return;
     }
 
-    if (!isAuthed) {
-      document.cookie = `pending_url=${encodeURIComponent(trimmed)}; path=/; max-age=600; SameSite=Lax`;
-      router.push("/auth/sign-in?next=/dashboard");
-      return;
-    }
-
     setStatus("streaming");
     setError(null);
     setStreamStatus(null);
@@ -386,7 +378,7 @@ export function NewResearchClient({
       setError(err instanceof Error ? err.message : "Something went wrong");
       setStatus("error");
     }
-  }, [url, isAuthed, router]);
+  }, [url, router]);
 
   const handleCancel = useCallback(() => {
     const id = runId;

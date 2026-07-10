@@ -54,8 +54,7 @@ const baseSchema = z.object({
 });
 
 export async function POST(request: Request) {
-  const auth = await getAuthedUser();
-  if ("response" in auth) return auth.response;
+  const { user } = await getAuthedUser();
 
   let body: z.infer<typeof baseSchema>;
   try {
@@ -79,7 +78,7 @@ export async function POST(request: Request) {
     const { data, error } = await supabase
       .from("research_sessions")
       .insert({
-        user_id: auth.user.id,
+        user_id: user.id,
         input: body.input as never,
         product_analyst_result: body.product_analyst_result as never,
         updated_at: new Date().toISOString(),

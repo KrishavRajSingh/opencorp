@@ -13,8 +13,7 @@ const STOP_STATUSES = new Set([
 ]);
 
 export async function GET(request: Request) {
-  const auth = await getAuthedUser();
-  if ("response" in auth) return auth.response;
+  await getAuthedUser();
 
   const runId = new URL(request.url).searchParams.get("runId");
   if (!runId) {
