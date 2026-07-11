@@ -90,6 +90,7 @@ const RESULTS: LandingConsoleData = {
       num_comments: 67,
       whyRelevant:
         "Core pain Filler solves — people describing the exact retype loop across sites.",
+      isExample: true,
     },
     {
       id: "1abc002",
@@ -102,6 +103,7 @@ const RESULTS: LandingConsoleData = {
       num_comments: 124,
       whyRelevant:
         "High-engagement job-seeker thread. Natural place to show a privacy-first autofill.",
+      isExample: true,
     },
     {
       id: "1abc003",
@@ -113,6 +115,7 @@ const RESULTS: LandingConsoleData = {
       num_comments: 41,
       whyRelevant:
         "Buyers comparing tools on privacy — local-only storage is the differentiator.",
+      isExample: true,
     },
     {
       id: "1abc004",
@@ -124,6 +127,7 @@ const RESULTS: LandingConsoleData = {
       num_comments: 93,
       whyRelevant:
         "Technical audience hitting React/Vue controlled inputs — Filler's target surface.",
+      isExample: true,
     },
     {
       id: "1abc005",
@@ -135,6 +139,7 @@ const RESULTS: LandingConsoleData = {
       num_comments: 78,
       whyRelevant:
         "Founders looking for warm conversations — same loop OpenCorp is built for.",
+      isExample: true,
     },
     {
       id: "1abc006",
@@ -146,6 +151,7 @@ const RESULTS: LandingConsoleData = {
       num_comments: 201,
       whyRelevant:
         "Massive thread on the exact form types Filler maps to real profile answers.",
+      isExample: true,
     },
     {
       id: "1abc007",
@@ -157,6 +163,7 @@ const RESULTS: LandingConsoleData = {
       num_comments: 54,
       whyRelevant:
         "Privacy-minded users actively rejecting cloud autofill — perfect pitch surface.",
+      isExample: true,
     },
     {
       id: "1abc008",
@@ -168,6 +175,7 @@ const RESULTS: LandingConsoleData = {
       num_comments: 39,
       whyRelevant:
         "Meta-thread about finding buyers in communities — OpenCorp's own use case.",
+      isExample: true,
     },
     {
       id: "1abc009",
@@ -179,6 +187,7 @@ const RESULTS: LandingConsoleData = {
       num_comments: 28,
       whyRelevant:
         "No-account, local-first buyers — aligns with Filler's architecture.",
+      isExample: true,
     },
     {
       id: "1abc010",
@@ -190,6 +199,7 @@ const RESULTS: LandingConsoleData = {
       num_comments: 96,
       whyRelevant:
         "Practitioners comparing profile-based vs AI-generated answers.",
+      isExample: true,
     },
   ],
   hnThreads: [

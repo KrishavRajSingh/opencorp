@@ -36,6 +36,7 @@ export type RedditThread = {
   score?: number;
   num_comments?: number;
   whyRelevant?: string;
+  isExample?: boolean;
 };
 
 export type LandingConsoleData = {
@@ -226,23 +227,33 @@ function RedditPanel({ threads }: { threads: RedditThread[] }) {
         {threads.map((t, i) => {
           const rank = String(i + 1).padStart(2, "0");
           return (
-            <motion.a
+            <motion.div
               key={t.id}
-              href={t.link}
-              target="_blank"
-              rel="noopener noreferrer"
               initial={{ opacity: 0, y: 4 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.05 }}
-              className="group/row flex items-start gap-2 rounded-md px-2 py-1.5 transition-colors hover:bg-card/60"
+              className="group/row flex items-start gap-2 rounded-md px-2 py-1.5"
             >
               <span className="mt-0.5 w-5 shrink-0 text-right font-mono text-[10px] tabular-nums text-[#FF4500]/80">
                 {rank}
               </span>
               <div className="min-w-0 flex-1">
-                <p className="line-clamp-2 text-xs text-foreground/85 group-hover/row:text-foreground">
-                  {t.title}
-                </p>
+                {t.isExample ? (
+                  <p className="line-clamp-2 text-xs text-foreground/85">
+                    {t.title}
+                  </p>
+                ) : (
+                  <a
+                    href={t.link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="block hover:text-foreground"
+                  >
+                    <p className="line-clamp-2 text-xs text-foreground/85 group-hover/row:text-foreground">
+                      {t.title}
+                    </p>
+                  </a>
+                )}
                 {t.whyRelevant && (
                   <p className="mt-0.5 text-[11px] italic text-muted-foreground/70">
                     {t.whyRelevant}
@@ -259,9 +270,14 @@ function RedditPanel({ threads }: { threads: RedditThread[] }) {
                   {typeof t.num_comments === "number" && (
                     <span>· {t.num_comments} cmts</span>
                   )}
+                  {t.isExample && (
+                    <span className="rounded border border-border/40 bg-background/50 px-1 text-[9px] uppercase tracking-wider text-muted-foreground/70">
+                      Example
+                    </span>
+                  )}
                 </div>
               </div>
-            </motion.a>
+            </motion.div>
           );
         })}
       </div>

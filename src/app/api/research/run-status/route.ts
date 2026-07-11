@@ -1,5 +1,6 @@
 import { runs } from "@trigger.dev/sdk/v3";
 import { getAuthedUser } from "@/lib/supabase/auth";
+import { ANON_BUCKET_USER_ID, createClient } from "@/lib/supabase/server";
 
 /** Terminal Trigger.dev run statuses that mean "stop waiting". */
 const STOP_STATUSES = new Set([
@@ -13,12 +14,41 @@ const STOP_STATUSES = new Set([
 ]);
 
 export async function GET(request: Request) {
-  await getAuthedUser();
+  const { user } = await getAuthedUser();
 
-  const runId = new URL(request.url).searchParams.get("runId");
+  const params = new URL(request.url).searchParams;
+  const runId = params.get("runId");
   if (!runId) {
     return new Response(JSON.stringify({ error: "runId required" }), {
       status: 400,
+      headers: { "Content-Type": "application/json" },
+    });
+  }
+
+  const sessionId = params.get("sessionId") ?? undefined;
+  if (sessionId !== undefined && (typeof sessionId !== "string" || !sessionId)) {
+    return new Response(
+      JSON.stringify({ error: "sessionId must be a non-empty string when provided" }),
+      { status: 400, headers: { "Content-Type": "application/json" } },
+    );
+  }
+
+  if (sessionId) {
+    const supabase = await createClient();
+    const { data, error } = await supabase
+      .from("research_sessions")
+      .select("id")
+      .eq("id", sessionId)
+      .single();
+    if (error || !data) {
+      return new Response(JSON.stringify({ error: "not found" }), {
+        status: 404,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+  } else if (user.id !== ANON_BUCKET_USER_ID) {
+    return new Response(JSON.stringify({ error: "not found" }), {
+      status: 404,
       headers: { "Content-Type": "application/json" },
     });
   }
