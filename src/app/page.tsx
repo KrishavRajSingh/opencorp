@@ -1,29 +1,21 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import { motion } from "motion/react";
 import Link from "next/link";
-import {
-  ArrowRight,
-  Maximize2,
-  Minimize2,
-  Search,
-  Sparkles,
-  Volume2,
-  VolumeX,
-} from "lucide-react";
+import { ArrowRight, Search, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { MarketingShell } from "@/components/marketing-shell";
-import { AgentConsole } from "@/components/agent-console";
 import {
   LandingConsole,
   type LandingConsoleData,
 } from "@/components/landing-console";
+import { RedditIcon } from "@/components/dashboard/reddit-icon";
+import { HNIcon } from "@/components/dashboard/hn-icon";
 import { cn } from "@/lib/utils";
 import { trackEvent } from "@/lib/analytics";
 
-const DEMO_VIDEO_SRC = "https://files.catbox.moe/sqrtf7.mp4";
 const FOUNDER_HANDLE = "opencorpai";
 
 const RESULTS: LandingConsoleData = {
@@ -33,206 +25,219 @@ const RESULTS: LandingConsoleData = {
       name: "FormPilot",
       url: "https://github.com/Karan-Raj-KR/FormPilot",
       description:
-        "AI-powered Chrome extension that scans any web form, understands each field with LLMs (GPT-4o, Claude, Gemini, Groq), and fills long-form essay fields too. Native setter bypass for React/Vue SPAs, BYOK, 100% local.",
+        "AI-powered Chrome extension that scans any web form, understands each field with LLMs, and fills long-form essay fields. Native setter bypass for React/Vue SPAs, BYOK, 100% local.",
       mentionSources: ["chrome store", "github", "hacker news"],
     },
     {
       name: "Superfill.ai",
       url: "https://github.com/superfill-ai/superfill.ai",
       description:
-        "MIT open-source cross-browser extension with an intelligent memory layer of Q&A pairs. Supports OpenAI, Anthropic, Groq, DeepSeek, Google, Ollama. AES-256 encryption, zero telemetry.",
+        "MIT open-source cross-browser extension with an intelligent memory layer of Q&A pairs. Supports OpenAI, Anthropic, Groq, DeepSeek, Google, Ollama.",
       mentionSources: ["github", "hacker news"],
     },
     {
       name: "Fillify",
       url: "https://fillify.tech",
       description:
-        "AI form filler driven by plain-language descriptions. Multi-backend (ChatGPT, Claude, Gemini, DeepSeek, Ollama), personal knowledge base, multilingual, privacy-first with local API keys. ~652 users, 5.0 rating.",
+        "AI form filler driven by plain-language descriptions. Multi-backend, personal knowledge base, multilingual, privacy-first with local API keys.",
       mentionSources: ["chrome store"],
-    },
-    {
-      name: "AI Form Filler",
-      url: "https://chromewebstore.google.com/detail/ai-form-filler/bmjhemfapilakkdabmpgafjejbfopefn",
-      description:
-        "Uses AI to intelligently fill forms with realistic data. Works on Google Forms, Microsoft Forms, and standard web forms — names, addresses, payment info. ~2,000 users.",
-      mentionSources: ["chrome store"],
-    },
-    {
-      name: "QuickForm",
-      url: "https://chromewebstore.google.com/detail/quickform-autofill-form-f/hmbnbbbknglecphfogchkhpdjiodfclh",
-      description:
-        "Record any form once, autofill forever. Works on React/Angular/Vue/dynamic SPAs with auto-click, smart delays, URL-specific profiles. ~40,000 users. Not AI — record and replay.",
-      mentionSources: ["chrome store"],
-    },
-    {
-      name: "FillSwift",
-      url: "https://chromewebstore.google.com/detail/fillswift-ai-powered-auto/oaiolajedpcbgniefchcpdkagieojlie",
-      description:
-        "Profile-based intelligent autofill with LLM-powered semantic matching. Multiple profiles (work, personal, clients), one-click full form fill, handles multi-step forms. Free, no limits. ~11 users.",
-      mentionSources: ["chrome store"],
-    },
-    {
-      name: "FillWise",
-      url: "https://chromewebstore.google.com/detail/fillwise/kpkdnalfelngnbdnglcgemgiigggloim",
-      description:
-        "AI auto-filling across 100+ languages with translation. Supports Latin, Cyrillic, Arabic, Chinese. Pulls data from CRM, spreadsheets, or emails. ~229 users. Updated January 2026.",
-      mentionSources: ["chrome store"],
-    },
-    {
-      name: "Smart Form Filler (hddevteam)",
-      url: "https://github.com/hddevteam/smart-form-filler",
-      description:
-        "AI-powered browser extension for intelligent data extraction and form filling. Ollama local model support for fully offline AI. ~42 stars, ISC license.",
-      mentionSources: ["github"],
-    },
-    {
-      name: "AI Form Helper (aiform)",
-      url: "https://github.com/aiform/ai-form-helper",
-      description:
-        "OpenAI-compatible LLM extension that analyzes DOM structures for automatic field recognition, data extraction, and one-click filling. AI memory, smart generation for unknown fields. Manifest V3.",
-      mentionSources: ["github"],
-    },
-    {
-      name: "LoopFil",
-      url: "https://chromewebstore.google.com/detail/loopfil/ahcfioaldlbkboagekngignbjmgohbln",
-      description:
-        "AI-powered smart form filling using ChatGPT or Gemini. Smart form detection, custom profiles, Google Drive sync, offline mode, privacy-first. ~14 users.",
-      mentionSources: ["chrome store"],
-    },
-    {
-      name: "AutoFill Forms (tlintspr)",
-      url: "https://chromewebstore.google.com/detail/autofill-forms/focmhibpdifbdjacabpgnifhdalgfogg",
-      description:
-        "Classic form filler with multiple profiles and regex-based rules. Random passwords/strings, multi-line text, position-based filling. ~100,000 users. Rule and pattern-based — not AI.",
-      mentionSources: ["chrome store"],
-    },
-    {
-      name: "Lightning Autofill",
-      url: "https://chromewebstore.google.com/detail/lightning-autofill/nlmmgnhgdeffjkdckmikfpnddkbbfkkk",
-      description:
-        "Long-established autofill extension (since 2010) combining form filling, automation, macros, text expansion, random data, and form recovery. ~500,000 users. Not AI-powered.",
-      mentionSources: ["chrome store"],
-    },
-    {
-      name: "Universal Form Compiler",
-      url: "https://github.com/universal-form-compiler/universal-form-compiler",
-      description:
-        "Auto-fills any web form from uploaded PDFs or DOCX using OpenAI. Anti-hallucination guards, Angular Material/React compatibility, on-demand activation. MIT licensed.",
-      mentionSources: ["github"],
-    },
-    {
-      name: "PrIDA",
-      url: "https://github.com/prida/prida",
-      description:
-        "Personal Information Digital Assistant using Chrome's built-in Gemini Nano for on-device autofill. Label detection, context-aware suggestions, multiple profiles, context menu. 100% on-device, MIT.",
-      mentionSources: ["github"],
-    },
-    {
-      name: "Formilot",
-      url: "https://formilot.com",
-      description:
-        "AI-powered one-click autofill with natural language interaction. Smart recognition of complex forms, multi-language support, random data for testing, encrypted local storage. Freemium ($2-3/mo Pro).",
-      mentionSources: ["website", "hacker news"],
-    },
-    {
-      name: "AI Autofill (chandrasuda)",
-      url: "https://github.com/chandrasuda/ai-autofill",
-      description:
-        "RAG-based autofill for researchers applying for grants. Uploads PDFs, Word, plain text, uses a local LLM with RAG to answer questions and autofill forms. 27 stars, MIT.",
-      mentionSources: ["github"],
     },
     {
       name: "Tap Apply",
       url: "https://tapapply.net",
       description:
-        "Browser extension focused on job applications. Autofills from resume, generates tailored cover letters and answers via AI. Credit-based pricing for AI features; autofill itself is free.",
+        "Browser extension focused on job applications. Autofills from resume, generates tailored cover letters and answers via AI.",
       mentionSources: ["website", "hacker news"],
-    },
-    {
-      name: "TETRAform",
-      url: "https://tetraform.app",
-      description:
-        "Free autofill Chrome extension with multiple profiles (Work, Personal, Job Applications, School). 100% private — data never leaves device. Smart field detection, blocks sensitive fields. No account required.",
-      mentionSources: ["website"],
-    },
-    {
-      name: "LiftmyCV",
-      url: "https://www.liftmycv.com/",
-      description:
-        "AI job search agent with Chrome extension that auto-applies across 7 job boards/ATS platforms. GPT-4o powered. Freemium/pay-as-you-go. 942 signups, 70 paying users since Feb 2025.",
-      mentionSources: ["hacker news"],
     },
     {
       name: "Simplify Copilot",
       url: "https://chromewebstore.google.com/detail/simplify-copilot-autofill/pbanhockgagggenencehbnadejlgchfc",
       description:
-        "AI tool for job search efficiency. Autofills Workday, Lever, Greenhouse, generates tailored resumes and cover letters, all-in-one job tracker. 500,000 users, 4.9 rating. Free autofill.",
+        "AI tool for job search efficiency. Autofills Workday, Lever, Greenhouse; generates tailored resumes and cover letters.",
       mentionSources: ["chrome store"],
     },
     {
-      name: "KeeperFill",
-      url: "https://keepersecurity.com",
+      name: "Formilot",
+      url: "https://formilot.com",
       description:
-        "Patented technology from Keeper Security using AI to securely log into sites. Autofills usernames, passwords, TOTP, passkeys, addresses, payment. Phishing protection. Cross-platform.",
-      mentionSources: ["website"],
-    },
-    {
-      name: "Zetoe",
-      url: "https://zetoe.com",
-      description:
-        "Blue action bubble on text selection with instant AI actions: ask AI, one-click summaries, translations, in-context fact checking, and smart form autofill. ~60 users.",
-      mentionSources: ["hacker news", "chrome store"],
+        "AI-powered one-click autofill with natural language interaction. Smart recognition of complex forms, multi-language support.",
+      mentionSources: ["website", "hacker news"],
     },
     {
       name: "Form Sherpa",
       url: "https://github.com/form-sherpa/form-sherpa",
       description:
-        "Privacy-first Chrome extension that explains form fields, translates labels/errors, autofills from a local encrypted vault, and adds a PII guardrail before submit. On-device via Chrome Prompt API, MIT.",
+        "Privacy-first Chrome extension that explains form fields, translates labels, and autofills from a local encrypted vault.",
       mentionSources: ["github"],
     },
     {
-      name: "Form Filler (thuyydt)",
-      url: "https://addons.mozilla.org",
+      name: "Lightning Autofill",
+      url: "https://chromewebstore.google.com/detail/lightning-autofill/nlmmgnhgdeffjkdckmikfpnddkbbfkkk",
       description:
-        "AI-powered form filler for developers and testers. Smart scoring on context, labels, HTML structure. Detects Email, Phone, Address, Names (Vietnamese/Japanese/English). Privacy-first, no data collection. Open source.",
-      mentionSources: ["mozilla addons"],
+        "Long-established autofill extension combining form filling, automation, macros, text expansion, and form recovery.",
+      mentionSources: ["chrome store"],
+    },
+  ],
+  redditThreads: [
+    {
+      id: "1abc001",
+      sub: "productivity",
+      title:
+        "Tired of retyping the same info on every job application / signup form?",
+      link: "https://www.reddit.com/r/productivity/comments/example1",
+      author: "form_fatigue",
+      score: 142,
+      num_comments: 67,
+      whyRelevant:
+        "Core pain Filler solves — people describing the exact retype loop across sites.",
+      isExample: true,
+    },
+    {
+      id: "1abc002",
+      sub: "jobs",
+      title:
+        "Anyone else spending more time filling ATS forms than writing the resume?",
+      link: "https://www.reddit.com/r/jobs/comments/example2",
+      author: "ats_hater",
+      score: 318,
+      num_comments: 124,
+      whyRelevant:
+        "High-engagement job-seeker thread. Natural place to show a privacy-first autofill.",
+      isExample: true,
+    },
+    {
+      id: "1abc003",
+      sub: "chrome_extensions",
+      title: "Best form autofill extensions that don't phone home?",
+      link: "https://www.reddit.com/r/chrome_extensions/comments/example3",
+      author: "privacy_first",
+      score: 89,
+      num_comments: 41,
+      whyRelevant:
+        "Buyers comparing tools on privacy — local-only storage is the differentiator.",
+      isExample: true,
+    },
+    {
+      id: "1abc004",
+      sub: "webdev",
+      title: "Why do every SPA form break my browser autofill?",
+      link: "https://www.reddit.com/r/webdev/comments/example4",
+      author: "react_dev",
+      score: 204,
+      num_comments: 93,
+      whyRelevant:
+        "Technical audience hitting React/Vue controlled inputs — Filler's target surface.",
+      isExample: true,
+    },
+    {
+      id: "1abc005",
+      sub: "SaaS",
+      title: "How do you find early users without cold email spam?",
+      link: "https://www.reddit.com/r/SaaS/comments/example5",
+      author: "indie_hacker",
+      score: 156,
+      num_comments: 78,
+      whyRelevant:
+        "Founders looking for warm conversations — same loop OpenCorp is built for.",
+      isExample: true,
+    },
+    {
+      id: "1abc006",
+      sub: "cscareerquestions",
+      title: "Greenhouse / Lever applications are soul-crushing. Alternatives?",
+      link: "https://www.reddit.com/r/cscareerquestions/comments/example6",
+      author: "new_grad_22",
+      score: 412,
+      num_comments: 201,
+      whyRelevant:
+        "Massive thread on the exact form types Filler maps to real profile answers.",
+      isExample: true,
+    },
+    {
+      id: "1abc007",
+      sub: "privacy",
+      title: "Do AI form fillers send my personal data to the cloud?",
+      link: "https://www.reddit.com/r/privacy/comments/example7",
+      author: "no_telemetry",
+      score: 97,
+      num_comments: 54,
+      whyRelevant:
+        "Privacy-minded users actively rejecting cloud autofill — perfect pitch surface.",
+      isExample: true,
+    },
+    {
+      id: "1abc008",
+      sub: "Entrepreneur",
+      title: "Just shipped my first extension. Where do I talk to real users?",
+      link: "https://www.reddit.com/r/Entrepreneur/comments/example8",
+      author: "shipped_it",
+      score: 63,
+      num_comments: 39,
+      whyRelevant:
+        "Meta-thread about finding buyers in communities — OpenCorp's own use case.",
+      isExample: true,
+    },
+    {
+      id: "1abc009",
+      sub: "selfhosted",
+      title: "Looking for local-only password + form tools (no account required)",
+      link: "https://www.reddit.com/r/selfhosted/comments/example9",
+      author: "homelab_user",
+      score: 71,
+      num_comments: 28,
+      whyRelevant:
+        "No-account, local-first buyers — aligns with Filler's architecture.",
+      isExample: true,
+    },
+    {
+      id: "1abc010",
+      sub: "experienceddevs",
+      title: "What do you use to stop retyping company history on every form?",
+      link: "https://www.reddit.com/r/experienceddevs/comments/example10",
+      author: "senior_eng",
+      score: 188,
+      num_comments: 96,
+      whyRelevant:
+        "Practitioners comparing profile-based vs AI-generated answers.",
+      isExample: true,
     },
   ],
   hnThreads: [
     {
       objectID: "41250001",
-      title: "Show HN: Superfill.ai – Open-source AI extension for intelligent form autofill",
+      title:
+        "Show HN: Superfill.ai – Open-source AI extension for intelligent form autofill",
       url: "https://news.ycombinator.com/item?id=46134574",
       points: 4,
       comments: 0,
       author: "superfill_team",
       date: "2026-06-29T14:20:00Z",
       whyRelevant:
-        "Direct competitor launch (Superfill.ai). The thread pitch explicitly names the problem Filler solves: retyping the same information across different websites like job applications, dating profiles, rental forms, surveys. You can respond with Filler as a competing approach — highlighting differentiators like local-only profiles (vs. their BYOK LLM approach), no account required, the flag-guesses-for-review UX, and that it handles dropdowns/radios (which they're still building in Phase 2).",
+        "Direct competitor launch. Thread names the retype problem Filler solves — job apps, surveys, rentals.",
       topCommentSnippet: null,
     },
     {
       objectID: "41249880",
       title: "Show HN: Job App Filler – free Chrome extension",
-      url: 'https://news.ycombinator.com/item?id=41068891',
+      url: "https://news.ycombinator.com/item?id=41068891",
       points: 3,
       comments: 1,
       author: "jobappfiller",
       date: "2026-06-28T09:11:00Z",
       whyRelevant:
-        "A direct competitor in the same Chrome extension job-autofill space, but narrow (job apps only). Still in early stages. Opportunity to pitch Filler as the broader tool that does jobs AND Google Forms, Tally, Ashby, surveys, signup pages. Great place to differentiate on scope and on the privacy-first, no-account model.",
+        "Narrow job-only autofill. Room to pitch broader form support + privacy-first model.",
       topCommentSnippet: null,
     },
     {
       objectID: "41247125",
       title: "Show HN: I made a Chrome extension to auto-apply to jobs",
-      url: 'https://news.ycombinator.com/item?id=41126965',
+      url: "https://news.ycombinator.com/item?id=41126965",
       points: 12,
       comments: 3,
       author: "instaapply",
       date: "2026-06-26T16:48:00Z",
       whyRelevant:
-        "InstaApply does auto-apply with AI, and the founder describes the exact pain Filler solves: applying to dozens of jobs… filling out the same data over and over again. The thread has active discussion from job-seekers. Perfect place to pitch Filler as the complement (or alternative) — especially since posts in this thread note concerns about ATS spam and degradation of application quality. Filler's human-in-the-loop review, no-auto-submit, and privacy positioning directly address those concerns.",
+        "Founder describes filling the same data over and over. Active job-seeker discussion.",
       topCommentSnippet: null,
     },
     {
@@ -244,308 +249,217 @@ const RESULTS: LandingConsoleData = {
       author: "liftmycv",
       date: "2026-06-24T11:32:00Z",
       whyRelevant:
-        "Direct competitor description mentions GPT-4o-powered auto-fill for job applications and lists competing products. The founder explicitly describes struggling with fine-tuning the AI auto-fill logic and GPT-generated responses required constant tweaks. Pitch here to highlight Filler's different design choice — reusing verified, human-saved answers from the user's own data instead of hallucinated AI answers, and never auto-submitting.",
+        "GPT auto-fill competitor. Pitch verified human-saved answers instead of hallucinated fields.",
       topCommentSnippet: null,
     },
     {
       objectID: "41244780",
-      title: "Show HN: Free AI tool that fills web forms from plain text (FillApp)",
-      url: 'https://news.ycombinator.com/item?id=44016661',
+      title:
+        "Show HN: Free AI tool that fills web forms from plain text (FillApp)",
+      url: "https://news.ycombinator.com/item?id=44016661",
       points: 3,
       comments: 2,
       author: "fillapp_dev",
       date: "2026-06-22T19:05:00Z",
       whyRelevant:
-        "A direct competitor (broad web-form filler). Comments from HN users are already raising data-privacy concerns. This is the ideal opening to pitch Filler, which stores profile data locally in the browser and is no-account-required.",
+        "Comments already raise data-privacy concerns — opening for local-only storage.",
       topCommentSnippet:
-        "If the model runs locally, form data would not have to be collected by you… not clear why you would need to retain all user-submitted data post-response.",
+        "If the model runs locally, form data would not have to be collected by you…",
     },
     {
       objectID: "41242915",
-      title: "Show HN: FinalApp – paste a job link, review the filled application, then submit",
-      url: 'https://news.ycombinator.com/item?id=48555531',
+      title:
+        "Show HN: FinalApp – paste a job link, review the filled application, then submit",
+      url: "https://news.ycombinator.com/item?id=48555531",
       points: 1,
       comments: 0,
       author: "finalapp",
       date: "2026-06-20T08:44:00Z",
       whyRelevant:
-        "Competitor that auto-fills AND submits. Good place to pitch Filler's different philosophy: never auto-submits, skips sensitive fields (passwords, payments, OTPs, government IDs) by design, works on non-job forms too.",
-      topCommentSnippet:
-        "Fills out and submits the real application with a Strict Mode to wait for approval.",
+        "Auto-fills and submits. Contrast with never-auto-submit, skip-sensitive-fields design.",
+      topCommentSnippet: null,
     },
     {
       objectID: "41240440",
       title: "Show HN: Fake Data Extension – The best wannabe form filler",
-      url: 'https://news.ycombinator.com/item?id=17718190',
+      url: "https://news.ycombinator.com/item?id=17718190",
       points: 3,
       comments: 0,
       author: "fakedata_dev",
       date: "2026-06-17T13:20:00Z",
       whyRelevant:
-        "Existing form-filler extension asking for critics. The pitch is for fake/test data, which is a completely different use case than Filler (real profile data). Easy to thread a comment introducing Filler as the tool that fills real personal info, not fake data.",
+        "Fake/test data tool — easy contrast with real profile data for real forms.",
       topCommentSnippet: "Throw here everything that you dislike.",
     },
     {
       objectID: "41238120",
-      title: "Show HN: Drafting AI – Human-in-the-loop AI automation for ops teams email",
-      url: 'https://news.ycombinator.com/item?id=42247037',
+      title:
+        "Show HN: Drafting AI – Human-in-the-loop AI automation for ops teams email",
+      url: "https://news.ycombinator.com/item?id=42247037",
       points: 29,
       comments: 2,
       author: "drafting_ai",
       date: "2026-06-15T10:12:00Z",
       whyRelevant:
-        "Drafting AI's whole thesis is that AI should draft responses but not submit them, and that pre-filling form fields will become standard for AI. This is philosophically aligned with Filler's never auto-submits design. The thread is a good place to pitch Filler as the consumer-facing version of the same principle — pre-fill, human reviews, human submits.",
+        "Thesis: AI drafts, humans submit. Philosophically aligned with pre-fill + review.",
       topCommentSnippet:
-        "AI should draft responses but not submit them… pre-filling form fields will become standard for AI.",
+        "AI should draft responses but not submit them… pre-filling form fields will become standard.",
     },
     {
       objectID: "41235509",
       title: "Show HN: I Made a Form Autofiller",
-      url: 'https://news.ycombinator.com/item?id=42809198',
+      url: "https://news.ycombinator.com/item?id=42809198",
       points: 1,
       comments: 1,
       author: "formautofiller",
       date: "2026-06-12T15:50:00Z",
       whyRelevant:
-        "Direct competitor Show HN. The single comment is the data-privacy question — a perfect opening to pitch Filler's local-first, no-account, no-server-storage architecture.",
+        "Direct competitor Show HN. Single comment is the privacy question.",
       topCommentSnippet: "What about data privacy?",
     },
     {
       objectID: "41233871",
       title: "Autofill Easy to Use (EasyAutoFill)",
-      url: 'https://news.ycombinator.com/item?id=41233871',
+      url: "https://news.ycombinator.com/item?id=41233871",
       points: 2,
       comments: 0,
       author: "easyfill_dev",
       date: "2026-06-10T09:30:00Z",
       whyRelevant:
-        "Competitor that securely saves your form data and automatically fills it the next time you visit the same page. Differentiator: EasyAutoFill is page-remembers-what-you-typed; Filler is profile-based and reads question text with AI to map to profile fields on any new form. Also Filler handles dropdowns/radios and guesses unseen questions.",
+        "Page-remembers-what-you-typed vs profile-based AI mapping on any new form.",
       topCommentSnippet: null,
     },
     {
       objectID: "41231444",
-      title: "Show HN: Advance AI to intelligently fill forms with realistic data (AI Form Filler)",
+      title:
+        "Show HN: Advance AI to intelligently fill forms with realistic data (AI Form Filler)",
       url: "https://news.ycombinator.com/item?id=40857392",
       points: 1,
       comments: 0,
       author: "samuelaidoo0001",
       date: "2026-06-07T17:24:00Z",
       whyRelevant:
-        "Direct competitor (AI Form Filler on Chrome Web Store). Pitch Filler here with differentiators: local profile storage, no account, answer reuse across forms, flag-guesses-for-review UX, and broad form support (Ashby, Tally, Google Forms).",
+        "Chrome store competitor. Differentiate on local profile storage and no account.",
       topCommentSnippet: null,
     },
     {
       objectID: "41228660",
-      title: "Show HN: FormFaker – AI-powered browser extension that fills forms with realistic fake data",
-      url: 'https://news.ycombinator.com/item?id=41228660',
+      title:
+        "Show HN: FormFaker – AI-powered browser extension that fills forms with realistic fake data",
+      url: "https://news.ycombinator.com/item?id=41228660",
       points: 2,
       comments: 8,
       author: "formfaker",
       date: "2026-06-04T12:08:00Z",
       whyRelevant:
-        "Fake-data filler (dev/test tool). Active discussion. Good place to comment introducing Filler as the real-data counterpart — for people who want to fill forms with their actual data instead of LLM-generated fake data.",
+        "Fake-data filler with active discussion. Introduce real-data counterpart.",
       topCommentSnippet: null,
     },
   ],
 };
 
-function VideoControlButton({
-  onClick,
-  label,
-  children,
-}: {
-  onClick: () => void;
-  label: string;
-  children: React.ReactNode;
-}) {
+const CAPABILITIES = [
+  {
+    title: "Alternatives",
+    description:
+      "See who else is building something similar — each result with sources.",
+    icon: Users,
+    tone: "brand" as const,
+  },
+  {
+    title: "Reddit",
+    description:
+      "Find threads where people describe the problem you solve.",
+    icon: RedditIcon,
+    tone: "reddit" as const,
+  },
+  {
+    title: "Hacker News",
+    description: "Surface launches and discussions worth joining.",
+    icon: HNIcon,
+    tone: "hn" as const,
+  },
+];
+
+function CapabilityCards() {
   return (
-    <button
-      type="button"
-      onClick={onClick}
-      aria-label={label}
-      className="inline-flex items-center gap-1.5 rounded-full bg-black/60 px-2.5 py-1 text-xs text-white backdrop-blur-sm transition-colors hover:bg-black/80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60"
-    >
-      {children}
-      <span className="hidden sm:inline">{label}</span>
-    </button>
-  );
-}
+    <section className="mx-auto max-w-5xl px-6 pb-8 pt-4">
+      <div className="grid gap-3 sm:grid-cols-3">
+        {CAPABILITIES.map((cap, i) => {
+          const Icon = cap.icon;
+          const iconWrap = {
+            brand: "border-brand/30 bg-brand/10 text-brand",
+            reddit: "border-[#FF4500]/25 bg-[#FF4500]/10",
+            hn: "border-orange-400/25 bg-orange-400/10",
+          }[cap.tone];
 
-function DemoVideo({
-  location,
-  className,
-}: {
-  location: "hero" | "footer";
-  className?: string;
-}) {
-  const [muted, setMuted] = useState(true);
-  const [isFullscreen, setIsFullscreen] = useState(false);
-  const wrapperRef = useRef<HTMLDivElement>(null);
-  const videoRef = useRef<HTMLVideoElement>(null);
-  const firedRef = useRef<Set<number>>(new Set());
-
-  useEffect(() => {
-    const video = videoRef.current;
-    if (!video) return;
-    const p = video.play();
-    if (p && typeof p.catch === "function") p.catch(() => {});
-  }, []);
-
-  useEffect(() => {
-    if (videoRef.current) {
-      videoRef.current.muted = muted;
-    }
-  }, [muted]);
-
-  useEffect(() => {
-    const onChange = () => {
-      setIsFullscreen(document.fullscreenElement === wrapperRef.current);
-    };
-    document.addEventListener("fullscreenchange", onChange);
-    return () => document.removeEventListener("fullscreenchange", onChange);
-  }, []);
-
-  useEffect(() => {
-    const video = videoRef.current;
-    if (!video) return;
-
-    const onTimeUpdate = () => {
-      if (!video.duration || !Number.isFinite(video.duration)) return;
-      const pct = Math.floor((video.currentTime / video.duration) * 100);
-      for (const t of [25, 50, 75, 100] as const) {
-        if (pct >= t && !firedRef.current.has(t)) {
-          firedRef.current.add(t);
-          trackEvent({ name: "demo_progress", data: { pct: t, location } });
-        }
-      }
-    };
-
-    video.addEventListener("timeupdate", onTimeUpdate);
-    return () => video.removeEventListener("timeupdate", onTimeUpdate);
-  }, [location]);
-
-  const toggleFullscreen = async () => {
-    const wrapper = wrapperRef.current;
-    if (!wrapper) return;
-    try {
-      if (!document.fullscreenElement) {
-        await wrapper.requestFullscreen();
-        trackEvent({ name: "demo_fullscreen_enter", data: { location } });
-      } else {
-        await document.exitFullscreen();
-        trackEvent({ name: "demo_fullscreen_exit", data: { location } });
-      }
-    } catch {
-      // user denied or API unavailable — silently noop
-    }
-  };
-
-  return (
-    <div
-      ref={wrapperRef}
-      className={cn(
-        "group relative overflow-hidden rounded-2xl border border-border/60 bg-card/50 shadow-[0_30px_60px_-15px_oklch(0_0_0_/_0.5),0_0_0_1px_oklch(0.72_0.15_75_/_0.06)] backdrop-blur-sm",
-        className,
-      )}
-    >
-      <div className="flex items-center gap-3 border-b border-border/40 px-4 py-2.5">
-        <span className="flex gap-1.5">
-          <span className="size-2.5 rounded-full bg-red-500/70" />
-          <span className="size-2.5 rounded-full bg-yellow-500/70" />
-          <span className="size-2.5 rounded-full bg-green-500/70" />
-        </span>
-        <span className="text-xs text-muted-foreground">opencorp.ai/demo</span>
-        <div className="ml-auto flex items-center gap-1.5 text-xs text-brand">
-          <span className="relative flex size-1.5">
-            <span className="absolute inline-flex size-full animate-ping rounded-full bg-brand opacity-60" />
-            <span className="relative inline-flex size-1.5 rounded-full bg-brand" />
-          </span>
-          Live
-        </div>
+          return (
+            <motion.div
+              key={cap.title}
+              initial={{ opacity: 0, y: 10 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-40px" }}
+              transition={{ duration: 0.4, delay: i * 0.06 }}
+              className="rounded-2xl border border-border/50 bg-card/40 p-5 backdrop-blur-sm"
+            >
+              <div
+                className={cn(
+                  "mb-4 grid size-10 place-items-center overflow-hidden rounded-xl border",
+                  iconWrap,
+                )}
+              >
+                {cap.tone === "brand" ? (
+                  <Icon className="size-5" />
+                ) : (
+                  <Icon className="size-8" />
+                )}
+              </div>
+              <h3 className="font-heading text-lg tracking-tight text-foreground">
+                {cap.title}
+              </h3>
+              <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+                {cap.description}
+              </p>
+            </motion.div>
+          );
+        })}
       </div>
-      <div className="relative">
-        <video
-          ref={videoRef}
-          src={DEMO_VIDEO_SRC}
-          autoPlay
-          muted={muted}
-          loop
-          playsInline
-          preload="metadata"
-          className="aspect-video w-full bg-black"
-        />
-        <div className="absolute bottom-3 right-3 z-10 flex items-center gap-1.5">
-          <VideoControlButton
-            onClick={toggleFullscreen}
-            label={isFullscreen ? "Exit" : "Fullscreen"}
-          >
-            {isFullscreen ? (
-              <Minimize2 className="size-3.5" />
-            ) : (
-              <Maximize2 className="size-3.5" />
-            )}
-          </VideoControlButton>
-          <VideoControlButton
-            onClick={() => setMuted((m) => !m)}
-            label={muted ? "Unmute" : "Mute"}
-          >
-            {muted ? (
-              <VolumeX className="size-3.5" />
-            ) : (
-              <Volume2 className="size-3.5" />
-            )}
-          </VideoControlButton>
-        </div>
-      </div>
-    </div>
+    </section>
   );
 }
 
 function RealOutput() {
   return (
-    <section className="mx-auto max-w-6xl px-6 py-24">
-      <div className="grid items-start gap-12 lg:grid-cols-[1.1fr_1fr]">
-        <motion.div
-          initial={{ opacity: 0, y: 12 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-100px" }}
-          transition={{ duration: 0.5 }}
-        >
-          <div className="font-mono text-[10px] font-medium uppercase tracking-widest text-brand">
-            01 / output
-          </div>
-          <h2 className="mt-3 font-heading text-3xl leading-tight tracking-tight sm:text-4xl">
-            Here&apos;s what opencorp found for{" "}
-            <span className="text-brand">filler.live</span>.
-          </h2>
-          <p className="mt-4 max-w-md text-sm leading-relaxed text-muted-foreground">
-            The first product opencorp ran on was its own creator&apos;s. The
-            agent pulled competitors from across the web, surfaced the HN
-            threads where the people who would want this are already talking,
-            and handed back a report in under a minute.
-          </p>
-          <div className="mt-6 flex flex-wrap items-center gap-x-6 gap-y-2 font-mono text-xs text-muted-foreground/80">
-            <span>
-              <span className="text-foreground">●</span>{" "}
-              <span className="text-foreground">competitors</span> — sources
-              included
-            </span>
-            <span>
-              <span className="text-foreground">●</span>{" "}
-              <span className="text-foreground">HN threads</span> — sentiment
-              tagged
-            </span>
-          </div>
-        </motion.div>
+    <section className="border-y border-border/50 bg-muted/20">
+      <div className="mx-auto max-w-6xl px-6 py-24">
+        <div className="grid items-start gap-12 lg:grid-cols-[1fr_1.05fr]">
+          <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 0.5 }}
+          >
+            <p className="text-sm font-medium text-brand">Real report</p>
+            <h2 className="mt-3 font-heading text-3xl leading-tight tracking-tight sm:text-4xl">
+              What OpenCorp found for{" "}
+              <span className="text-brand">filler.live</span>
+            </h2>
+            <p className="mt-4 max-w-md text-sm leading-relaxed text-muted-foreground">
+              A real product link. Alternatives to study, Reddit threads where
+              buyers complain, and Hacker News discussions ready to join — all
+              in one report.
+            </p>
+          </motion.div>
 
-        <motion.div
-          initial={{ opacity: 0, y: 12 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-100px" }}
-          transition={{ duration: 0.5, delay: 0.1 }}
-        >
-          <LandingConsole data={RESULTS} />
-        </motion.div>
+          <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 0.5, delay: 0.08 }}
+          >
+            <LandingConsole data={RESULTS} />
+          </motion.div>
+        </div>
       </div>
     </section>
   );
@@ -553,55 +467,46 @@ function RealOutput() {
 
 function FounderSection() {
   return (
-    <section className="border-y border-border/50 bg-muted/20">
-      <div className="mx-auto max-w-4xl px-6 py-24">
-        <div className="font-mono text-[10px] font-medium uppercase tracking-widest text-brand">
-          03 / founder
+    <section className="mx-auto max-w-4xl px-6 py-24">
+      <motion.div
+        initial={{ opacity: 0, y: 12 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "-100px" }}
+        transition={{ duration: 0.5 }}
+        className="grid items-start gap-8 sm:grid-cols-[auto_1fr]"
+      >
+        <div className="flex items-center gap-3">
+          <div className="grid size-14 place-items-center rounded-full border border-border/60 bg-gradient-to-br from-brand/30 to-brand/5 font-heading text-lg">
+            K
+          </div>
+          <div className="sm:hidden">
+            <div className="font-heading text-base">Founder</div>
+            <div className="text-[11px] text-muted-foreground">
+              {FOUNDER_HANDLE}
+            </div>
+          </div>
         </div>
-        <motion.div
-          initial={{ opacity: 0, y: 12 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-100px" }}
-          transition={{ duration: 0.5 }}
-          className="mt-6 grid items-start gap-8 sm:grid-cols-[auto_1fr]"
-        >
-          <div className="flex items-center gap-3">
-            <div className="grid size-14 place-items-center rounded-full border border-border/60 bg-gradient-to-br from-brand/30 to-brand/5 font-heading text-lg">
-              K
-            </div>
-            <div className="sm:hidden">
-              <div className="font-heading text-base">Founder</div>
-              <div className="font-mono text-[11px] text-muted-foreground">
-                {FOUNDER_HANDLE}
-              </div>
+        <div>
+          <div className="hidden sm:block">
+            <div className="font-heading text-base">Founder</div>
+            <div className="text-[11px] text-muted-foreground">
+              builder of filler.live
             </div>
           </div>
-          <div>
-            <div className="hidden sm:block">
-              <div className="font-heading text-base">Founder</div>
-              <div className="font-mono text-[11px] text-muted-foreground">
-                builder of filler.live
-              </div>
-            </div>
-            <h2 className="mt-3 font-heading text-2xl leading-snug tracking-tight sm:text-3xl">
-              I shipped filler.live last week and had no idea who my
-              competitors were. Perplexity didn&apos;t help. So I built
-              opencorp to do it for me — and then I built it for everyone else
-              who ships something new and has the same problem.
-            </h2>
-            <div className="mt-5 flex flex-wrap items-center gap-3">
-              <Button variant="outline" size="sm" asChild>
-                <Link href={`https://x.com/${FOUNDER_HANDLE}`} target="_blank">
-                  Read the build thread →
-                </Link>
-              </Button>
-              <span className="font-mono text-[11px] text-muted-foreground/70">
-                shipping in public since week 1
-              </span>
-            </div>
+          <h2 className="mt-3 font-heading text-2xl leading-snug tracking-tight sm:text-3xl">
+            I shipped filler.live and didn&apos;t know who my alternatives were
+            — or where people who needed it were already talking. So I built
+            OpenCorp: paste a link, get the map.
+          </h2>
+          <div className="mt-5 flex flex-wrap items-center gap-3">
+            <Button variant="outline" size="sm" asChild>
+              <Link href={`https://x.com/${FOUNDER_HANDLE}`} target="_blank">
+                Read the build thread →
+              </Link>
+            </Button>
           </div>
-        </motion.div>
-      </div>
+        </div>
+      </motion.div>
     </section>
   );
 }
@@ -609,51 +514,55 @@ function FounderSection() {
 function TryItWidget() {
   const [value, setValue] = useState("");
   return (
-    <section className="mx-auto max-w-3xl px-6 py-24">
-      <motion.div
-        initial={{ opacity: 0, y: 12 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, margin: "-100px" }}
-        transition={{ duration: 0.5 }}
-        className="text-center"
-      >
-        <div className="font-mono text-[10px] font-medium uppercase tracking-widest text-brand">
-          04 / try it
-        </div>
-        <h2 className="mt-3 font-heading text-3xl tracking-tight sm:text-4xl">
-          Drop a link. Get your competitors.
-        </h2>
-        <p className="mt-3 text-sm text-muted-foreground">
-          Paste a product URL. The agent runs the same workflow you just saw
-          and shows you the report.
-        </p>
-        <form
-          action="/dashboard"
-          method="get"
-          onSubmit={() => trackEvent({ name: "cta_try_with_link", data: { location: "footer" } })}
-          className="mx-auto mt-8 flex max-w-xl flex-col gap-2 sm:flex-row"
+    <section className="border-t border-border/50 bg-muted/20">
+      <div className="mx-auto max-w-3xl px-6 py-24">
+        <motion.div
+          initial={{ opacity: 0, y: 12 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-100px" }}
+          transition={{ duration: 0.5 }}
+          className="text-center"
         >
-          <div className="flex flex-1 items-center gap-2 rounded-lg border border-border/60 bg-card/50 px-3 py-2.5 backdrop-blur-sm">
-            <Search className="size-4 shrink-0 text-muted-foreground" />
-            <input
-              type="url"
-              name="url"
-              required
-              value={value}
-              onChange={(e) => setValue(e.target.value)}
-              placeholder="https://your-product.com"
-              className="flex-1 bg-transparent text-sm text-foreground outline-none placeholder:text-muted-foreground/50"
-            />
-          </div>
-          <Button type="submit" size="lg" className="w-full sm:w-auto">
-            Run agent
-            <ArrowRight className="size-4" />
-          </Button>
-        </form>
-        <p className="mt-3 font-mono text-[11px] text-muted-foreground/70">
-          no signup
-        </p>
-      </motion.div>
+          <h2 className="font-heading text-3xl tracking-tight sm:text-4xl">
+            Paste your product link
+          </h2>
+          <p className="mt-3 text-sm text-muted-foreground">
+            Get alternatives, Reddit threads, and Hacker News discussions in one
+            report.
+          </p>
+          <form
+            action="/dashboard"
+            method="get"
+            onSubmit={() =>
+              trackEvent({
+                name: "cta_try_with_link",
+                data: { location: "footer" },
+              })
+            }
+            className="mx-auto mt-8 flex max-w-xl flex-col gap-2 sm:flex-row"
+          >
+            <div className="flex flex-1 items-center gap-2 rounded-lg border border-border/60 bg-card/50 px-3 py-2.5 backdrop-blur-sm">
+              <Search className="size-4 shrink-0 text-muted-foreground" />
+              <input
+                type="url"
+                name="url"
+                required
+                value={value}
+                onChange={(e) => setValue(e.target.value)}
+                placeholder="https://your-product.com"
+                className="flex-1 bg-transparent text-sm text-foreground outline-none placeholder:text-muted-foreground/50"
+              />
+            </div>
+            <Button type="submit" size="lg" className="w-full sm:w-auto">
+              Try free
+              <ArrowRight className="size-4" />
+            </Button>
+          </form>
+          <p className="mt-3 text-xs text-muted-foreground/70">
+            Free preview · full threads with an account
+          </p>
+        </motion.div>
+      </div>
     </section>
   );
 }
@@ -662,90 +571,53 @@ export default function Page() {
   return (
     <MarketingShell>
       <main className="flex-1">
-        <section className="relative flex min-h-svh flex-col items-center justify-center overflow-hidden px-6 pt-20">
+        <section className="relative flex flex-col items-center overflow-hidden px-6 pb-12 pt-28 sm:pt-32">
           <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top,oklch(0.72_0.15_75_/_0.08),transparent_60%)]" />
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
+            transition={{ duration: 0.55 }}
             className="relative z-10 mx-auto flex max-w-3xl flex-col items-center text-center"
           >
             <Badge variant="secondary" className="mb-6">
-              <Sparkles className="size-3" />
-              User Acquisition, Autonomous
+              Market research for builders
             </Badge>
             <h1 className="font-heading text-4xl leading-tight tracking-tight sm:text-5xl md:text-6xl lg:text-7xl">
-              Find Your Market
+              Find where your users
               <br />
-              While You Build
+              already talk
             </h1>
             <p className="mt-6 max-w-xl text-balance text-lg text-muted-foreground">
-              Drop a link. OpenCorp finds your competitors and the HackerNews
-              threads where your future users already are — automatically.
+              Paste a product link. Get alternatives, Reddit threads, and
+              Hacker News discussions — ready to act on.
             </p>
-            <div className="mt-8 flex flex-col items-center gap-4 sm:flex-row">
+            <div className="mt-8 flex flex-col items-center gap-3 sm:flex-row">
               <Button
                 size="lg"
                 className="w-full sm:w-auto"
                 asChild
                 onClick={() =>
-                  trackEvent({ name: "cta_try_with_link", data: { location: "hero" } })
+                  trackEvent({
+                    name: "cta_try_with_link",
+                    data: { location: "hero" },
+                  })
                 }
               >
                 <Link href="/dashboard">
-                  Find your first competitors
+                  Research your product
                   <ArrowRight className="size-4" />
                 </Link>
               </Button>
+              <p className="text-xs text-muted-foreground/70">
+                Free to start · No credit card
+              </p>
             </div>
           </motion.div>
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.3 }}
-            className="mt-16 w-full max-w-3xl"
-          >
-            <DemoVideo location="hero" />
-          </motion.div>
         </section>
 
+        <CapabilityCards />
         <RealOutput />
-
-        <section className="border-y border-border/50 bg-muted/30">
-          <div className="mx-auto max-w-5xl px-6 py-24">
-            <motion.div
-              initial={{ opacity: 0, y: 12 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-100px" }}
-              transition={{ duration: 0.5 }}
-            >
-              <div className="font-mono text-[10px] font-medium uppercase tracking-widest text-brand">
-                02 / how it works
-              </div>
-              <h2 className="mt-3 max-w-2xl font-heading text-3xl leading-tight tracking-tight sm:text-4xl">
-                Two agents. One URL. Your future users.
-              </h2>
-              <p className="mt-3 max-w-2xl text-sm leading-relaxed text-muted-foreground">
-                The product analyst reads your site. The discovery agent uses
-                that to find your competitors and the HackerNews threads where
-                your future users already are. While they work, play dino — by
-                design.
-              </p>
-            </motion.div>
-            <motion.div
-              initial={{ opacity: 0, y: 16 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-100px" }}
-              transition={{ duration: 0.5, delay: 0.1 }}
-              className="mt-10"
-            >
-              <AgentConsole />
-            </motion.div>
-          </div>
-        </section>
-
         <FounderSection />
-
         <TryItWidget />
       </main>
     </MarketingShell>

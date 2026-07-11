@@ -1,14 +1,22 @@
-import type { competitorResearchTask } from "@/trigger/research";
+import type { gtmRedditScanTask } from "@/trigger/research";
 import { tasks } from "@trigger.dev/sdk/v3";
 import { z } from "zod/v4";
 import { getAuthedUser } from "@/lib/supabase/auth";
 
 const inputSchema = z.object({
-  sessionId: z.string().uuid(),
   url: z.string(),
   productName: z.string(),
   description: z.string(),
-  keyFeatures: z.array(z.string()),
+  keyFeatures: z.array(z.string()).optional().default([]),
+  targetAudience: z.string().optional().default(""),
+  pricingModel: z.string().optional().default(""),
+  subsSearch: z.array(z.string()).optional().default([]),
+  competitors: z.array(
+    z.object({
+      name: z.string(),
+      url: z.string().optional().default(""),
+    }).passthrough(),
+  ).optional().default([]),
 });
 
 export async function POST(request: Request) {
@@ -20,16 +28,14 @@ export async function POST(request: Request) {
     input = inputSchema.parse(body);
   } catch {
     return new Response(
-      JSON.stringify({
-        error: "Invalid body — sessionId and product context required",
-      }),
+      JSON.stringify({ error: "Invalid body — product context required" }),
       { status: 400, headers: { "Content-Type": "application/json" } },
     );
   }
 
   try {
-    const handle = await tasks.trigger<typeof competitorResearchTask>(
-      "competitor-research",
+    const handle = await tasks.trigger<typeof gtmRedditScanTask>(
+      "gtm-reddit-scan",
       input,
     );
     return new Response(
@@ -40,8 +46,8 @@ export async function POST(request: Request) {
       { status: 200, headers: { "Content-Type": "application/json" } },
     );
   } catch (err) {
-    const message = err instanceof Error ? err.message : "Failed to trigger task";
-    return new Response(JSON.stringify({ error: message }), {
+    console.error("[api/research/reddit] trigger failed:", err);
+    return new Response(JSON.stringify({ error: "Failed to trigger task" }), {
       status: 500,
       headers: { "Content-Type": "application/json" },
     });

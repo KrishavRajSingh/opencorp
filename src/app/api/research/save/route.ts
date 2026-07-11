@@ -1,5 +1,7 @@
 import { z } from "zod/v4";
 import { NextResponse } from "next/server";
+import { tasks } from "@trigger.dev/sdk/v3";
+import type { competitorResearchTask } from "@/trigger/research";
 import { getAuthedUser } from "@/lib/supabase/auth";
 import { getDbClient } from "@/lib/supabase/server";
 
@@ -36,17 +38,23 @@ const hnThreadsResultSchema = z.object({
   }).passthrough()).optional().default([]),
 }).passthrough();
 
+const redditScanResultSchema = z.object({
+  run_id: z.string().optional(),
+  generated_at: z.string().optional(),
+  top_threads: z.array(z.any()).optional().default([]),
+}).passthrough();
+
 const baseSchema = z.object({
   id: z.string().uuid().optional(),
   input: z.object({ url: z.string() }).passthrough().optional(),
   product_analyst_result: productAnalystResultSchema.optional(),
   competitor_result: competitorResultSchema.optional(),
   hn_threads_result: hnThreadsResultSchema.optional(),
+  reddit_scan_result: redditScanResultSchema.optional(),
 });
 
 export async function POST(request: Request) {
-  const auth = await getAuthedUser();
-  if ("response" in auth) return auth.response;
+  const { user } = await getAuthedUser();
 
   let body: z.infer<typeof baseSchema>;
   try {
@@ -70,7 +78,7 @@ export async function POST(request: Request) {
     const { data, error } = await supabase
       .from("research_sessions")
       .insert({
-        user_id: auth.user.id,
+        user_id: user.id,
         input: body.input as never,
         product_analyst_result: body.product_analyst_result as never,
         updated_at: new Date().toISOString(),
@@ -81,7 +89,37 @@ export async function POST(request: Request) {
     if (error) {
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
-    return NextResponse.json({ id: data.id }, { status: 201 });
+
+    // Backend stage: product done → kick off competitors; task persists result.
+    const product = body.product_analyst_result;
+    let competitorRunId: string | undefined;
+    let publicAccessToken: string | undefined;
+    try {
+      const handle = await tasks.trigger<typeof competitorResearchTask>(
+        "competitor-research",
+        {
+          sessionId: data.id,
+          url: product.url,
+          productName: product.productName,
+          description: product.description ?? "",
+          keyFeatures: product.keyFeatures ?? [],
+        },
+      );
+      competitorRunId = handle.id;
+      publicAccessToken = handle.publicAccessToken;
+    } catch (triggerErr) {
+      // Session exists; competitors can be re-run from the session UI.
+      console.error("Failed to chain competitor-research:", triggerErr);
+    }
+
+    return NextResponse.json(
+      {
+        id: data.id,
+        competitorRunId,
+        publicAccessToken,
+      },
+      { status: 201 },
+    );
   }
 
   const update: Record<string, unknown> = { updated_at: new Date().toISOString() };
@@ -93,6 +131,9 @@ export async function POST(request: Request) {
   }
   if (body.hn_threads_result !== undefined) {
     update.hn_threads_result = body.hn_threads_result;
+  }
+  if (body.reddit_scan_result !== undefined) {
+    update.reddit_scan_result = body.reddit_scan_result;
   }
   if (body.input !== undefined) {
     update.input = body.input;

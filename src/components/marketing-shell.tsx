@@ -98,7 +98,7 @@ function SiteFooter() {
             OpenCorp
           </Link>
           <span className="hidden sm:inline">
-            Built for builders who need users
+            Find where your users already talk
           </span>
         </div>
         <div className="flex flex-wrap items-center gap-5">

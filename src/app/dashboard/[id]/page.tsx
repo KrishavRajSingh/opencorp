@@ -1,5 +1,6 @@
-import { notFound, redirect } from "next/navigation";
-import { createClient, isAuthEnabled } from "@/lib/supabase/server";
+import { notFound } from "next/navigation";
+import { createClient } from "@/lib/supabase/server";
+import type { GtmBrief } from "@/components/ai-elements/gtm-brief";
 import { SessionViewClient } from "../session-view-client";
 import { fetchSession } from "../data";
 
@@ -43,16 +44,10 @@ export default async function SessionPage({
 }) {
   const { id } = await params;
 
-  if (isAuthEnabled()) {
-    const supabase = await createClient();
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-
-    if (!user) {
-      redirect(`/auth/sign-in?next=/dashboard/${id}`);
-    }
-  }
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
   const session = await fetchSession(id);
 
@@ -67,6 +62,19 @@ export default async function SessionPage({
 
   const competitors = session.competitor_result as CompetitorResult | null;
   const hnThreads = session.hn_threads_result as HNResult | null;
+  // Stored JSON may omit fields; normalize to shared GtmBrief (required top_threads).
+  const rawRedditScan = session.reddit_scan_result as
+    | (Partial<GtmBrief> & { dropped?: unknown })
+    | null;
+  const redditScan: GtmBrief | null = rawRedditScan
+    ? {
+        run_id: rawRedditScan.run_id,
+        generated_at: rawRedditScan.generated_at,
+        top_threads: rawRedditScan.top_threads ?? [],
+      }
+    : null;
+
+  const isAuthed = user?.email != null;
 
   return (
     <SessionViewClient
@@ -74,6 +82,8 @@ export default async function SessionPage({
       product={product}
       competitors={competitors}
       hnResult={hnThreads}
+      redditScan={redditScan}
+      isAuthed={isAuthed}
     />
   );
 }

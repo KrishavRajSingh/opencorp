@@ -3,9 +3,12 @@ import { createServerClient as createSupabaseServerClient } from "@supabase/ssr"
 import { createClient as createSupabaseAdminClient } from "@supabase/supabase-js";
 import type { Database } from "./types";
 
-export function isAuthEnabled(): boolean {
-  return process.env.AUTH_ENABLED !== "false";
-}
+/**
+ * Auth exists only to capture email for future mailing. All research sessions
+ * are written under this shared "anon bucket" user when no one is signed in.
+ * Existing rows in research_sessions reference this id; do not change.
+ */
+export const ANON_BUCKET_USER_ID = "a7cc9c56-ac06-40e8-98e5-7de256667979";
 
 export async function createClient() {
   const cookieStore = await cookies();
@@ -44,8 +47,5 @@ export function createAdminClient() {
 }
 
 export async function getDbClient() {
-  if (isAuthEnabled()) {
-    return createClient();
-  }
   return createAdminClient();
 }

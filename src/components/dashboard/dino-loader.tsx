@@ -9,7 +9,7 @@ const ChromeDinoGame = dynamic(
   { ssr: false },
 );
 
-type Tone = "brand" | "orange";
+type Tone = "brand" | "orange" | "emerald";
 
 export function DinoLoader({
   loading,
@@ -165,14 +165,22 @@ export function DinoLoader({
         <span
           className={cn(
             "size-2 rounded-full",
-            tone === "brand" ? "bg-brand" : "bg-orange-400",
+            tone === "brand"
+              ? "bg-brand"
+              : tone === "emerald"
+                ? "bg-emerald-500"
+                : "bg-orange-400",
             "animate-pulse",
           )}
         />
         <span
           className={cn(
             "font-mono text-xs font-medium uppercase tracking-widest",
-            tone === "brand" ? "text-brand" : "text-orange-400",
+            tone === "brand"
+              ? "text-brand"
+              : tone === "emerald"
+                ? "text-emerald-400"
+                : "text-orange-400",
           )}
         >
           {label}

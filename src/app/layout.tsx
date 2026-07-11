@@ -22,18 +22,19 @@ export const metadata: Metadata = {
     process.env.NEXT_PUBLIC_SITE_URL ?? "https://opencorp.live",
   ),
   title: {
-    default: "OpenCorp — Find Your Market While You Build",
+    default: "OpenCorp — Find Where Your Users Already Talk",
     template: "%s · OpenCorp",
   },
   description:
-    "Your autonomous AI company. OpenCorp does market research, user discovery, SEO, and outreach — so you can focus on building.",
+    "Drop a product link. OpenCorp finds alternatives and the Reddit and Hacker News threads where your future users already talk.",
   applicationName: "OpenCorp",
   keywords: [
     "user acquisition",
     "market research",
-    "lead generation",
-    "AI agent",
-    "outreach",
+    "competitor research",
+    "Reddit marketing",
+    "Hacker News",
+    "AI research agent",
   ],
   icons: {
     icon: [{ url: "/icon.svg", type: "image/svg+xml" }],
@@ -44,23 +45,23 @@ export const metadata: Metadata = {
     locale: "en_US",
     url: "https://opencorp.live",
     siteName: "OpenCorp",
-    title: "OpenCorp — Find Your Market While You Build",
+    title: "OpenCorp — Find Where Your Users Already Talk",
     description:
-      "Your autonomous AI company. OpenCorp does market research, user discovery, SEO, and outreach — so you can focus on building.",
+      "Drop a product link. OpenCorp finds alternatives and the Reddit and Hacker News threads where your future users already talk.",
     images: [
       {
         url: "/og.png",
         width: 1200,
         height: 630,
-        alt: "OpenCorp — Find Your Market While You Build",
+        alt: "OpenCorp — Find Where Your Users Already Talk",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "OpenCorp — Find Your Market While You Build",
+    title: "OpenCorp — Find Where Your Users Already Talk",
     description:
-      "Your autonomous AI company. OpenCorp does market research, user discovery, SEO, and outreach — so you can focus on building.",
+      "Drop a product link. OpenCorp finds alternatives and the Reddit and Hacker News threads where your future users already talk.",
     images: ["/og.png"],
     site: "@opencorpai",
     creator: "@opencorpai",

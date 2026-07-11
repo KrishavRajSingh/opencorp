@@ -4,6 +4,7 @@ import { Logo } from "@/components/dashboard/logo";
 import { ScanlineBackdrop } from "@/components/dashboard/scanline-backdrop";
 import { SessionViewClient } from "@/app/dashboard/session-view-client";
 import { fetchSession } from "@/app/dashboard/data";
+import { getAuthedUser } from "@/lib/supabase/auth";
 
 type ProductResult = {
   url: string;
@@ -58,10 +59,13 @@ export default async function SharedSessionPage({
   const competitors = session.competitor_result as CompetitorResult | null;
   const hnThreads = session.hn_threads_result as HNResult | null;
 
+  const { user } = await getAuthedUser();
+  const isAuthed = user.email !== null;
+
   return (
     <div className="flex min-h-svh flex-col">
       <header className="sticky top-0 z-40 flex h-12 items-center justify-between border-b border-border/40 bg-background/80 px-6 backdrop-blur-sm">
-        <Link href="/" className="flex items-center gap-2">
+        <Link href="/" className="flex items-center gap-1.5">
           <Logo size={16} />
           <span className="font-heading text-sm tracking-tight text-foreground">
             OpenCorp
@@ -82,6 +86,7 @@ export default async function SharedSessionPage({
               competitors={competitors}
               hnResult={hnThreads}
               readOnly
+              isAuthed={isAuthed}
             />
           </div>
         </div>
