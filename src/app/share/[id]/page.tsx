@@ -5,39 +5,11 @@ import { ScanlineBackdrop } from "@/components/dashboard/scanline-backdrop";
 import { SessionViewClient } from "@/app/dashboard/session-view-client";
 import { fetchSession } from "@/app/dashboard/data";
 import { getAuthedUser } from "@/lib/supabase/auth";
-
-type ProductResult = {
-  url: string;
-  productName: string;
-  description: string;
-  keyFeatures: string[];
-  targetAudience: string;
-  pricingModel: string;
-};
-
-type CompetitorResult = {
-  competitors: Array<{
-    name: string;
-    url: string;
-    description: string;
-    mentionSources: string[];
-  }>;
-  searchQueriesUsed?: string[];
-};
-
-type HNResult = {
-  threads: Array<{
-    objectID: string;
-    title: string;
-    url: string | null;
-    points: number;
-    comments: number;
-    author: string;
-    date: string;
-    whyRelevant: string;
-    topCommentSnippet: string | null;
-  }>;
-};
+import type {
+  ProductResult,
+  CompetitorResult,
+  HNResult,
+} from "@/lib/types/session";
 
 export default async function SharedSessionPage({
   params,

@@ -3,18 +3,9 @@
 import { motion } from "motion/react";
 import { ExternalLink, MessageSquare } from "lucide-react";
 import { HNIcon } from "@/components/dashboard/hn-icon";
+import type { HNThread } from "@/lib/types/session";
 
-export type HNThread = {
-  objectID: string;
-  title: string;
-  url: string | null;
-  points: number;
-  comments: number;
-  author: string;
-  date: string;
-  whyRelevant: string;
-  topCommentSnippet: string | null;
-};
+export type { HNThread };
 
 function relativeDate(iso: string): string {
   if (!iso) return "";
