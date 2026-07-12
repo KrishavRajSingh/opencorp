@@ -13,7 +13,8 @@ export type AnalyticsEvent =
   | WithData<"demo_fullscreen_exit", { location: "hero" | "footer" }>
   | { name: "auth_google_oauth_click" }
   | { name: "auth_signin_submit" }
-  | { name: "auth_signup_submit" };
+  | { name: "auth_signup_submit" }
+  | { name: "cta_signup_unlock_click" };
 
 type DataFor<E extends AnalyticsEvent["name"]> = Extract<
   AnalyticsEvent,

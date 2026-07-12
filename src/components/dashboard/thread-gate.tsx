@@ -2,6 +2,7 @@
 
 import { Lock } from "lucide-react";
 import Link from "next/link";
+import { trackEvent } from "@/lib/analytics";
 
 /** Anon free preview depth for Reddit + HN thread lists. */
 export const ANON_PREVIEW_COUNT = 5;
@@ -43,6 +44,7 @@ export function SignupUnlockBar({
       </p>
       <Link
         href={signupHref}
+        onClick={() => trackEvent({ name: "cta_signup_unlock_click" })}
         className="inline-flex shrink-0 items-center gap-1 text-xs font-medium text-brand hover:underline"
       >
         Sign up to unlock
