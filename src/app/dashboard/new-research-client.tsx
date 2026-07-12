@@ -19,88 +19,10 @@ import {
 import { ProductFavicon } from "@/components/dashboard/product-favicon";
 import { Logo } from "@/components/dashboard/logo";
 import { cn } from "@/lib/utils";
-
-interface ProductResult {
-  url: string;
-  productName: string;
-  description: string;
-  keyFeatures: string[];
-  targetAudience: string;
-  pricingModel: string;
-}
+import type { ProductResult, ToolCallChunk } from "@/lib/types/session";
+import { readSseStream } from "@/lib/sse";
 
 type Status = "idle" | "streaming" | "success" | "error";
-
-type ToolCallChunk = {
-  toolCallId: string;
-  toolName: string;
-  args?: { url?: string; query?: string };
-  url?: string;
-  query?: string;
-  title?: string;
-  snippet?: string;
-};
-
-function readSSEStream(
-  runId: string,
-  streamKey: string,
-  accessToken: string,
-  onData: (data: string) => void,
-  onError: (err: string) => void,
-  signal: AbortSignal,
-) {
-  const url = `https://api.trigger.dev/realtime/v1/streams/${runId}/${streamKey}`;
-  fetch(url, {
-    headers: {
-      Accept: "text/event-stream",
-      Authorization: `Bearer ${accessToken}`,
-      "Timeout-Seconds": "600",
-    },
-    signal,
-  })
-    .then(async (res) => {
-      if (!res.ok) {
-        const text = await res.text().catch(() => "");
-        throw new Error(`HTTP ${res.status}: ${text.slice(0, 200)}`);
-      }
-      const reader = res.body?.getReader();
-      if (!reader) throw new Error("No response body");
-      const decoder = new TextDecoder();
-      let buf = "";
-      while (true) {
-        const { done, value } = await reader.read();
-        if (value) {
-          buf += decoder.decode(value, { stream: !done });
-        }
-        const parts = buf.split("\n\n");
-        buf = parts.pop() ?? "";
-        for (const part of parts) {
-          if (!part.trim()) continue;
-          let eventType = "";
-          let data = "";
-          for (const line of part.split("\n")) {
-            if (line.startsWith("event: ")) eventType = line.slice(7);
-            else if (line.startsWith("data: ")) data = line.slice(6);
-          }
-          if (!data) continue;
-          try {
-            const obj = JSON.parse(data);
-            if (eventType === "batch" && obj.records) {
-              for (const r of obj.records) {
-                const body = JSON.parse(r.body);
-                onData(body.data);
-              }
-            }
-          } catch { /* skip */ }
-        }
-        if (done) break;
-      }
-    })
-    .catch((err) => {
-      if (err instanceof DOMException && err.name === "AbortError") return;
-      onError(err.message ?? String(err));
-    });
-}
 
 function Field({ label, value }: { label: string; value: string }) {
   return (
@@ -212,122 +134,128 @@ export function NewResearchClient({
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setStreamStatus("Connecting...");
 
-    readSSEStream(runId, "research", token, (data) => {
-      try {
-        const event = JSON.parse(data) as { type: string } & Record<string, unknown>;
-        switch (event.type) {
-          case "tool-call": {
-            const chunk = event as unknown as ToolCallChunk;
-            const label = chunk.title
-              ? `Read: ${chunk.title}`
-              : chunk.query
-                ? `Searching "${chunk.query}"`
-                : chunk.url
-                  ? `Reading ${chunk.url}...`
-                  : chunk.toolName;
-            setStreamStatus(label);
-            if (chunk.toolCallId) {
-              const id = chunk.toolCallId;
-              setActivity((prev) => {
-                if (prev.some((c) => c.id === id)) return prev;
-                return [
-                  ...prev.map((c) =>
-                    c.status === "in-flight" ? { ...c, status: "done" as const } : c,
-                  ),
-                  {
-                    id,
-                    track: "product",
-                    toolName: chunk.toolName,
-                    url: chunk.url ?? chunk.args?.url,
-                    query: chunk.query ?? chunk.args?.query,
-                    title: chunk.title,
-                    snippet: chunk.snippet,
-                    status: "in-flight",
-                    arrivedAt: Date.now(),
-                  },
-                ];
-              });
+    readSseStream(
+      `https://api.trigger.dev/realtime/v1/streams/${runId}/research`,
+      token,
+      (data) => {
+        try {
+          const event = JSON.parse(data) as { type: string } & Record<string, unknown>;
+          switch (event.type) {
+            case "tool-call": {
+              const chunk = event as unknown as ToolCallChunk;
+              const label = chunk.title
+                ? `Read: ${chunk.title}`
+                : chunk.query
+                  ? `Searching "${chunk.query}"`
+                  : chunk.url
+                    ? `Reading ${chunk.url}...`
+                    : chunk.toolName;
+              setStreamStatus(label);
+              if (chunk.toolCallId) {
+                const id = chunk.toolCallId;
+                setActivity((prev) => {
+                  if (prev.some((c) => c.id === id)) return prev;
+                  return [
+                    ...prev.map((c) =>
+                      c.status === "in-flight" ? { ...c, status: "done" as const } : c,
+                    ),
+                    {
+                      id,
+                      track: "product",
+                      toolName: chunk.toolName,
+                      url: chunk.url ?? chunk.args?.url,
+                      query: chunk.query ?? chunk.args?.query,
+                      title: chunk.title,
+                      snippet: chunk.snippet,
+                      status: "in-flight",
+                      arrivedAt: Date.now(),
+                    },
+                  ];
+                });
+              }
+              break;
             }
-            break;
-          }
-          case "result": {
-            controller.abort();
-            setActivity((prev) =>
-              prev.map((c) =>
-                c.status === "in-flight" ? { ...c, status: "done" as const } : c,
-              ),
-            );
-            const r = event as unknown as ProductResult;
-            setResult(r);
-            setStatus("success");
-            setStreamStatus("Done");
-            fetch("/api/research/save", {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({
-                input: { url: r.url },
-                product_analyst_result: r,
-              }),
-            })
-              .then((res) => res.json())
-              .then(
-                (body: {
-                  id?: string;
-                  error?: string;
-                  competitorRunId?: string;
-                  publicAccessToken?: string;
-                }) => {
-                  if (body.id) {
-                    if (body.competitorRunId && body.publicAccessToken) {
-                      try {
-                        sessionStorage.setItem(
-                          `competitor-stream:${body.id}`,
-                          JSON.stringify({
-                            runId: body.competitorRunId,
-                            publicAccessToken: body.publicAccessToken,
-                          }),
-                        );
-                        sessionStorage.setItem(
-                          `competitor-stage:${body.id}`,
-                          JSON.stringify({
-                            status: "running",
-                            runId: body.competitorRunId,
-                          }),
-                        );
-                      } catch {
-                        /* private mode / quota — session view will poll */
+            case "result": {
+              controller.abort();
+              setActivity((prev) =>
+                prev.map((c) =>
+                  c.status === "in-flight" ? { ...c, status: "done" as const } : c,
+                ),
+              );
+              const r = event as unknown as ProductResult;
+              setResult(r);
+              setStatus("success");
+              setStreamStatus("Done");
+              fetch("/api/research/save", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                  input: { url: r.url },
+                  product_analyst_result: r,
+                }),
+              })
+                .then((res) => res.json())
+                .then(
+                  (body: {
+                    id?: string;
+                    error?: string;
+                    competitorRunId?: string;
+                    publicAccessToken?: string;
+                  }) => {
+                    if (body.id) {
+                      if (body.competitorRunId && body.publicAccessToken) {
+                        try {
+                          sessionStorage.setItem(
+                            `competitor-stream:${body.id}`,
+                            JSON.stringify({
+                              runId: body.competitorRunId,
+                              publicAccessToken: body.publicAccessToken,
+                            }),
+                          );
+                          sessionStorage.setItem(
+                            `competitor-stage:${body.id}`,
+                            JSON.stringify({
+                              status: "running",
+                              runId: body.competitorRunId,
+                            }),
+                          );
+                        } catch {
+                          /* private mode / quota — session view will poll */
+                        }
                       }
+                      setStreamStatus("Saved. Opening project…");
+                      router.push(`/dashboard/${body.id}`);
+                    } else {
+                      setError(body.error ?? "Failed to save");
+                      setStatus("error");
                     }
-                    setStreamStatus("Saved. Opening project…");
-                    router.push(`/dashboard/${body.id}`);
-                  } else {
-                    setError(body.error ?? "Failed to save");
-                    setStatus("error");
-                  }
-                },
-              )
-              .catch((err) => {
-                setError(err instanceof Error ? err.message : "Save failed");
-                setStatus("error");
-              });
-            break;
+                  },
+                )
+                .catch((err) => {
+                  setError(err instanceof Error ? err.message : "Save failed");
+                  setStatus("error");
+                });
+              break;
+            }
+            case "error": {
+              controller.abort();
+              setActivity((prev) =>
+                prev.map((c) =>
+                  c.status === "in-flight" ? { ...c, status: "error" as const } : c,
+                ),
+              );
+              setError((event as unknown as { error: string }).error);
+              setStatus("error");
+              break;
+            }
           }
-          case "error": {
-            controller.abort();
-            setActivity((prev) =>
-              prev.map((c) =>
-                c.status === "in-flight" ? { ...c, status: "error" as const } : c,
-              ),
-            );
-            setError((event as unknown as { error: string }).error);
-            setStatus("error");
-            break;
-          }
+        } catch (e) {
+          setStreamError(`Parse: ${String(e).slice(0, 80)}`);
         }
-      } catch (e) {
-        setStreamError(`Parse: ${String(e).slice(0, 80)}`);
-      }
-    }, (err) => setStreamError(`Stream: ${err}`), controller.signal);
+      },
+      (err) => setStreamError(`Stream: ${err}`),
+      controller.signal,
+    );
 
     return () => controller.abort();
   }, [runId, token, router]);

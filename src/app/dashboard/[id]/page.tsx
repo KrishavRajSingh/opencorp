@@ -3,39 +3,11 @@ import { createClient } from "@/lib/supabase/server";
 import type { GtmBrief } from "@/components/ai-elements/gtm-brief";
 import { SessionViewClient } from "../session-view-client";
 import { fetchSession } from "../data";
-
-type ProductResult = {
-  url: string;
-  productName: string;
-  description: string;
-  keyFeatures: string[];
-  targetAudience: string;
-  pricingModel: string;
-};
-
-type CompetitorResult = {
-  competitors: Array<{
-    name: string;
-    url: string;
-    description: string;
-    mentionSources: string[];
-  }>;
-  searchQueriesUsed?: string[];
-};
-
-type HNResult = {
-  threads: Array<{
-    objectID: string;
-    title: string;
-    url: string | null;
-    points: number;
-    comments: number;
-    author: string;
-    date: string;
-    whyRelevant: string;
-    topCommentSnippet: string | null;
-  }>;
-};
+import type {
+  ProductResult,
+  CompetitorResult,
+  HNResult,
+} from "@/lib/types/session";
 
 export default async function SessionPage({
   params,
