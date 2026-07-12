@@ -253,8 +253,16 @@ export function NewResearchClient({
           setStreamError(`Parse: ${String(e).slice(0, 80)}`);
         }
       },
-      (err) => setStreamError(`Stream: ${err}`),
+      (err) => {
+        setStreamError(`Stream: ${err}`);
+        setError(`Research stream failed: ${err}`);
+        setStatus("error");
+      },
       controller.signal,
+      () => {
+        setError("Research stream ended before producing a result.");
+        setStatus("error");
+      },
     );
 
     return () => controller.abort();

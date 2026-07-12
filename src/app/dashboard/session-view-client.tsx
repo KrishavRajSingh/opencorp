@@ -105,6 +105,8 @@ export function SessionViewClient({
   const streamAbortRef = useRef<AbortController | null>(null);
   const [runId, setRunId] = useState<string | null>(null);
   const [token, setToken] = useState<string | null>(null);
+  /** Timestamp when run-status first reported COMPLETED for a token-less recovery run. */
+  const runCompletedAtRef = useRef<number | null>(null);
 
   const flushCompetitorStage = useCallback(() => {
     const s = stageRef.current.getSnapshot();
@@ -473,10 +475,10 @@ export function SessionViewClient({
           });
           return;
         }
-        // COMPLETED without UI result yet: keep polling session for payload;
-        // don't spin forever if stream missed the result event.
+        // COMPLETED without UI result yet: record completion time so the
+        // session-poll effect can apply a grace period and then stop.
         if (body.completed && !competitors) {
-          // session poll effect handles result; give it a few cycles, then stop
+          runCompletedAtRef.current ??= Date.now();
         }
       } catch {
         /* next tick */
@@ -641,6 +643,10 @@ export function SessionViewClient({
     const started = Date.now();
     // Without a live stream, only wait briefly for a persisted result.
     const GRACE_MS = 15_000;
+    // After run-status reports COMPLETED, allow this long for the DB row to
+    // appear before we give up and stop the loading UI.
+    const COMPLETED_GRACE_MS = 10_000;
+    runCompletedAtRef.current = null;
 
     const poll = async () => {
       try {
@@ -660,7 +666,16 @@ export function SessionViewClient({
           router.refresh();
           return;
         }
-        if (!cancelled && Date.now() - started > GRACE_MS && !runId) {
+        // No result yet — check whether we should give up.
+        const elapsed = Date.now() - started;
+        const completedGrace =
+          runCompletedAtRef.current !== null &&
+          Date.now() - runCompletedAtRef.current > COMPLETED_GRACE_MS;
+        if (
+          !cancelled &&
+          !competitors &&
+          ((runId && completedGrace) || (!runId && elapsed > GRACE_MS))
+        ) {
           stopCompetitorsUi({
             idle: true,
             message: null,

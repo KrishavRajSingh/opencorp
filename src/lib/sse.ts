@@ -35,13 +35,13 @@ export function readSseStream(
         if (value) {
           buf += decoder.decode(value, { stream: !done });
         }
-        const parts = buf.split("\n\n");
+        const parts = buf.split(/\r?\n\r?\n/);
         buf = parts.pop() ?? "";
         for (const part of parts) {
           if (!part.trim()) continue;
           let eventType = "";
           let data = "";
-          for (const line of part.split("\n")) {
+          for (const line of part.split(/\r?\n/)) {
             if (line.startsWith("event: ")) eventType = line.slice(7);
             else if (line.startsWith("data: ")) data = line.slice(6);
           }

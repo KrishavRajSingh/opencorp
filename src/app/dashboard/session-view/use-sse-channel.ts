@@ -34,6 +34,7 @@ export function useSseChannel<T>(opts: {
   const [loading, setLoading] = useState(false);
   const [streamStatus, setStreamStatus] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const runGenRef = useRef(0);
 
   // SSE reader
   useEffect(() => {
@@ -59,9 +60,14 @@ export function useSseChannel<T>(opts: {
               controller.abort();
               if (done.current) break;
               done.current = true;
-              void onResult(result.payload);
-              setStreamStatus("Saved");
-              setLoading(false);
+              void Promise.resolve(onResult(result.payload))
+                .then(() => setStreamStatus("Saved"))
+                .catch((err) => {
+                  setError(
+                    err instanceof Error ? err.message : "Failed to save result",
+                  );
+                })
+                .finally(() => setLoading(false));
               break;
             }
             case "error": {
@@ -73,14 +79,27 @@ export function useSseChannel<T>(opts: {
           }
         } catch { /* skip */ }
       },
-      onError: (err) => onError?.(`${transportPrefix}: ${err}`),
+      onError: (err) => {
+        const message = `${transportPrefix}: ${err}`;
+        setError(message);
+        setLoading(false);
+        onError?.(message);
+      },
       signal: controller.signal,
+      onEnd: () => {
+        if (done.current) return;
+        const message = `${transportPrefix}: stream ended before a result`;
+        setError(message);
+        setLoading(false);
+        onError?.(message);
+      },
     });
 
     return () => controller.abort();
   }, [runId, token, mapEvent, onResult, onError, transportPrefix]);
 
   const run = useCallback(async () => {
+    const gen = ++runGenRef.current;
     setLoading(true);
     setError(null);
     setRunId(null);
@@ -100,15 +119,18 @@ export function useSseChannel<T>(opts: {
         throw new Error(body.error ?? `Request failed (${res.status})`);
       }
 
+      if (gen !== runGenRef.current) return;
       setRunId(body.runId);
       setToken(body.publicAccessToken);
     } catch (err) {
+      if (gen !== runGenRef.current) return;
       setError(err instanceof Error ? err.message : "Something went wrong");
       setLoading(false);
     }
   }, [apiPath, buildBody]);
 
   const cancel = useCallback(() => {
+    runGenRef.current++;
     const id = runId;
     setRunId(null);
     setToken(null);
