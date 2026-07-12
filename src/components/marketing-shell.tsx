@@ -115,11 +115,11 @@ function SiteFooter() {
             Terms
           </Link>
           <a
-            href="mailto:support@opencorp.live"
+            href="mailto:krishavrajsingh@gmail.com"
             className="inline-flex items-center gap-1.5 transition-colors hover:text-foreground"
           >
             <Mail className="size-4" />
-            support@opencorp.live
+            krishavrajsingh@gmail.com
           </a>
           <a
             href="https://www.linkedin.com/company/opencorpai"

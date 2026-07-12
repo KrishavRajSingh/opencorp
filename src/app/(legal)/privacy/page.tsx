@@ -155,10 +155,10 @@ export default function PrivacyPage() {
                 Postgres). We retain your account data for as long as your
                 account is active. If you would like your data deleted, email{" "}
                 <a
-                  href="mailto:support@opencorp.live"
+                  href="mailto:krishavrajsingh@gmail.com"
                   className="text-foreground underline decoration-brand/60 underline-offset-4 hover:decoration-brand"
                 >
-                  support@opencorp.live
+                  krishavrajsingh@gmail.com
                 </a>{" "}
                 and we will remove it within 30 days.
               </p>
@@ -175,10 +175,10 @@ export default function PrivacyPage() {
               <p>
                 To exercise any of these, email{" "}
                 <a
-                  href="mailto:support@opencorp.live"
+                  href="mailto:krishavrajsingh@gmail.com"
                   className="text-foreground underline decoration-brand/60 underline-offset-4 hover:decoration-brand"
                 >
-                  support@opencorp.live
+                  krishavrajsingh@gmail.com
                 </a>
                 .
               </p>
@@ -221,10 +221,10 @@ export default function PrivacyPage() {
               <p>
                 Questions, concerns, or data requests:{" "}
                 <a
-                  href="mailto:support@opencorp.live"
+                  href="mailto:krishavrajsingh@gmail.com"
                   className="text-foreground underline decoration-brand/60 underline-offset-4 hover:decoration-brand"
                 >
-                  support@opencorp.live
+                  krishavrajsingh@gmail.com
                 </a>
                 .
               </p>

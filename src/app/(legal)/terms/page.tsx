@@ -42,10 +42,10 @@ export default function TermsPage() {
                 keep your credentials secure. You are responsible for all
                 activity that occurs under your account. Tell us promptly at{" "}
                 <a
-                  href="mailto:support@opencorp.live"
+                  href="mailto:krishavrajsingh@gmail.com"
                   className="text-foreground underline decoration-brand/60 underline-offset-4 hover:decoration-brand"
                 >
-                  support@opencorp.live
+                  krishavrajsingh@gmail.com
                 </a>{" "}
                 if you believe your account has been compromised.
               </p>
@@ -126,10 +126,10 @@ export default function TermsPage() {
                 You can stop using OpenCorp at any time and close your account
                 by emailing{" "}
                 <a
-                  href="mailto:support@opencorp.live"
+                  href="mailto:krishavrajsingh@gmail.com"
                   className="text-foreground underline decoration-brand/60 underline-offset-4 hover:decoration-brand"
                 >
-                  support@opencorp.live
+                  krishavrajsingh@gmail.com
                 </a>
                 . We may suspend or terminate accounts that violate these
                 terms or that abuse the service.
@@ -170,10 +170,10 @@ export default function TermsPage() {
               <p>
                 Questions about these terms:{" "}
                 <a
-                  href="mailto:support@opencorp.live"
+                  href="mailto:krishavrajsingh@gmail.com"
                   className="text-foreground underline decoration-brand/60 underline-offset-4 hover:decoration-brand"
                 >
-                  support@opencorp.live
+                  krishavrajsingh@gmail.com
                 </a>
                 .
               </p>
