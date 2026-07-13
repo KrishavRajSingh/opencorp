@@ -89,6 +89,7 @@ async function runWithRetry(
     }>;
     toolResults?: Array<{ payload: unknown }>;
   }) => void,
+  signal?: AbortSignal,
 ): Promise<Record<string, unknown>> {
   const MAX_STREAM_ATTEMPTS = 3;
   const RATE_LIMIT_BACKOFF_MS = 30_000;
@@ -114,16 +115,23 @@ async function runWithRetry(
     return Math.floor(exp / 2 + Math.random() * (exp / 2));
   }
 
+  if (signal?.aborted) {
+    throw new DOMException("Aborted before start", "AbortError");
+  }
+
   let lastError: Error | null = null;
 
   for (let attempt = 1; attempt <= MAX_STREAM_ATTEMPTS; attempt++) {
+    if (signal?.aborted) {
+      throw new DOMException("Aborted", "AbortError");
+    }
     try {
       const streamOpts =
         attempt === 1
           ? { ...opts, onStepFinish: onToolCall }
           : opts;
 
-      const result = await agent.stream(prompt, streamOpts);
+      const result = await agent.stream(prompt, { ...streamOpts, abortSignal: signal });
       const object = await result.object;
 
       if (object) {
@@ -139,6 +147,9 @@ async function runWithRetry(
         }),
       );
     } catch (err) {
+      if (err instanceof DOMException && err.name === "AbortError") {
+        throw err;
+      }
       lastError = err instanceof Error ? err : new Error(String(err));
       const rateLimited = isRateLimitError(lastError);
 
@@ -179,7 +190,7 @@ const productSchema = z.object({
 export const productResearchTask = task({
   id: "product-research",
   maxDuration: 3600,
-  run: async (payload: { url: string }) => {
+  run: async (payload: { url: string }, { signal }) => {
     const agent = mastra.getAgent("productAnalystAgent");
     if (!agent) {
       await researchStream.append(JSON.stringify({ type: "error", error: "Product analyst agent not found" }));
@@ -219,6 +230,7 @@ export const productResearchTask = task({
             }));
           }
         },
+        signal,
       );
 
       const result = {
@@ -289,7 +301,7 @@ async function persistCompetitorResult(
 export const competitorResearchTask = task({
   id: "competitor-research",
   maxDuration: 3600,
-  run: async (payload: z.infer<typeof competitorTaskPayloadSchema>) => {
+  run: async (payload: z.infer<typeof competitorTaskPayloadSchema>, { signal }) => {
     const input = competitorTaskPayloadSchema.parse(payload);
     const agent = mastra.getAgent("discoveryAgent");
     if (!agent) {
@@ -331,6 +343,7 @@ Features: ${input.keyFeatures.join(", ")}`;
             }));
           }
         },
+        signal,
       );
 
       const obj = object as { competitors: Array<Record<string, unknown>>; searchQueriesUsed: string[] };
@@ -390,7 +403,7 @@ const hnContextSchema = productContextSchema.extend({
 export const hnThreadsTask = task({
   id: "hn-threads",
   maxDuration: 3600,
-  run: async (payload: z.infer<typeof hnContextSchema>) => {
+  run: async (payload: z.infer<typeof hnContextSchema>, { signal }) => {
     const agent = mastra.getAgent("discoveryAgent");
     if (!agent) {
       await researchStream.append(JSON.stringify({ type: "error", error: "Discovery agent not found" }));
@@ -444,6 +457,7 @@ ${competitorList || "(none provided)"}`;
             }));
           }
         },
+        signal,
       );
 
       const obj = object as { threads: Array<Record<string, unknown>> };

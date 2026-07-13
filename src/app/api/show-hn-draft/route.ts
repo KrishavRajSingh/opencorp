@@ -93,7 +93,10 @@ export async function POST(request: Request) {
 ${corpus}
 Draft the Show HN post. Call submit_show_hn_draft with the complete draft.`;
 
-    const result = await agent.generate([{ role: 'user', content: userQ }]);
+    const result = await agent.generate(
+      [{ role: 'user', content: userQ }],
+      { abortSignal: request.signal },
+    );
 
     let parsed: z.infer<typeof showHNDraftOutputSchema> | null = null;
     for (const tc of result.toolCalls ?? []) {

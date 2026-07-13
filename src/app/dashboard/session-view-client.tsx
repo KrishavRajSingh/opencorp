@@ -184,6 +184,7 @@ export function SessionViewClient({
 
   const [showHNDraft, setShowHNDraft] = useState<ShowHNDraft | null>(initialShowHNDraft);
   const [loadingShowHN, setLoadingShowHN] = useState(false);
+  const draftAbortRef = useRef<AbortController | null>(null);
   const [activeHNChannel, setActiveHNChannel] = useState<"find" | "draft" | null>(
     initialHNResult
       ? "find"
@@ -353,6 +354,8 @@ export function SessionViewClient({
   const draftShowHN = useCallback(async () => {
     setLoadingShowHN(true);
     setStreamError(null);
+    const controller = new AbortController();
+    draftAbortRef.current = controller;
     try {
       const res = await fetch("/api/show-hn-draft", {
         method: "POST",
@@ -372,6 +375,7 @@ export function SessionViewClient({
           openSource: null,
           openSourceUrl: null,
         }),
+        signal: controller.signal,
       });
       const body = await res.json();
       if (!res.ok)
@@ -388,13 +392,21 @@ export function SessionViewClient({
         })
         .catch(() => {});
     } catch (err) {
+      if (err instanceof DOMException && err.name === "AbortError") return;
       setStreamError(
         err instanceof Error ? err.message : "Failed to draft Show HN post",
       );
     } finally {
-      setLoadingShowHN(false);
+      if (draftAbortRef.current === controller) {
+        draftAbortRef.current = null;
+        setLoadingShowHN(false);
+      }
     }
   }, [product, sessionId, router]);
+
+  const cancelDraftShowHN = useCallback(() => {
+    draftAbortRef.current?.abort();
+  }, []);
 
   const persistShowHNDraft = useCallback(
     async (next: ShowHNDraft) => {
@@ -901,6 +913,7 @@ export function SessionViewClient({
               setActiveHNChannel("draft");
               void draftShowHN();
             }}
+            onCancelDraft={cancelDraftShowHN}
             onPersistShowHN={persistShowHNDraft}
             activeHNChannel={activeHNChannel}
             onActivateHNChannel={setActiveHNChannel}

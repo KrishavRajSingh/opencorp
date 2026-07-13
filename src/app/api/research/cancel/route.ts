@@ -1,10 +1,7 @@
 import { runs } from "@trigger.dev/sdk/v3";
-import { getAuthedUser } from "@/lib/supabase/auth";
-import { ANON_BUCKET_USER_ID, createClient } from "@/lib/supabase/server";
+import { getDbClient } from "@/lib/supabase/server";
 
 export async function POST(request: Request) {
-  const { user } = await getAuthedUser();
-
   let runId: string;
   let sessionId: string | undefined;
   try {
@@ -33,23 +30,18 @@ export async function POST(request: Request) {
   }
 
   if (sessionId) {
-    const supabase = await createClient();
-    const { data, error } = await supabase
+    const supabase = await getDbClient();
+    const { data } = await supabase
       .from("research_sessions")
       .select("id")
       .eq("id", sessionId)
-      .single();
-    if (error || !data) {
+      .maybeSingle();
+    if (!data) {
       return new Response(JSON.stringify({ error: "not found" }), {
         status: 404,
         headers: { "Content-Type": "application/json" },
       });
     }
-  } else if (user.id !== ANON_BUCKET_USER_ID) {
-    return new Response(JSON.stringify({ error: "not found" }), {
-      status: 404,
-      headers: { "Content-Type": "application/json" },
-    });
   }
 
   try {

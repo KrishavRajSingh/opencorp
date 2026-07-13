@@ -2,9 +2,8 @@
 
 import { useEffect, useRef, useState } from "react";
 import { Copy, Check } from "lucide-react";
-import { Card, CardContent } from "@/components/ui/card";
-import { cn } from "@/lib/utils";
 import type { ShowHNDraft } from "@/lib/types/session";
+import { cn } from "@/lib/utils";
 
 function CopyButton({ text }: { text: string }) {
   const [copied, setCopied] = useState(false);
@@ -28,7 +27,7 @@ function CopyButton({ text }: { text: string }) {
     <button
       type="button"
       onClick={copy}
-      className="inline-flex items-center gap-1 font-mono text-[9px] text-muted-foreground/50 transition-colors hover:text-foreground/70"
+      className="inline-flex items-center gap-1 font-mono text-[10px] uppercase tracking-widest text-muted-foreground/50 transition-colors hover:text-foreground/80"
     >
       {copied ? (
         <Check className="size-3 text-emerald-400" />
@@ -40,8 +39,8 @@ function CopyButton({ text }: { text: string }) {
   );
 }
 
-const inputBase =
-  "w-full rounded-md border border-border/40 bg-card/40 px-2 py-1.5 text-[12px] text-foreground/90 focus:border-brand/50 focus:outline-none";
+const fieldBase =
+  "w-full bg-transparent text-sm text-foreground/90 placeholder:text-muted-foreground/30 focus:outline-none focus:bg-orange-400/[0.04] transition-colors";
 
 export function ShowHNDraftView({
   draft,
@@ -63,11 +62,7 @@ export function ShowHNDraftView({
     if (saveTimerRef.current) clearTimeout(saveTimerRef.current);
     saveTimerRef.current = setTimeout(async () => {
       setSaving(true);
-      const next: ShowHNDraft = {
-        ...draft,
-        title,
-        body,
-      };
+      const next: ShowHNDraft = { ...draft, title, body };
       try {
         await onPersist(next);
       } finally {
@@ -83,50 +78,66 @@ export function ShowHNDraftView({
   const editable = !!onPersist;
 
   return (
-    <div className="space-y-3 py-2">
-      {/* Title */}
-      <Card>
-        <div className="flex items-center justify-between gap-3 px-(--card-spacing)">
-          <span className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground/60">
-            Title
-          </span>
-          <CopyButton text={title} />
-        </div>
-        <CardContent>
-          <input
-            type="text"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            readOnly={!editable}
-            className={cn(inputBase, "font-medium leading-snug")}
-          />
-        </CardContent>
-      </Card>
+    <div>
+      <Field label="title" copyText={title} editable={editable}>
+        <input
+          type="text"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          readOnly={!editable}
+          className={cn(
+            fieldBase,
+            "py-3 text-[15px] font-medium leading-snug",
+            !editable && "cursor-default",
+          )}
+          placeholder="Show HN: I built …"
+        />
+      </Field>
 
-      {/* Post body */}
-      <Card>
-        <div className="flex items-center justify-between gap-3 px-(--card-spacing)">
-          <span className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground/60">
-            Post Body
-          </span>
-          <CopyButton text={body} />
-        </div>
-        <CardContent>
-          <textarea
-            value={body}
-            onChange={(e) => setBody(e.target.value)}
-            readOnly={!editable}
-            rows={18}
-            className={cn(inputBase, "resize-y leading-relaxed font-mono")}
-          />
-        </CardContent>
-      </Card>
+      <Field label="body" copyText={body} editable={editable}>
+        <textarea
+          value={body}
+          onChange={(e) => setBody(e.target.value)}
+          readOnly={!editable}
+          rows={18}
+          className={cn(
+            fieldBase,
+            "resize-y py-3 font-mono text-[12.5px] leading-relaxed",
+            !editable && "cursor-default",
+          )}
+          placeholder="Hey HN — I got tired of …"
+        />
+      </Field>
 
-      <p className="text-center font-mono text-[9px] text-muted-foreground/30">
+      <div className="border-t border-border/30 px-3 py-2 text-center font-mono text-[9px] uppercase tracking-widest text-muted-foreground/35">
         {saving
           ? "saving…"
           : `generated ${new Date(draft.generated_at).toLocaleTimeString()}`}
-      </p>
+      </div>
+    </div>
+  );
+}
+
+function Field({
+  label,
+  copyText,
+  editable,
+  children,
+}: {
+  label: string;
+  copyText: string;
+  editable: boolean;
+  children: React.ReactNode;
+}) {
+  return (
+    <div className="border-b border-border/30">
+      <div className="flex items-center justify-between gap-3 px-3 pt-3">
+        <span className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground/55">
+          {label}
+        </span>
+        {editable && <CopyButton text={copyText} />}
+      </div>
+      <div className="px-3 pb-2">{children}</div>
     </div>
   );
 }

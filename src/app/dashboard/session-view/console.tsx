@@ -50,6 +50,7 @@ export type ConsoleProps = {
   showHNDraft: ShowHNDraft | null;
   loadingShowHN: boolean;
   onDraftShowHN: () => void;
+  onCancelDraft?: () => void;
   onPersistShowHN?: (next: ShowHNDraft) => Promise<void> | void;
   activeHNChannel: "find" | "draft" | null;
   onActivateHNChannel: (next: "find" | "draft") => void;
@@ -85,6 +86,7 @@ export function Console({
   showHNDraft,
   loadingShowHN,
   onDraftShowHN,
+  onCancelDraft,
   onPersistShowHN,
   activeHNChannel,
   onActivateHNChannel,
@@ -369,7 +371,7 @@ export function Console({
                       state={draftState}
                       onRun={onDraftShowHN}
                       onActivate={() => onActivateHNChannel("draft")}
-                      onCancel={loadingShowHN ? onCancel : undefined}
+                      onCancel={loadingShowHN ? onCancelDraft : undefined}
                       busy={busy && !loadingShowHN}
                       isActive={displayedChannel === "draft"}
                       resultSummary={showHNDraft ? "1 draft" : undefined}

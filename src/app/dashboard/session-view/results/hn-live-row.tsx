@@ -44,27 +44,26 @@ export function HNLiveRow({ t, rank }: { t: HNThread; rank: number }) {
       href={hnUrl}
       target="_blank"
       rel="noopener noreferrer"
-      className="group/row grid grid-cols-[2.5rem_4rem_minmax(0,1fr)] items-baseline gap-x-3 border-b border-border/25 px-3 py-2.5 transition-colors last:border-b-0 hover:bg-card/30"
+      className="group/row block border-b border-border/25 px-3 py-2.5 transition-colors last:border-b-0 hover:bg-card/30"
     >
-      <span className="font-mono text-[10px] tabular-nums text-orange-400/80 group-hover/row:text-orange-400">
-        {String(rank).padStart(2, "0")}
-      </span>
-      <span className="font-mono text-[11px] tabular-nums text-muted-foreground/70 group-hover/row:text-foreground/90">
-        ▲ {t.points}
-      </span>
-      <div className="min-w-0">
-        <p className="truncate text-sm text-foreground/90 group-hover/row:text-foreground">
+      <div className="flex items-baseline gap-2">
+        <p className="min-w-0 flex-1 truncate text-sm text-foreground/90 group-hover/row:text-foreground">
           {t.title}
         </p>
-        {t.whyRelevant && (
-          <p className="mt-0.5 truncate text-[11px] italic text-muted-foreground/55">
-            {t.whyRelevant}
-          </p>
-        )}
-        <p className="mt-0.5 truncate font-mono text-[10px] text-muted-foreground/45">
-          @{t.author || "unknown"} · {relativeHNDate(t.date)} · {t.comments} cmts
-        </p>
+        <span className="shrink-0 font-mono text-[10.5px] tabular-nums text-muted-foreground/45 group-hover/row:text-foreground/70">
+          ▲ {t.points}
+        </span>
       </div>
+      {t.whyRelevant && (
+        <p className="mt-0.5 truncate text-[11px] italic text-muted-foreground/55">
+          {t.whyRelevant}
+        </p>
+      )}
+      <p className="mt-0.5 truncate font-mono text-[10px] text-muted-foreground/45">
+        @{t.author || "unknown"} · {relativeHNDate(t.date)} · {t.comments} cmts
+        <span className="ml-1.5 text-muted-foreground/25">·</span>
+        <span className="ml-1.5 text-muted-foreground/35">#{rank}</span>
+      </p>
     </a>
   );
 }
