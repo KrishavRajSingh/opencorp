@@ -37,6 +37,7 @@ import type {
   CompetitorResult,
   HNResult,
   RedditScanResult,
+  ShowHNDraft,
   ToolCallChunk,
 } from "@/lib/types/session";
 
@@ -61,6 +62,7 @@ export function SessionViewClient({
   competitors: initialCompetitors,
   hnResult: initialHNResult,
   redditScan: initialRedditScan = null,
+  initialShowHNDraft = null,
   readOnly = false,
   isAuthed = !readOnly,
   signupHref = "/auth/sign-up",
@@ -70,6 +72,7 @@ export function SessionViewClient({
   competitors: CompetitorResult | null;
   hnResult: HNResult | null;
   redditScan?: RedditScanResult | null;
+  initialShowHNDraft?: ShowHNDraft | null;
   readOnly?: boolean;
   isAuthed?: boolean;
   signupHref?: string;
@@ -177,6 +180,16 @@ export function SessionViewClient({
 
   const [activeResult, setActiveResult] = useState<"reddit" | "hn">(
     "reddit",
+  );
+
+  const [showHNDraft, setShowHNDraft] = useState<ShowHNDraft | null>(initialShowHNDraft);
+  const [loadingShowHN, setLoadingShowHN] = useState(false);
+  const [activeHNChannel, setActiveHNChannel] = useState<"find" | "draft" | null>(
+    initialHNResult
+      ? "find"
+      : initialShowHNDraft
+        ? "draft"
+        : null,
   );
 
   const [subsSearch, setSubsSearch] = useState<string[]>([]);
@@ -336,6 +349,71 @@ export function SessionViewClient({
     onResult: onRedditResult,
     onError: setStreamError,
   });
+
+  const draftShowHN = useCallback(async () => {
+    setLoadingShowHN(true);
+    setStreamError(null);
+    try {
+      const res = await fetch("/api/show-hn-draft", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          productName: product.productName,
+          description: product.description,
+          keyFeatures: product.keyFeatures,
+          targetAudience: product.targetAudience,
+          demoUrl: product.url,
+          buildMotivation: null,
+          techStack: null,
+          hardChallenge: null,
+          tradeoffs: null,
+          lessonLearned: null,
+          keyMetric: null,
+          openSource: null,
+          openSourceUrl: null,
+        }),
+      });
+      const body = await res.json();
+      if (!res.ok)
+        throw new Error(body.error ?? `Request failed (${res.status})`);
+      const draft = body as ShowHNDraft;
+      setShowHNDraft(draft);
+      fetch("/api/research/save", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id: sessionId, show_hn_draft_result: draft }),
+      })
+        .then((res) => {
+          if (res.ok) router.refresh();
+        })
+        .catch(() => {});
+    } catch (err) {
+      setStreamError(
+        err instanceof Error ? err.message : "Failed to draft Show HN post",
+      );
+    } finally {
+      setLoadingShowHN(false);
+    }
+  }, [product, sessionId, router]);
+
+  const persistShowHNDraft = useCallback(
+    async (next: ShowHNDraft) => {
+      setShowHNDraft(next);
+      try {
+        await fetch("/api/research/save", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            id: sessionId,
+            show_hn_draft_result: next,
+          }),
+        });
+      } catch {
+        /* swallow — silent retry on next edit */
+      }
+    },
+    [sessionId],
+  );
 
   const [hnElapsed, setHNElapsed] = useState(0);
   const [redditElapsed, setRedditElapsed] = useState(0);
@@ -800,7 +878,6 @@ export function SessionViewClient({
             redditCount={redditScan?.top_threads?.length ?? 0}
             hnCount={hnResult?.threads.length ?? 0}
             onFindReddit={reddit.run}
-            onFindHN={hn.run}
             onCancel={cancelCurrent}
             streamStatus={activeStreamStatus}
             elapsedDisplay={elapsedDisplay}
@@ -818,6 +895,19 @@ export function SessionViewClient({
             readOnly={readOnly}
             isAuthed={isAuthed}
             signupHref={signupHref}
+            showHNDraft={showHNDraft}
+            loadingShowHN={loadingShowHN}
+            onDraftShowHN={() => {
+              setActiveHNChannel("draft");
+              void draftShowHN();
+            }}
+            onPersistShowHN={persistShowHNDraft}
+            activeHNChannel={activeHNChannel}
+            onActivateHNChannel={setActiveHNChannel}
+            onFindHN={() => {
+              setActiveHNChannel("find");
+              hn.run();
+            }}
           />
         </div>
       </div>

@@ -39,6 +39,13 @@ export type HNResult = {
 
 export type RedditScanResult = GtmBrief;
 
+export type ShowHNDraft = {
+  title: string;
+  body: string;
+  run_id: string;
+  generated_at: string;
+};
+
 export type ToolCallChunk = {
   toolCallId: string;
   toolName: string;

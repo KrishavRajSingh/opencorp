@@ -50,11 +50,12 @@ export const fetchSession = cache(
     competitor_result: unknown;
     hn_threads_result: unknown;
     reddit_scan_result: unknown;
+    show_hn_draft_result: unknown;
   } | null> => {
     const supabase = await getDbClient();
     const { data } = await supabase
       .from("research_sessions")
-      .select("id, input, product_analyst_result, competitor_result, hn_threads_result, reddit_scan_result")
+      .select("id, input, product_analyst_result, competitor_result, hn_threads_result, reddit_scan_result, show_hn_draft_result")
       .eq("id", id)
       .maybeSingle();
     const row = data as Record<string, unknown> | null;
@@ -66,6 +67,7 @@ export const fetchSession = cache(
       competitor_result: row.competitor_result,
       hn_threads_result: row.hn_threads_result,
       reddit_scan_result: row.reddit_scan_result ?? null,
+      show_hn_draft_result: row.show_hn_draft_result ?? null,
     };
   },
 );

@@ -51,6 +51,7 @@ const baseSchema = z.object({
   competitor_result: competitorResultSchema.optional(),
   hn_threads_result: hnThreadsResultSchema.optional(),
   reddit_scan_result: redditScanResultSchema.optional(),
+  show_hn_draft_result: z.any().optional(),
 });
 
 export async function POST(request: Request) {
@@ -134,6 +135,9 @@ export async function POST(request: Request) {
   }
   if (body.reddit_scan_result !== undefined) {
     update.reddit_scan_result = body.reddit_scan_result;
+  }
+  if (body.show_hn_draft_result !== undefined) {
+    update.show_hn_draft_result = body.show_hn_draft_result;
   }
   if (body.input !== undefined) {
     update.input = body.input;
