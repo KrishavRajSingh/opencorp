@@ -15,12 +15,6 @@ import {
 import { Console } from "./session-view/console";
 import { ProductHeader } from "./session-view/product-header";
 import { useSseChannel } from "./session-view/use-sse-channel";
-import {
-  ANON_PREVIEW_COUNT,
-  LockedThreadRow,
-  SignupUnlockBar,
-} from "@/components/dashboard/thread-gate";
-import type { HNThread } from "@/app/dashboard/hn-threads-block";
 import { cn } from "@/lib/utils";
 import {
   createCompetitorStage,
@@ -33,7 +27,6 @@ import {
 import { readTriggerSse } from "@/lib/sse";
 import type {
   ProductResult,
-  Competitor,
   CompetitorResult,
   HNResult,
   RedditScanResult,

@@ -1,7 +1,5 @@
 import { useState, useCallback, useRef, useEffect } from "react";
-import { useRouter } from "next/navigation";
 import { readTriggerSse } from "@/lib/sse";
-import type { ToolCallChunk } from "@/lib/types/session";
 
 type ChannelEvent<T> =
   | { kind: "tool-call"; status: string }
@@ -23,11 +21,9 @@ export function useSseChannel<T>(opts: {
   sessionId: string;
   onResult: (payload: T) => void | Promise<void>;
   onError?: (message: string) => void;
-  transportErrorPrefix?: string;
 }) {
-  const router = useRouter();
-  const { channel, apiPath, buildBody, mapEvent, sessionId, onResult, onError, transportErrorPrefix } = opts;
-  const transportPrefix = transportErrorPrefix ?? channel.toUpperCase();
+  const { channel, apiPath, buildBody, mapEvent, sessionId, onResult, onError } = opts;
+  const transportPrefix = channel.toUpperCase();
 
   const [runId, setRunId] = useState<string | null>(null);
   const [token, setToken] = useState<string | null>(null);

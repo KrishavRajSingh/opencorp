@@ -1,7 +1,6 @@
 "use client";
 
 import { ChevronDown } from "lucide-react";
-import { ProductFavicon } from "@/components/dashboard/product-favicon";
 import { DinoLoader } from "@/components/dashboard/dino-loader";
 import { GtmBriefView } from "@/components/ai-elements/gtm-brief";
 import { HNResultView } from "./results/hn-result-view";
