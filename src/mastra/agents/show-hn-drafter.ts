@@ -50,13 +50,33 @@ export const showHNDraftInputSchema = z.object({
     .describe('Repo URL if open source. Shown alongside the open-source mention.'),
 });
 
+const ASCII_ONLY = /^[\x00-\x7F]*$/;
+const PLACEHOLDER_MARKERS = /\[(todo|placeholder|insert|not provided|your)\b[^\]]*\]/i;
+
+function wordCount(text: string): number {
+  return text.trim().split(/\s+/).filter(Boolean).length;
+}
+
 export const showHNDraftOutputSchema = z.object({
   title: z
     .string()
+    .startsWith('Show HN:', { message: 'title must begin with "Show HN:"' })
+    .regex(ASCII_ONLY, { message: 'title must be plain ASCII' })
     .describe('Show HN: <headline>. Plain ASCII, no emojis. Single best title — pick the strongest of the 4 corpus patterns for this product.'),
   body: z
     .string()
-    .describe('Post body, 200-400 words, first-person, plain ASCII, no marketing fluff, no placeholder markers. Write a complete, postable draft using only what PRODUCT CONTEXT provides.'),
+    .regex(ASCII_ONLY, { message: 'body must be plain ASCII' })
+    .refine((body) => !PLACEHOLDER_MARKERS.test(body), {
+      message: 'body must not contain placeholder markers',
+    })
+    .refine(
+      (body) => {
+        const words = wordCount(body);
+        return words >= 100 && words <= 400;
+      },
+      { message: 'body must be 100-400 words' },
+    )
+    .describe('Post body, 100-400 words, first-person, plain ASCII, no marketing fluff, no placeholder markers. Write a complete, postable draft using only what PRODUCT CONTEXT provides.'),
 });
 
 const submitDraftTool = {
@@ -83,7 +103,7 @@ TITLE PATTERNS — pick the single strongest title. Consider these 4 corpus patt
 
 If openSource is true, prefer the open-source or repo-URL framing.
 
-BODY (200-400 words, first-person, plain ASCII, no markdown, no bold, no links except demo URL and optional repo URL):
+BODY (100-400 words, first-person, plain ASCII, no markdown, no bold, no links except demo URL and optional repo URL). Stop when you have said everything true — shorter beats longer, never pad to reach a word count:
 - Open with the hook. Pick one of:
   * If buildMotivation is provided: "I built <Product> because <buildMotivation>."
   * If buildMotivation is null: write a generic, complete opener using the description (e.g. "I built <Product> — <one-line value prop from description>."). Do NOT use [TODO: ...] or any placeholder markers.

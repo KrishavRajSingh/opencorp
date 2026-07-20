@@ -1,7 +1,10 @@
 import { runs } from "@trigger.dev/sdk/v3";
+import { getAuthedUser } from "@/lib/supabase/auth";
 import { getDbClient } from "@/lib/supabase/server";
 
 export async function POST(request: Request) {
+  const { user } = await getAuthedUser();
+
   let runId: string;
   let sessionId: string | undefined;
   try {
@@ -33,14 +36,31 @@ export async function POST(request: Request) {
     const supabase = await getDbClient();
     const { data } = await supabase
       .from("research_sessions")
-      .select("id")
+      .select("id, user_id")
       .eq("id", sessionId)
       .maybeSingle();
-    if (!data) {
+    if (!data || data.user_id !== user.id) {
       return new Response(JSON.stringify({ error: "not found" }), {
         status: 404,
         headers: { "Content-Type": "application/json" },
       });
+    }
+
+    // Reject runs bound to a different session. Only competitor-research
+    // payloads carry sessionId; other tasks leave the run unbound, so
+    // there is nothing to compare for them.
+    try {
+      const run = await runs.retrieve(runId);
+      const runSessionId = (run.payload as { sessionId?: unknown } | undefined)
+        ?.sessionId;
+      if (typeof runSessionId === "string" && runSessionId !== sessionId) {
+        return new Response(JSON.stringify({ error: "not found" }), {
+          status: 404,
+          headers: { "Content-Type": "application/json" },
+        });
+      }
+    } catch {
+      // Run already gone — runs.cancel below treats that as a no-op.
     }
   }
 
