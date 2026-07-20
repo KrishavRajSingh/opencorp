@@ -6,6 +6,12 @@ import Link from "next/link";
 import { ArrowRight, Search, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 import { MarketingShell } from "@/components/marketing-shell";
 import {
   LandingConsole,
@@ -381,6 +387,85 @@ const CAPABILITIES = [
   },
 ];
 
+function UrlCtaForm({ location }: { location: "hero" | "footer" }) {
+  const [value, setValue] = useState("");
+  return (
+    <form
+      action="/dashboard"
+      method="get"
+      onSubmit={() =>
+        trackEvent({ name: "cta_try_with_link", data: { location } })
+      }
+      className="mx-auto flex w-full max-w-xl flex-col gap-2 sm:flex-row"
+    >
+      <div className="flex flex-1 items-center gap-2 rounded-lg border border-border/60 bg-card/50 px-3 py-2.5 backdrop-blur-sm transition-colors focus-within:border-brand/50">
+        <Search className="size-4 shrink-0 text-muted-foreground" />
+        <input
+          type="url"
+          name="url"
+          required
+          value={value}
+          onChange={(e) => setValue(e.target.value)}
+          placeholder="https://your-product.com"
+          className="flex-1 bg-transparent text-sm text-foreground outline-none placeholder:text-muted-foreground/50"
+        />
+      </div>
+      <Button type="submit" size="lg" className="w-full sm:w-auto">
+        Try free
+        <ArrowRight className="size-4" />
+      </Button>
+    </form>
+  );
+}
+
+const STEPS = [
+  {
+    n: "01",
+    title: "Paste a product link",
+    description:
+      "OpenCorp reads your landing page to learn what you do and who it's for.",
+  },
+  {
+    n: "02",
+    title: "Agents scan the map",
+    description:
+      "Alternatives, Reddit threads, and Hacker News discussions, cross-referenced against your product.",
+  },
+  {
+    n: "03",
+    title: "Join the right threads",
+    description:
+      "Ranked results with a reason attached to each. You show up and talk.",
+  },
+];
+
+function HowItWorks() {
+  return (
+    <section className="mx-auto max-w-5xl px-6 pb-8">
+      <div className="grid gap-3 sm:grid-cols-3">
+        {STEPS.map((step, i) => (
+          <motion.div
+            key={step.n}
+            initial={{ opacity: 0, y: 10 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-40px" }}
+            transition={{ duration: 0.4, delay: i * 0.06 }}
+            className="rounded-2xl border border-border/50 bg-card/40 p-5 backdrop-blur-sm"
+          >
+            <span className="font-mono text-xs text-brand/80">{step.n}</span>
+            <h3 className="mt-3 font-heading text-lg tracking-tight text-foreground">
+              {step.title}
+            </h3>
+            <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+              {step.description}
+            </p>
+          </motion.div>
+        ))}
+      </div>
+    </section>
+  );
+}
+
 function CapabilityCards() {
   return (
     <section className="mx-auto max-w-5xl px-6 pb-8 pt-4">
@@ -430,7 +515,7 @@ function CapabilityCards() {
 
 function RealOutput() {
   return (
-    <section className="border-y border-border/50 bg-muted/20">
+    <section id="report" className="scroll-mt-20 border-y border-border/50 bg-muted/20">
       <div className="mx-auto max-w-6xl px-6 py-24">
         <div className="grid items-start gap-12 lg:grid-cols-[1fr_1.05fr]">
           <motion.div
@@ -439,13 +524,13 @@ function RealOutput() {
             viewport={{ once: true, margin: "-100px" }}
             transition={{ duration: 0.5 }}
           >
-            <p className="text-sm font-medium text-brand">Real report</p>
+            <p className="text-sm font-medium text-brand">Example report</p>
             <h2 className="mt-3 font-heading text-3xl leading-tight tracking-tight sm:text-4xl">
-              What OpenCorp found for{" "}
+              What OpenCorp finds for{" "}
               <span className="text-brand">filler.live</span>
             </h2>
             <p className="mt-4 max-w-md text-sm leading-relaxed text-muted-foreground">
-              A real product link. Alternatives to study, Reddit threads where
+              One product link in. Alternatives to study, Reddit threads where
               buyers complain, and Hacker News discussions ready to join — all
               in one report.
             </p>
@@ -476,9 +561,13 @@ function FounderSection() {
         className="grid items-start gap-8 sm:grid-cols-[auto_1fr]"
       >
         <div className="flex items-center gap-3">
-          <div className="grid size-14 place-items-center rounded-full border border-border/60 bg-gradient-to-br from-brand/30 to-brand/5 font-heading text-lg">
-            K
-          </div>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="https://github.com/KrishavRajSingh.png"
+            alt="Krishav Raj Singh"
+            loading="lazy"
+            className="size-14 rounded-full border border-border/60"
+          />
           <div className="sm:hidden">
             <div className="font-heading text-base">Founder</div>
             <div className="text-[11px] text-muted-foreground">
@@ -501,7 +590,7 @@ function FounderSection() {
           <div className="mt-5 flex flex-wrap items-center gap-3">
             <Button variant="outline" size="sm" asChild>
               <Link href={`https://x.com/${FOUNDER_HANDLE}`} target="_blank">
-                Read the build thread →
+                Follow the build on X →
               </Link>
             </Button>
           </div>
@@ -511,8 +600,59 @@ function FounderSection() {
   );
 }
 
+const FAQS = [
+  {
+    q: "Is it really free?",
+    a: "Yes. OpenCorp is open source with no pricing tier. A free account unlocks full thread lists and saves your reports.",
+  },
+  {
+    q: "Where does the data come from?",
+    a: "Public sources only: Reddit threads, Hacker News discussions, and live web results for alternatives. Every item links back to its source.",
+  },
+  {
+    q: "What do I get without an account?",
+    a: "The full alternatives list plus a preview of the top Reddit and Hacker News threads. Sign up free to see everything and keep your history.",
+  },
+  {
+    q: "How is this different from searching Reddit myself?",
+    a: "OpenCorp reads your product page first, then searches for the problem you solve — not your product name — and ranks threads with a reason attached to each.",
+  },
+  {
+    q: "Does it post or comment for me?",
+    a: "No auto-posting. OpenCorp finds where to show up and why. The words you write are yours.",
+  },
+];
+
+function Faq() {
+  return (
+    <section className="mx-auto max-w-3xl px-6 py-24">
+      <motion.div
+        initial={{ opacity: 0, y: 12 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "-100px" }}
+        transition={{ duration: 0.5 }}
+      >
+        <h2 className="text-center font-heading text-3xl tracking-tight sm:text-4xl">
+          Questions, answered
+        </h2>
+        <Accordion type="single" collapsible className="mt-8">
+          {FAQS.map((f, i) => (
+            <AccordionItem key={f.q} value={`q-${i}`}>
+              <AccordionTrigger className="text-base">
+                {f.q}
+              </AccordionTrigger>
+              <AccordionContent className="leading-relaxed text-muted-foreground">
+                {f.a}
+              </AccordionContent>
+            </AccordionItem>
+          ))}
+        </Accordion>
+      </motion.div>
+    </section>
+  );
+}
+
 function TryItWidget() {
-  const [value, setValue] = useState("");
   return (
     <section className="border-t border-border/50 bg-muted/20">
       <div className="mx-auto max-w-3xl px-6 py-24">
@@ -530,36 +670,11 @@ function TryItWidget() {
             Get alternatives, Reddit threads, and Hacker News discussions in one
             report.
           </p>
-          <form
-            action="/dashboard"
-            method="get"
-            onSubmit={() =>
-              trackEvent({
-                name: "cta_try_with_link",
-                data: { location: "footer" },
-              })
-            }
-            className="mx-auto mt-8 flex max-w-xl flex-col gap-2 sm:flex-row"
-          >
-            <div className="flex flex-1 items-center gap-2 rounded-lg border border-border/60 bg-card/50 px-3 py-2.5 backdrop-blur-sm">
-              <Search className="size-4 shrink-0 text-muted-foreground" />
-              <input
-                type="url"
-                name="url"
-                required
-                value={value}
-                onChange={(e) => setValue(e.target.value)}
-                placeholder="https://your-product.com"
-                className="flex-1 bg-transparent text-sm text-foreground outline-none placeholder:text-muted-foreground/50"
-              />
-            </div>
-            <Button type="submit" size="lg" className="w-full sm:w-auto">
-              Try free
-              <ArrowRight className="size-4" />
-            </Button>
-          </form>
+          <div className="mt-8">
+            <UrlCtaForm location="footer" />
+          </div>
           <p className="mt-3 text-xs text-muted-foreground/70">
-            Free preview · full threads with an account
+            Free & open source · account unlocks full thread lists
           </p>
         </motion.div>
       </div>
@@ -591,33 +706,26 @@ export default function Page() {
               Paste a product link. Get alternatives, Reddit threads, and
               Hacker News discussions — ready to act on.
             </p>
-            <div className="mt-8 flex flex-col items-center gap-3 sm:flex-row">
-              <Button
-                size="lg"
-                className="w-full sm:w-auto"
-                asChild
-                onClick={() =>
-                  trackEvent({
-                    name: "cta_try_with_link",
-                    data: { location: "hero" },
-                  })
-                }
-              >
-                <Link href="/dashboard">
-                  Research your product
-                  <ArrowRight className="size-4" />
+            <div className="mt-8 w-full max-w-xl">
+              <UrlCtaForm location="hero" />
+              <div className="mt-3 flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-xs text-muted-foreground/70">
+                <span>Free & open source · No credit card</span>
+                <Link
+                  href="#report"
+                  className="inline-flex items-center gap-1 text-muted-foreground/80 transition-colors hover:text-foreground"
+                >
+                  See example report ↓
                 </Link>
-              </Button>
-              <p className="text-xs text-muted-foreground/70">
-                Free to start · No credit card
-              </p>
+              </div>
             </div>
           </motion.div>
         </section>
 
+        <HowItWorks />
         <CapabilityCards />
         <RealOutput />
         <FounderSection />
+        <Faq />
         <TryItWidget />
       </main>
     </MarketingShell>

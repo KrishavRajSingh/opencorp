@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Mail } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -45,6 +46,71 @@ function DiscordIcon({ className }: { className?: string }) {
   );
 }
 
+const GITHUB_REPO = "KrishavRajSingh/opencorp";
+const STARS_CACHE_KEY = "gh-stars-opencorp";
+
+function formatStars(n: number) {
+  return n >= 1000 ? `${(n / 1000).toFixed(1)}k` : String(n);
+}
+
+function GitHubStarsLink() {
+  const [stars, setStars] = useState<number | null>(() => {
+    if (typeof window === "undefined") return null;
+    try {
+      const cached = sessionStorage.getItem(STARS_CACHE_KEY);
+      if (cached) {
+        const { count, ts } = JSON.parse(cached) as {
+          count: number;
+          ts: number;
+        };
+        if (Date.now() - ts < 60 * 60 * 1000) return count;
+      }
+    } catch {
+      // ignore cache errors
+    }
+    return null;
+  });
+
+  useEffect(() => {
+    if (stars !== null) return;
+    fetch(`https://api.github.com/repos/${GITHUB_REPO}`)
+      .then((r) => (r.ok ? r.json() : Promise.reject(new Error("gh api"))))
+      .then((d: { stargazers_count?: number }) => {
+        if (typeof d.stargazers_count === "number") {
+          setStars(d.stargazers_count);
+          try {
+            sessionStorage.setItem(
+              STARS_CACHE_KEY,
+              JSON.stringify({ count: d.stargazers_count, ts: Date.now() }),
+            );
+          } catch {
+            // ignore cache errors
+          }
+        }
+      })
+      .catch(() => {
+        // offline or rate-limited: keep bare icon
+      });
+  }, [stars]);
+
+  return (
+    <a
+      href={`https://github.com/${GITHUB_REPO}`}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="inline-flex items-center gap-1.5 text-muted-foreground transition-colors hover:text-foreground"
+      aria-label="GitHub"
+    >
+      <GitHubIcon className="size-5" />
+      {stars !== null && (
+        <span className="inline-flex items-center gap-1 rounded-md border border-border/60 px-1.5 py-0.5 font-mono text-[10px] tabular-nums text-muted-foreground">
+          ★ {formatStars(stars)}
+        </span>
+      )}
+    </a>
+  );
+}
+
 function SiteNav() {
   return (
     <header className="fixed top-0 z-50 w-full border-b border-border/50 bg-background/80 backdrop-blur-sm">
@@ -53,15 +119,7 @@ function SiteNav() {
           OpenCorp
         </Link>
         <div className="flex items-center gap-3">
-          <a
-            href="https://github.com/KrishavRajSingh/opencorp"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-muted-foreground transition-colors hover:text-foreground"
-            aria-label="GitHub"
-          >
-            <GitHubIcon className="size-5" />
-          </a>
+          <GitHubStarsLink />
           <a
             href="https://discord.gg/ArQF8jtC9"
             target="_blank"
