@@ -7,6 +7,9 @@ export const fetchSessions = cache(async (): Promise<SessionSummary[]> => {
   const { data, error } = await supabase
     .from("research_sessions")
     .select("id, input, product_analyst_result, competitor_result, hn_threads_result, reddit_scan_result, updated_at")
+    // Upfront-created rows without a product result are in-flight or
+    // abandoned stubs — never listed.
+    .not("product_analyst_result", "is", null)
     .order("updated_at", { ascending: false })
     .limit(50);
 
@@ -36,6 +39,7 @@ export const fetchMostRecentSession = cache(async (): Promise<string | null> => 
   const { data } = await supabase
     .from("research_sessions")
     .select("id")
+    .not("product_analyst_result", "is", null)
     .order("updated_at", { ascending: false })
     .limit(1)
     .maybeSingle();

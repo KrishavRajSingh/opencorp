@@ -112,6 +112,7 @@ export function NewResearchClient({
 
   const [runId, setRunId] = useState<string | null>(null);
   const [token, setToken] = useState<string | null>(null);
+  const [sessionId, setSessionId] = useState<string | null>(null);
 
   useEffect(() => {
     if (status === "streaming") {
@@ -190,6 +191,7 @@ export function NewResearchClient({
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
+                  ...(sessionId ? { id: sessionId } : {}),
                   input: { url: r.url },
                   product_analyst_result: r,
                 }),
@@ -266,7 +268,7 @@ export function NewResearchClient({
     );
 
     return () => controller.abort();
-  }, [runId, token, router]);
+  }, [runId, token, sessionId, router]);
 
   useEffect(() => {
     if (initialUrl) {
@@ -294,6 +296,7 @@ export function NewResearchClient({
     setResult(null);
     setActivity([]);
     setElapsed(0);
+    setSessionId(null);
 
     try {
       const res = await fetch("/api/research", {
@@ -310,6 +313,7 @@ export function NewResearchClient({
 
       setRunId(body.runId);
       setToken(body.publicAccessToken);
+      setSessionId(body.sessionId ?? null);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong");
       setStatus("error");
@@ -318,17 +322,19 @@ export function NewResearchClient({
 
   const handleCancel = useCallback(() => {
     const id = runId;
+    const sid = sessionId;
     setRunId(null);
     setToken(null);
+    setSessionId(null);
     setStatus("idle");
-    if (id) {
+    if (id && sid) {
       void fetch("/api/research/cancel", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ runId: id }),
+        body: JSON.stringify({ runId: id, sessionId: sid }),
       });
     }
-  }, [runId]);
+  }, [runId, sessionId]);
 
   const handleReset = useCallback(() => {
     setStatus("idle");

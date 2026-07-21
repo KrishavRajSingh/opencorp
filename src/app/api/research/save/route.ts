@@ -54,6 +54,33 @@ const baseSchema = z.object({
   show_hn_draft_result: z.any().optional(),
 });
 
+// Backend stage: product done → kick off competitors; task persists result.
+async function triggerCompetitors(
+  sessionId: string,
+  product: z.infer<typeof productAnalystResultSchema>,
+): Promise<{ competitorRunId?: string; publicAccessToken?: string }> {
+  try {
+    const handle = await tasks.trigger<typeof competitorResearchTask>(
+      "competitor-research",
+      {
+        sessionId,
+        url: product.url,
+        productName: product.productName,
+        description: product.description ?? "",
+        keyFeatures: product.keyFeatures ?? [],
+      },
+    );
+    return {
+      competitorRunId: handle.id,
+      publicAccessToken: handle.publicAccessToken,
+    };
+  } catch (triggerErr) {
+    // Session exists; competitors can be re-run from the session UI.
+    console.error("Failed to chain competitor-research:", triggerErr);
+    return {};
+  }
+}
+
 export async function POST(request: Request) {
   const { user } = await getAuthedUser();
 
@@ -91,27 +118,10 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
 
-    // Backend stage: product done → kick off competitors; task persists result.
-    const product = body.product_analyst_result;
-    let competitorRunId: string | undefined;
-    let publicAccessToken: string | undefined;
-    try {
-      const handle = await tasks.trigger<typeof competitorResearchTask>(
-        "competitor-research",
-        {
-          sessionId: data.id,
-          url: product.url,
-          productName: product.productName,
-          description: product.description ?? "",
-          keyFeatures: product.keyFeatures ?? [],
-        },
-      );
-      competitorRunId = handle.id;
-      publicAccessToken = handle.publicAccessToken;
-    } catch (triggerErr) {
-      // Session exists; competitors can be re-run from the session UI.
-      console.error("Failed to chain competitor-research:", triggerErr);
-    }
+    const { competitorRunId, publicAccessToken } = await triggerCompetitors(
+      data.id,
+      body.product_analyst_result,
+    );
 
     return NextResponse.json(
       {
@@ -153,5 +163,17 @@ export async function POST(request: Request) {
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
+
+  // Product result landing on an upfront-created session → chain competitors.
+  // Session-view updates never carry product_analyst_result, so this fires
+  // only for the initial save.
+  if (body.product_analyst_result) {
+    const { competitorRunId, publicAccessToken } = await triggerCompetitors(
+      body.id,
+      body.product_analyst_result,
+    );
+    return NextResponse.json({ id: data.id, competitorRunId, publicAccessToken });
+  }
+
   return NextResponse.json({ id: data.id });
 }
