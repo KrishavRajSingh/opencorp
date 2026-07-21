@@ -302,20 +302,24 @@ async function persistCompetitorResult(
   if (!url || !key) {
     throw new Error("Missing Supabase admin env for competitor persist");
   }
-  // Inline admin client — avoid importing next/headers via @/lib/supabase/server.
-  const { createClient } = await import("@supabase/supabase-js");
-  const supabase = createClient(url, key, {
-    auth: { autoRefreshToken: false, persistSession: false },
-  });
-  const { error } = await supabase
-    .from("research_sessions")
-    .update({
+  // PostgREST via fetch — supabase-js eagerly inits RealtimeClient, which
+  // throws on Node < 22 workers (no native WebSocket). This call is pure REST.
+  const res = await fetch(`${url}/rest/v1/research_sessions?id=eq.${sessionId}`, {
+    method: "PATCH",
+    headers: {
+      apikey: key,
+      Authorization: `Bearer ${key}`,
+      "Content-Type": "application/json",
+      Prefer: "return=minimal",
+    },
+    body: JSON.stringify({
       competitor_result: result,
       updated_at: new Date().toISOString(),
-    })
-    .eq("id", sessionId);
-  if (error) {
-    throw new Error(`Failed to persist competitors: ${error.message}`);
+    }),
+  });
+  if (!res.ok) {
+    const detail = (await res.text()).slice(0, 300);
+    throw new Error(`Failed to persist competitors: ${res.status} ${detail}`);
   }
 }
 
@@ -374,16 +378,8 @@ Features: ${input.keyFeatures.join(", ")}`;
       };
 
       if (input.sessionId) {
-        try {
-          await persistCompetitorResult(input.sessionId, result);
-        } catch (persistErr) {
-          const msg =
-            persistErr instanceof Error ? persistErr.message : "persist failed";
-          await researchStream.append(
-            JSON.stringify({ type: "error", error: msg }),
-          );
-          throw persistErr;
-        }
+        // Errors propagate to the outer catch, which appends once to the stream.
+        await persistCompetitorResult(input.sessionId, result);
       }
 
       await researchStream.append(JSON.stringify({ type: "result", ...result }));
