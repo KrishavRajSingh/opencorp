@@ -42,13 +42,21 @@ export const showHNDraftInputSchema = z.object({
     .boolean()
     .nullable()
     .optional()
-    .describe('Is the project open source? True → mention "open source" or repo URL in the title. False/null → skip.'),
+    .describe('Is the project open source? True → mention "open source" or repo URL in the title (requires openSourceUrl). False/null → skip.'),
   openSourceUrl: z
     .string()
     .nullable()
     .optional()
-    .describe('Repo URL if open source. Shown alongside the open-source mention.'),
-});
+    .describe('Repo URL if open source. Shown alongside the open-source mention. Required when openSource is true.'),
+}).refine(
+  (input) =>
+    input.openSource !== true ||
+    (typeof input.openSourceUrl === 'string' && input.openSourceUrl.length > 0),
+  {
+    message: 'openSourceUrl is required when openSource is true',
+    path: ['openSourceUrl'],
+  },
+);
 
 const ASCII_ONLY = /^[\x00-\x7F]*$/;
 const PLACEHOLDER_MARKERS = /\[(todo|placeholder|insert|not provided|your)\b[^\]]*\]/i;
