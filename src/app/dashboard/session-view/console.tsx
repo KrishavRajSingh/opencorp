@@ -120,6 +120,11 @@ export function Console({
             ? "draft"
             : null;
 
+  // Read-only sessions hide the channel rows, so displayedChannel would
+  // lock to "find" — with both artifacts present, render both instead.
+  const showBothReadOnly =
+    readOnly && hnResult !== null && showHNDraft !== null;
+
   const statusMeta = {
     idle: {
       dot: "bg-muted-foreground/50",
@@ -378,7 +383,7 @@ export function Console({
                   </div>
                 )}
 
-                {displayedChannel === "find" && (
+                {(displayedChannel === "find" || showBothReadOnly) && (
                   <div>
                     {loadingHN ? (
                       <div className="flex flex-col items-center justify-center py-6">
@@ -416,8 +421,12 @@ export function Console({
                   </div>
                 )}
 
-                {displayedChannel === "draft" && (
-                  <div>
+                {(displayedChannel === "draft" || showBothReadOnly) && (
+                  <div
+                    className={cn(
+                      showBothReadOnly && "mt-4 border-t border-border/30 pt-4",
+                    )}
+                  >
                     {loadingShowHN && !showHNDraft ? (
                       <div className="flex flex-col items-center justify-center py-6">
                         <DinoLoader
