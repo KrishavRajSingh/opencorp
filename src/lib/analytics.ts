@@ -14,7 +14,8 @@ export type AnalyticsEvent =
   | { name: "auth_google_oauth_click" }
   | { name: "auth_signin_submit" }
   | { name: "auth_signup_submit" }
-  | { name: "cta_signup_unlock_click" };
+  | { name: "cta_signup_unlock_click" }
+  | WithData<"cta_share_research_own", { location: "share_header" | "share_banner" }>;
 
 type DataFor<E extends AnalyticsEvent["name"]> = Extract<
   AnalyticsEvent,

@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Logo } from "@/components/dashboard/logo";
@@ -5,12 +6,34 @@ import { ScanlineBackdrop } from "@/components/dashboard/scanline-backdrop";
 import { SessionViewClient } from "@/app/dashboard/session-view-client";
 import { fetchSession } from "@/app/dashboard/data";
 import { getAuthedUser } from "@/lib/supabase/auth";
+import { ShareCtaBanner, ShareCtaHeader } from "./share-cta";
 import type {
   ProductResult,
   CompetitorResult,
   HNResult,
   ShowHNDraft,
 } from "@/lib/types/session";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}): Promise<Metadata> {
+  const { id } = await params;
+  const session = await fetchSession(id);
+  const product = session?.product_analyst_result as ProductResult | null;
+  if (!product?.productName) {
+    return { title: "Shared research" };
+  }
+  const title = `Research for ${product.productName}`;
+  const description = `Alternatives, Reddit threads, and Hacker News discussions OpenCorp found for ${product.productName}.`;
+  return {
+    title,
+    description,
+    openGraph: { title, description },
+    twitter: { title, description },
+  };
+}
 
 export default async function SharedSessionPage({
   params,
@@ -45,9 +68,12 @@ export default async function SharedSessionPage({
             OpenCorp
           </span>
         </Link>
-        <span className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground/60">
-          Shared research
-        </span>
+        <div className="flex items-center gap-3">
+          <span className="hidden font-mono text-[10px] uppercase tracking-widest text-muted-foreground/60 sm:inline">
+            Shared research
+          </span>
+          <ShareCtaHeader />
+        </div>
       </header>
 
       <main className="relative flex-1">
@@ -63,6 +89,7 @@ export default async function SharedSessionPage({
               readOnly
               isAuthed={isAuthed}
             />
+            <ShareCtaBanner />
           </div>
         </div>
       </main>
