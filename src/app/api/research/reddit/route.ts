@@ -44,10 +44,11 @@ export async function POST(request: Request) {
     .eq("id", input.sessionId)
     .maybeSingle();
   if (sessionError) {
-    return new Response(JSON.stringify({ error: sessionError.message }), {
-      status: 500,
-      headers: { "Content-Type": "application/json" },
-    });
+    console.error("[api/research/reddit] session lookup failed:", sessionError);
+    return new Response(
+      JSON.stringify({ error: "Failed to authorize session" }),
+      { status: 500, headers: { "Content-Type": "application/json" } },
+    );
   }
   if (!session || session.user_id !== user.id) {
     return new Response(JSON.stringify({ error: "not found" }), {
