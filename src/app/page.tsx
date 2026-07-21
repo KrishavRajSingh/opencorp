@@ -411,7 +411,7 @@ function UrlCtaForm({ location }: { location: "hero" | "footer" }) {
         />
       </div>
       <Button type="submit" size="lg" className="w-full sm:w-auto">
-        Try free
+        Find my users
         <ArrowRight className="size-4" />
       </Button>
     </form>
@@ -433,7 +433,7 @@ const STEPS = [
   },
   {
     n: "03",
-    title: "Join the right threads",
+    title: "Show up where buyers are",
     description:
       "Ranked results with a reason attached to each. You show up and talk.",
   },
@@ -602,6 +602,10 @@ function FounderSection() {
 
 const FAQS = [
   {
+    q: "What do I actually get?",
+    a: "A ranked map of where your next users already are: alternatives to study, Reddit threads where buyers describe the problem you solve, and Hacker News discussions ready to join — each with a reason attached.",
+  },
+  {
     q: "Is it really free?",
     a: "Yes. OpenCorp is open source with no pricing tier. A free account unlocks full thread lists and saves your reports.",
   },
@@ -664,11 +668,11 @@ function TryItWidget() {
           className="text-center"
         >
           <h2 className="font-heading text-3xl tracking-tight sm:text-4xl">
-            Paste your product link
+            Find your users
           </h2>
           <p className="mt-3 text-sm text-muted-foreground">
-            Get alternatives, Reddit threads, and Hacker News discussions in one
-            report.
+            Paste your product link — see who&apos;s already looking for what
+            you built.
           </p>
           <div className="mt-8">
             <UrlCtaForm location="footer" />
@@ -695,7 +699,7 @@ export default function Page() {
             className="relative z-10 mx-auto flex max-w-3xl flex-col items-center text-center"
           >
             <Badge variant="secondary" className="mb-6">
-              Market research for builders
+              User acquisition for builders
             </Badge>
             <h1 className="font-heading text-4xl leading-tight tracking-tight sm:text-5xl md:text-6xl lg:text-7xl">
               Find where your users
@@ -703,8 +707,8 @@ export default function Page() {
               already talk
             </h1>
             <p className="mt-6 max-w-xl text-balance text-lg text-muted-foreground">
-              Paste a product link. Get alternatives, Reddit threads, and
-              Hacker News discussions — ready to act on.
+              OpenCorp finds the people already looking for what you built —
+              and shows you exactly where to reach them.
             </p>
             <div className="mt-8 w-full max-w-xl">
               <UrlCtaForm location="hero" />
