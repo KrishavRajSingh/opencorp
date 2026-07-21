@@ -4,6 +4,7 @@ import { tasks } from "@trigger.dev/sdk/v3";
 import type { competitorResearchTask } from "@/trigger/research";
 import { getAuthedUser } from "@/lib/supabase/auth";
 import { getDbClient } from "@/lib/supabase/server";
+import { showHNDraftSchema } from "@/lib/types/session";
 
 const productAnalystResultSchema = z.object({
   url: z.string(),
@@ -51,7 +52,7 @@ const baseSchema = z.object({
   competitor_result: competitorResultSchema.optional(),
   hn_threads_result: hnThreadsResultSchema.optional(),
   reddit_scan_result: redditScanResultSchema.optional(),
-  show_hn_draft_result: z.any().optional(),
+  show_hn_draft_result: showHNDraftSchema.optional(),
 });
 
 // Backend stage: product done → kick off competitors; task persists result.

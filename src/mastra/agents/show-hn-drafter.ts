@@ -90,6 +90,44 @@ const submitDraftTool = {
   },
 };
 
+export type ShowHNDraftInput = z.infer<typeof showHNDraftInputSchema>;
+
+const OMIT = '[not provided — omit]';
+
+export function buildShowHNDraftPrompt(input: ShowHNDraftInput, corpus = ''): string {
+  const motivationLine = input.buildMotivation ? input.buildMotivation : OMIT;
+  const stackLine =
+    input.techStack && input.techStack.length > 0 ? input.techStack.join(', ') : OMIT;
+  const hardLine = input.hardChallenge ? input.hardChallenge : OMIT;
+  const tradeoffsLine = input.tradeoffs ? input.tradeoffs : OMIT;
+  const learnedLine = input.lessonLearned ? input.lessonLearned : OMIT;
+  const metricLine = input.keyMetric
+    ? input.keyMetric
+    : '[not provided — skip the metric-led title pattern]';
+  const ossLine =
+    input.openSource === true
+      ? `yes${input.openSourceUrl ? ` (${input.openSourceUrl})` : ''}`
+      : input.openSource === false
+        ? 'no'
+        : '[not provided — skip open source mentions]';
+
+  return `PRODUCT CONTEXT
+- name: ${input.productName}
+- description: ${input.description}
+- features: ${input.keyFeatures.join(', ') || '(none)'}
+- target audience: ${input.targetAudience}
+- demo url: ${input.demoUrl ?? '(none — call this out in body)'}
+- build motivation: ${motivationLine}
+- tech stack: ${stackLine}
+- hard challenge: ${hardLine}
+- tradeoffs: ${tradeoffsLine}
+- lesson learned: ${learnedLine}
+- key metric: ${metricLine}
+- open source: ${ossLine}
+${corpus}
+Draft the Show HN post. Call submit_show_hn_draft with the complete draft.`;
+}
+
 export const showHNDrafterAgent = new Agent({
   id: 'show-hn-drafter',
   name: 'Show HN Drafter',

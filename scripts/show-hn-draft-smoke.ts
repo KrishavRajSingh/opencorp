@@ -1,5 +1,6 @@
 import "dotenv/config";
 import { mastra } from "@/mastra";
+import { buildShowHNDraftPrompt } from "@/mastra/agents/show-hn-drafter";
 
 const PRODUCT = {
   productName: "Filler",
@@ -44,46 +45,7 @@ const args: Args = (() => {
 
 const input = { ...PRODUCT, ...args };
 
-const motivationLine = input.buildMotivation
-  ? input.buildMotivation
-  : "[not provided — use [TODO: the moment that started it] in body opener]";
-const stackLine =
-  input.techStack && input.techStack.length > 0
-    ? input.techStack.join(", ")
-    : "[not provided — use [TODO: your real stack] in first comment]";
-const hardLine = input.hardChallenge
-  ? input.hardChallenge
-  : "[not provided — use [TODO: the one hard part]]";
-const tradeoffsLine = input.tradeoffs
-  ? input.tradeoffs
-  : "[not provided — use [TODO: the tradeoffs you made]]";
-const learnedLine = input.lessonLearned
-  ? input.lessonLearned
-  : "[not provided — use [TODO: what you learned]]";
-const metricLine = input.keyMetric
-  ? input.keyMetric
-  : "[not provided — skip the metric-led title pattern]";
-const ossLine =
-  input.openSource === true
-    ? `yes${input.openSourceUrl ? ` (${input.openSourceUrl})` : ""}`
-    : input.openSource === false
-      ? "no"
-      : "[not provided — skip open source mentions]";
-
-const userQ = `PRODUCT CONTEXT
-- name: ${input.productName}
-- description: ${input.description}
-- features: ${input.keyFeatures.join(", ") || "(none)"}
-- target audience: ${input.targetAudience}
-- demo url: ${input.demoUrl ?? "(none — call this out in body)"}
-- build motivation: ${motivationLine}
-- tech stack: ${stackLine}
-- hard challenge: ${hardLine}
-- tradeoffs: ${tradeoffsLine}
-- lesson learned: ${learnedLine}
-- key metric: ${metricLine}
-- open source: ${ossLine}
-Draft the Show HN post. Call submit_show_hn_draft with the complete draft.`;
+const userQ = buildShowHNDraftPrompt(input);
 
 async function main() {
   const agent = mastra.getAgent("showHNDrafterAgent");

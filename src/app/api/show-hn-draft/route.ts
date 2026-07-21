@@ -1,8 +1,9 @@
 import { z } from 'zod';
 import { mastra } from '@/mastra';
-import { showHNDraftInputSchema, showHNDraftOutputSchema } from '@/mastra/agents/show-hn-drafter';
+import { showHNDraftInputSchema, showHNDraftOutputSchema, buildShowHNDraftPrompt } from '@/mastra/agents/show-hn-drafter';
 import { fetchPageTool } from '@/mastra/tools/fetch-page';
 import { getAuthedUser } from '@/lib/supabase/auth';
+import { ANON_BUCKET_USER_ID } from '@/lib/supabase/server';
 
 const requestSchema = showHNDraftInputSchema;
 
@@ -25,7 +26,13 @@ async function fetchCorpus(): Promise<string> {
 }
 
 export async function POST(request: Request) {
-  await getAuthedUser();
+  const { user } = await getAuthedUser();
+  if (user.id === ANON_BUCKET_USER_ID) {
+    return new Response(JSON.stringify({ error: 'unauthorized' }), {
+      status: 401,
+      headers: { 'Content-Type': 'application/json' },
+    });
+  }
 
   let input: z.infer<typeof requestSchema>;
   try {
@@ -51,47 +58,7 @@ export async function POST(request: Request) {
   try {
     const [corpus] = await Promise.all([fetchCorpus()]);
 
-    const motivationLine = input.buildMotivation
-      ? input.buildMotivation
-      : '[not provided — use [TODO: the moment that started it] in body opener]';
-    const stackLine =
-      input.techStack && input.techStack.length > 0
-        ? input.techStack.join(', ')
-        : '[not provided — use [TODO: your real stack] in first comment]';
-    const hardLine = input.hardChallenge
-      ? input.hardChallenge
-      : '[not provided — use [TODO: the one hard part]]';
-    const tradeoffsLine = input.tradeoffs
-      ? input.tradeoffs
-      : '[not provided — use [TODO: the tradeoffs you made]]';
-    const learnedLine = input.lessonLearned
-      ? input.lessonLearned
-      : '[not provided — use [TODO: what you learned]]';
-    const metricLine = input.keyMetric
-      ? input.keyMetric
-      : '[not provided — skip the metric-led title pattern]';
-    const ossLine =
-      input.openSource === true
-        ? `yes${input.openSourceUrl ? ` (${input.openSourceUrl})` : ''}`
-        : input.openSource === false
-          ? 'no'
-          : '[not provided — skip open source mentions]';
-
-    const userQ = `PRODUCT CONTEXT
-- name: ${input.productName}
-- description: ${input.description}
-- features: ${input.keyFeatures.join(', ') || '(none)'}
-- target audience: ${input.targetAudience}
-- demo url: ${input.demoUrl ?? '(none — call this out in body)'}
-- build motivation: ${motivationLine}
-- tech stack: ${stackLine}
-- hard challenge: ${hardLine}
-- tradeoffs: ${tradeoffsLine}
-- lesson learned: ${learnedLine}
-- key metric: ${metricLine}
-- open source: ${ossLine}
-${corpus}
-Draft the Show HN post. Call submit_show_hn_draft with the complete draft.`;
+    const userQ = buildShowHNDraftPrompt(input, corpus);
 
     const result = await agent.generate(
       [{ role: 'user', content: userQ }],
