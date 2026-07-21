@@ -393,20 +393,32 @@ function UrlCtaForm({ location }: { location: "hero" | "footer" }) {
     <form
       action="/dashboard"
       method="get"
-      onSubmit={() =>
-        trackEvent({ name: "cta_try_with_link", data: { location } })
-      }
+      onSubmit={(e) => {
+        // Accept bare domains ("filler.live") — normalize to a full URL
+        // before the native GET submits.
+        const input = e.currentTarget.elements.namedItem(
+          "url",
+        ) as HTMLInputElement;
+        const v = input.value.trim();
+        if (v && !/^https?:\/\//i.test(v)) {
+          input.value = `https://${v}`;
+        }
+        trackEvent({ name: "cta_try_with_link", data: { location } });
+      }}
       className="mx-auto flex w-full max-w-xl flex-col gap-2 sm:flex-row"
     >
       <div className="flex flex-1 items-center gap-2 rounded-lg border border-border/60 bg-card/50 px-3 py-2.5 backdrop-blur-sm transition-colors focus-within:border-brand/50">
         <Search className="size-4 shrink-0 text-muted-foreground" />
         <input
-          type="url"
+          type="text"
+          inputMode="url"
+          autoComplete="url"
+          spellCheck={false}
           name="url"
           required
           value={value}
           onChange={(e) => setValue(e.target.value)}
-          placeholder="https://your-product.com"
+          placeholder="your-product.com"
           className="flex-1 bg-transparent text-sm text-foreground outline-none placeholder:text-muted-foreground/50"
         />
       </div>
