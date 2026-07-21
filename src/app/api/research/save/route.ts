@@ -1,4 +1,5 @@
 import { z } from "zod/v4";
+import { createHash } from "crypto";
 import { NextResponse } from "next/server";
 import { tasks } from "@trigger.dev/sdk/v3";
 import type { competitorResearchTask } from "@/trigger/research";
@@ -61,15 +62,24 @@ async function triggerCompetitors(
   product: z.infer<typeof productAnalystResultSchema>,
 ): Promise<{ competitorRunId?: string; publicAccessToken?: string }> {
   try {
+    const payload = {
+      sessionId,
+      url: product.url,
+      productName: product.productName,
+      description: product.description ?? "",
+      keyFeatures: product.keyFeatures ?? [],
+    };
+    // Idempotency key = session + product revision: a retry of the same
+    // initial save reuses the existing run; a changed product enqueues a
+    // fresh run.
+    const revision = createHash("sha256")
+      .update(JSON.stringify(payload))
+      .digest("hex")
+      .slice(0, 16);
     const handle = await tasks.trigger<typeof competitorResearchTask>(
       "competitor-research",
-      {
-        sessionId,
-        url: product.url,
-        productName: product.productName,
-        description: product.description ?? "",
-        keyFeatures: product.keyFeatures ?? [],
-      },
+      payload,
+      { idempotencyKey: `competitor-research:${sessionId}:${revision}` },
     );
     return {
       competitorRunId: handle.id,
