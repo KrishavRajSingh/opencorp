@@ -54,8 +54,12 @@ function formatStars(n: number) {
 }
 
 function GitHubStarsLink() {
-  const [stars, setStars] = useState<number | null>(() => {
-    if (typeof window === "undefined") return null;
+  // Always start null so the first client render matches SSR; the cached
+  // value is applied from the effect below, after hydration.
+  const [stars, setStars] = useState<number | null>(null);
+
+  useEffect(() => {
+    // Fresh cache entry wins — no GitHub request.
     try {
       const cached = sessionStorage.getItem(STARS_CACHE_KEY);
       if (cached) {
@@ -63,16 +67,18 @@ function GitHubStarsLink() {
           count: number;
           ts: number;
         };
-        if (Date.now() - ts < 60 * 60 * 1000) return count;
+        if (typeof count === "number" && Date.now() - ts < 60 * 60 * 1000) {
+          // One-shot apply of the cached value right after mount — the
+          // hydration-gating pattern this rule heuristically flags.
+          // eslint-disable-next-line react-hooks/set-state-in-effect
+          setStars(count);
+          return;
+        }
       }
     } catch {
       // ignore cache errors
     }
-    return null;
-  });
 
-  useEffect(() => {
-    if (stars !== null) return;
     fetch(`https://api.github.com/repos/${GITHUB_REPO}`)
       .then((r) => (r.ok ? r.json() : Promise.reject(new Error("gh api"))))
       .then((d: { stargazers_count?: number }) => {
@@ -91,7 +97,7 @@ function GitHubStarsLink() {
       .catch(() => {
         // offline or rate-limited: keep bare icon
       });
-  }, [stars]);
+  }, []);
 
   return (
     <a

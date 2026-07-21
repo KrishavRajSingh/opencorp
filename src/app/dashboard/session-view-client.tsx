@@ -401,21 +401,30 @@ export function SessionViewClient({
     draftAbortRef.current?.abort();
   }, []);
 
+  // Serializes persistShowHNDraft saves: a later debounced draft must never
+  // reach the server before an earlier in-flight one, or the stale draft
+  // would overwrite the newer edit (save API is last-writer-wins).
+  const showHNSaveQueueRef = useRef<Promise<void>>(Promise.resolve());
+
   const persistShowHNDraft = useCallback(
-    async (next: ShowHNDraft) => {
+    (next: ShowHNDraft) => {
       setShowHNDraft(next);
-      try {
-        await fetch("/api/research/save", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            id: sessionId,
-            show_hn_draft_result: next,
-          }),
-        });
-      } catch {
-        /* swallow — silent retry on next edit */
-      }
+      const queued = showHNSaveQueueRef.current.then(async () => {
+        try {
+          await fetch("/api/research/save", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              id: sessionId,
+              show_hn_draft_result: next,
+            }),
+          });
+        } catch {
+          /* swallow — silent retry on next edit */
+        }
+      });
+      showHNSaveQueueRef.current = queued;
+      return queued;
     },
     [sessionId],
   );

@@ -115,6 +115,27 @@ async function runWithRetry(
     return Math.floor(exp / 2 + Math.random() * (exp / 2));
   }
 
+  // setTimeout that rejects with AbortError as soon as signal aborts, so a
+  // canceled run exits the backoff immediately instead of lingering for the
+  // full retry interval (and then starting another attempt).
+  function sleep(ms: number, signal?: AbortSignal): Promise<void> {
+    return new Promise((resolve, reject) => {
+      if (signal?.aborted) {
+        reject(new DOMException("Aborted", "AbortError"));
+        return;
+      }
+      const onAbort = () => {
+        clearTimeout(timer);
+        reject(new DOMException("Aborted", "AbortError"));
+      };
+      const timer = setTimeout(() => {
+        signal?.removeEventListener("abort", onAbort);
+        resolve();
+      }, ms);
+      signal?.addEventListener("abort", onAbort, { once: true });
+    });
+  }
+
   if (signal?.aborted) {
     throw new DOMException("Aborted before start", "AbortError");
   }
@@ -169,7 +190,7 @@ async function runWithRetry(
     if (attempt < MAX_STREAM_ATTEMPTS) {
       const rateLimited = isRateLimitError(lastError);
       const wait = backoffMs(attempt, rateLimited);
-      await new Promise((r) => setTimeout(r, wait));
+      await sleep(wait, signal);
     }
   }
 

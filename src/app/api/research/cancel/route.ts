@@ -59,8 +59,17 @@ export async function POST(request: Request) {
           headers: { "Content-Type": "application/json" },
         });
       }
-    } catch {
-      // Run already gone — runs.cancel below treats that as a no-op.
+    } catch (err) {
+      // Confirmed missing run (404) → let runs.cancel below no-op it.
+      // Anything else (network, auth, upstream 5xx) fails closed — the
+      // binding check did not complete, so do not cancel.
+      if ((err as { status?: number })?.status !== 404) {
+        const message = err instanceof Error ? err.message : "Run lookup failed";
+        return new Response(JSON.stringify({ error: message }), {
+          status: 500,
+          headers: { "Content-Type": "application/json" },
+        });
+      }
     }
   }
 
