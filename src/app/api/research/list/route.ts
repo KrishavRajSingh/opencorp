@@ -17,6 +17,8 @@ export async function GET() {
   const { data, error } = await supabase
     .from("research_sessions")
     .select("id, input, product_analyst_result, competitor_result, updated_at")
+    // Hide in-flight/abandoned stub rows created upfront at trigger time.
+    .not("product_analyst_result", "is", null)
     .order("updated_at", { ascending: false })
     .limit(50);
 

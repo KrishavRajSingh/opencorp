@@ -15,12 +15,6 @@ import {
 import { Console } from "./session-view/console";
 import { ProductHeader } from "./session-view/product-header";
 import { useSseChannel } from "./session-view/use-sse-channel";
-import {
-  ANON_PREVIEW_COUNT,
-  LockedThreadRow,
-  SignupUnlockBar,
-} from "@/components/dashboard/thread-gate";
-import type { HNThread } from "@/app/dashboard/hn-threads-block";
 import { cn } from "@/lib/utils";
 import {
   createCompetitorStage,
@@ -33,10 +27,10 @@ import {
 import { readTriggerSse } from "@/lib/sse";
 import type {
   ProductResult,
-  Competitor,
   CompetitorResult,
   HNResult,
   RedditScanResult,
+  ShowHNDraft,
   ToolCallChunk,
 } from "@/lib/types/session";
 
@@ -61,6 +55,7 @@ export function SessionViewClient({
   competitors: initialCompetitors,
   hnResult: initialHNResult,
   redditScan: initialRedditScan = null,
+  initialShowHNDraft = null,
   readOnly = false,
   isAuthed = !readOnly,
   signupHref = "/auth/sign-up",
@@ -70,6 +65,7 @@ export function SessionViewClient({
   competitors: CompetitorResult | null;
   hnResult: HNResult | null;
   redditScan?: RedditScanResult | null;
+  initialShowHNDraft?: ShowHNDraft | null;
   readOnly?: boolean;
   isAuthed?: boolean;
   signupHref?: string;
@@ -179,6 +175,17 @@ export function SessionViewClient({
     "reddit",
   );
 
+  const [showHNDraft, setShowHNDraft] = useState<ShowHNDraft | null>(initialShowHNDraft);
+  const [loadingShowHN, setLoadingShowHN] = useState(false);
+  const draftAbortRef = useRef<AbortController | null>(null);
+  const [activeHNChannel, setActiveHNChannel] = useState<"find" | "draft" | null>(
+    initialHNResult
+      ? "find"
+      : initialShowHNDraft
+        ? "draft"
+        : null,
+  );
+
   const [subsSearch, setSubsSearch] = useState<string[]>([]);
   const [subsSearchOpen, setSubsSearchOpen] = useState(false);
 
@@ -255,6 +262,7 @@ export function SessionViewClient({
 
   const hnBuildBody = useCallback(
     () => ({
+      sessionId,
       url: product.url,
       productName: product.productName,
       description: product.description,
@@ -262,7 +270,7 @@ export function SessionViewClient({
       competitors:
         competitors?.competitors?.map((c) => ({ name: c.name, url: c.url })) ?? [],
     }),
-    [product, competitors],
+    [sessionId, product, competitors],
   );
 
   const hn = useSseChannel<HNResult>({
@@ -314,6 +322,7 @@ export function SessionViewClient({
 
   const redditBuildBody = useCallback(
     () => ({
+      sessionId,
       url: product.url,
       productName: product.productName,
       description: product.description,
@@ -324,7 +333,7 @@ export function SessionViewClient({
       competitors:
         competitors?.competitors?.map((c) => ({ name: c.name, url: c.url })) ?? [],
     }),
-    [product, subsSearch, competitors],
+    [sessionId, product, subsSearch, competitors],
   );
 
   const reddit = useSseChannel<RedditScanResult>({
@@ -336,6 +345,94 @@ export function SessionViewClient({
     onResult: onRedditResult,
     onError: setStreamError,
   });
+
+  const draftShowHN = useCallback(async () => {
+    setLoadingShowHN(true);
+    setStreamError(null);
+    const controller = new AbortController();
+    draftAbortRef.current = controller;
+    try {
+      const res = await fetch("/api/show-hn-draft", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          productName: product.productName,
+          description: product.description,
+          keyFeatures: product.keyFeatures,
+          targetAudience: product.targetAudience,
+          demoUrl: product.url,
+          buildMotivation: null,
+          techStack: null,
+          hardChallenge: null,
+          tradeoffs: null,
+          lessonLearned: null,
+          keyMetric: null,
+          openSource: null,
+          openSourceUrl: null,
+        }),
+        signal: controller.signal,
+      });
+      const body = await res.json();
+      if (!res.ok)
+        throw new Error(body.error ?? `Request failed (${res.status})`);
+      const draft = body as ShowHNDraft;
+      setShowHNDraft(draft);
+      fetch("/api/research/save", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id: sessionId, show_hn_draft_result: draft }),
+      })
+        .then((res) => {
+          if (res.ok) router.refresh();
+        })
+        .catch(() => {});
+    } catch (err) {
+      if (err instanceof DOMException && err.name === "AbortError") return;
+      setStreamError(
+        err instanceof Error ? err.message : "Failed to draft Show HN post",
+      );
+    } finally {
+      if (draftAbortRef.current === controller) {
+        draftAbortRef.current = null;
+        setLoadingShowHN(false);
+      }
+    }
+  }, [product, sessionId, router]);
+
+  const cancelDraftShowHN = useCallback(() => {
+    draftAbortRef.current?.abort();
+  }, []);
+
+  // Serializes persistShowHNDraft saves: a later debounced draft must never
+  // reach the server before an earlier in-flight one, or the stale draft
+  // would overwrite the newer edit (save API is last-writer-wins).
+  const showHNSaveQueueRef = useRef<Promise<void>>(Promise.resolve());
+
+  const persistShowHNDraft = useCallback(
+    (next: ShowHNDraft) => {
+      setShowHNDraft(next);
+      const queued = showHNSaveQueueRef.current.then(async () => {
+        const res = await fetch("/api/research/save", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            id: sessionId,
+            show_hn_draft_result: next,
+          }),
+        });
+        if (!res.ok) {
+          const body = await res.json().catch(() => ({}));
+          throw new Error(body.error ?? `Save failed (${res.status})`);
+        }
+      });
+      // Queue must survive a failed save — store the caught chain, but hand
+      // the editor the raw promise so HTTP/network failures reach its
+      // try/finally instead of resolving as if persisted.
+      showHNSaveQueueRef.current = queued.catch(() => {});
+      return queued;
+    },
+    [sessionId],
+  );
 
   const [hnElapsed, setHNElapsed] = useState(0);
   const [redditElapsed, setRedditElapsed] = useState(0);
@@ -800,7 +897,6 @@ export function SessionViewClient({
             redditCount={redditScan?.top_threads?.length ?? 0}
             hnCount={hnResult?.threads.length ?? 0}
             onFindReddit={reddit.run}
-            onFindHN={hn.run}
             onCancel={cancelCurrent}
             streamStatus={activeStreamStatus}
             elapsedDisplay={elapsedDisplay}
@@ -818,6 +914,20 @@ export function SessionViewClient({
             readOnly={readOnly}
             isAuthed={isAuthed}
             signupHref={signupHref}
+            showHNDraft={showHNDraft}
+            loadingShowHN={loadingShowHN}
+            onDraftShowHN={() => {
+              setActiveHNChannel("draft");
+              void draftShowHN();
+            }}
+            onCancelDraft={cancelDraftShowHN}
+            onPersistShowHN={persistShowHNDraft}
+            activeHNChannel={activeHNChannel}
+            onActivateHNChannel={setActiveHNChannel}
+            onFindHN={() => {
+              setActiveHNChannel("find");
+              hn.run();
+            }}
           />
         </div>
       </div>

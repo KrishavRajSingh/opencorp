@@ -112,6 +112,10 @@ export function NewResearchClient({
 
   const [runId, setRunId] = useState<string | null>(null);
   const [token, setToken] = useState<string | null>(null);
+  const [sessionId, setSessionId] = useState<string | null>(null);
+  // Set when the user cancels before the creation response provided
+  // runId/sessionId — handleSubmit sends the cancel once both IDs arrive.
+  const cancelIntentRef = useRef(false);
 
   useEffect(() => {
     if (status === "streaming") {
@@ -190,6 +194,7 @@ export function NewResearchClient({
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
+                  ...(sessionId ? { id: sessionId } : {}),
                   input: { url: r.url },
                   product_analyst_result: r,
                 }),
@@ -266,7 +271,7 @@ export function NewResearchClient({
     );
 
     return () => controller.abort();
-  }, [runId, token, router]);
+  }, [runId, token, sessionId, router]);
 
   useEffect(() => {
     if (initialUrl) {
@@ -294,6 +299,8 @@ export function NewResearchClient({
     setResult(null);
     setActivity([]);
     setElapsed(0);
+    setSessionId(null);
+    cancelIntentRef.current = false;
 
     try {
       const res = await fetch("/api/research", {
@@ -308,9 +315,39 @@ export function NewResearchClient({
         throw new Error(body.error ?? `Request failed (${res.status})`);
       }
 
+      if (cancelIntentRef.current) {
+        // Canceled while creation was in flight — cancel the run instead
+        // of starting SSE, and stay out of idle until the outcome is known.
+        setStreamStatus("Canceling...");
+        try {
+          const cancelRes = await fetch("/api/research/cancel", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              runId: body.runId,
+              sessionId: body.sessionId,
+            }),
+          });
+          if (!cancelRes.ok) {
+            const errBody = await cancelRes.json().catch(() => ({}));
+            throw new Error(errBody.error ?? `Cancel failed (${cancelRes.status})`);
+          }
+          cancelIntentRef.current = false;
+          setStreamStatus(null);
+          setStatus("idle");
+        } catch (err) {
+          cancelIntentRef.current = false;
+          setError(err instanceof Error ? err.message : "Failed to cancel");
+          setStatus("error");
+        }
+        return;
+      }
+
       setRunId(body.runId);
       setToken(body.publicAccessToken);
+      setSessionId(body.sessionId ?? null);
     } catch (err) {
+      cancelIntentRef.current = false;
       setError(err instanceof Error ? err.message : "Something went wrong");
       setStatus("error");
     }
@@ -318,19 +355,29 @@ export function NewResearchClient({
 
   const handleCancel = useCallback(() => {
     const id = runId;
+    const sid = sessionId;
     setRunId(null);
     setToken(null);
-    setStatus("idle");
-    if (id) {
+    setSessionId(null);
+    if (id && sid) {
+      cancelIntentRef.current = false;
+      setStatus("idle");
       void fetch("/api/research/cancel", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ runId: id }),
+        body: JSON.stringify({ runId: id, sessionId: sid }),
       });
+    } else {
+      // Creation request still in flight — no IDs to cancel with yet.
+      // Record the intent; handleSubmit completes the cancellation when
+      // the response arrives and only then leaves the non-idle state.
+      cancelIntentRef.current = true;
+      setStreamStatus("Canceling...");
     }
-  }, [runId]);
+  }, [runId, sessionId]);
 
   const handleReset = useCallback(() => {
+    cancelIntentRef.current = false;
     setStatus("idle");
     setResult(null);
     setError(null);

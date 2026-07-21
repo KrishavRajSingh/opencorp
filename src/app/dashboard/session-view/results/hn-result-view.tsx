@@ -1,6 +1,5 @@
 "use client";
 
-import { Card, CardContent } from "@/components/ui/card";
 import type { HNResult } from "@/lib/types/session";
 import {
   ANON_PREVIEW_COUNT,
@@ -25,34 +24,27 @@ export function HNResultView({
     : (result?.threads ?? []).slice(0, ANON_PREVIEW_COUNT);
 
   return (
-    <Card>
-      <HNCardHeader count={totalCount} />
-      <CardContent className="space-y-0.5">
-        {visibleThreads.map((t, i) => (
-          <HNLiveRow key={t.objectID} t={t} rank={i + 1} />
-        ))}
+    <div>
+      {totalCount > 0 && <HNCardHeader count={totalCount} />}
+      {visibleThreads.map((t, i) => (
+        <HNLiveRow key={t.objectID} t={t} rank={i + 1} />
+      ))}
 
-        {!isAuthed && hiddenCount > 0 && (
-          <SignupUnlockBar
-            hiddenCount={hiddenCount}
-            signupHref={signupHref}
-          />
-        )}
+      {!isAuthed && hiddenCount > 0 && (
+        <SignupUnlockBar hiddenCount={hiddenCount} signupHref={signupHref} />
+      )}
 
-        {!isAuthed && result && hiddenCount > 0 && (
-          <>
-            {result.threads
-              .slice(ANON_PREVIEW_COUNT)
-              .map((t, i) => (
-                <LockedThreadRow
-                  key={t.objectID}
-                  rank={i + 1 + ANON_PREVIEW_COUNT}
-                  title={t.title}
-                />
-              ))}
-          </>
-        )}
-      </CardContent>
-    </Card>
+      {!isAuthed && result && hiddenCount > 0 && (
+        <>
+          {result.threads.slice(ANON_PREVIEW_COUNT).map((t, i) => (
+            <LockedThreadRow
+              key={t.objectID}
+              rank={i + 1 + ANON_PREVIEW_COUNT}
+              title={t.title}
+            />
+          ))}
+        </>
+      )}
+    </div>
   );
 }

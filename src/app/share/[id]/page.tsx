@@ -9,6 +9,7 @@ import type {
   ProductResult,
   CompetitorResult,
   HNResult,
+  ShowHNDraft,
 } from "@/lib/types/session";
 
 export default async function SharedSessionPage({
@@ -30,6 +31,7 @@ export default async function SharedSessionPage({
 
   const competitors = session.competitor_result as CompetitorResult | null;
   const hnThreads = session.hn_threads_result as HNResult | null;
+  const showHNDraft = session.show_hn_draft_result as ShowHNDraft | null;
 
   const { user } = await getAuthedUser();
   const isAuthed = user.email !== null;
@@ -57,6 +59,7 @@ export default async function SharedSessionPage({
               product={product}
               competitors={competitors}
               hnResult={hnThreads}
+              initialShowHNDraft={showHNDraft}
               readOnly
               isAuthed={isAuthed}
             />

@@ -2,8 +2,10 @@ import type { hnThreadsTask } from "@/trigger/research";
 import { tasks } from "@trigger.dev/sdk/v3";
 import { z } from "zod/v4";
 import { getAuthedUser } from "@/lib/supabase/auth";
+import { ANON_BUCKET_USER_ID, getDbClient } from "@/lib/supabase/server";
 
 const inputSchema = z.object({
+  sessionId: z.string().uuid(),
   url: z.string(),
   productName: z.string(),
   description: z.string(),
@@ -20,7 +22,15 @@ const inputSchema = z.object({
 });
 
 export async function POST(request: Request) {
-  await getAuthedUser();
+  const { user } = await getAuthedUser();
+  // The shared anon bucket passes ownership for every anonymous client —
+  // require a real user so a session can only be used by its creator.
+  if (user.id === ANON_BUCKET_USER_ID) {
+    return new Response(JSON.stringify({ error: "unauthorized" }), {
+      status: 401,
+      headers: { "Content-Type": "application/json" },
+    });
+  }
 
   let input: z.infer<typeof inputSchema>;
   try {
@@ -31,6 +41,28 @@ export async function POST(request: Request) {
       JSON.stringify({ error: "Invalid body — product context required" }),
       { status: 400, headers: { "Content-Type": "application/json" } },
     );
+  }
+
+  // Authorize against the session before queuing work: the run is bound to
+  // this sessionId, so its owner must be the caller.
+  const supabase = await getDbClient();
+  const { data: session, error: sessionError } = await supabase
+    .from("research_sessions")
+    .select("id, user_id")
+    .eq("id", input.sessionId)
+    .maybeSingle();
+  if (sessionError) {
+    console.error("[api/research/hn] session lookup failed:", sessionError);
+    return new Response(
+      JSON.stringify({ error: "Failed to authorize session" }),
+      { status: 500, headers: { "Content-Type": "application/json" } },
+    );
+  }
+  if (!session || session.user_id !== user.id) {
+    return new Response(JSON.stringify({ error: "not found" }), {
+      status: 404,
+      headers: { "Content-Type": "application/json" },
+    });
   }
 
   try {

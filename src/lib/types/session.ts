@@ -1,3 +1,4 @@
+import { z } from "zod/v4";
 import type { GtmBrief } from "@/components/ai-elements/gtm-brief";
 
 export type ProductResult = {
@@ -38,6 +39,15 @@ export type HNResult = {
 };
 
 export type RedditScanResult = GtmBrief;
+
+export const showHNDraftSchema = z.object({
+  title: z.string(),
+  body: z.string(),
+  run_id: z.string(),
+  generated_at: z.string(),
+});
+
+export type ShowHNDraft = z.infer<typeof showHNDraftSchema>;
 
 export type ToolCallChunk = {
   toolCallId: string;

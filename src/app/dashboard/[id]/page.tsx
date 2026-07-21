@@ -7,6 +7,7 @@ import type {
   ProductResult,
   CompetitorResult,
   HNResult,
+  ShowHNDraft,
 } from "@/lib/types/session";
 
 export default async function SessionPage({
@@ -46,6 +47,8 @@ export default async function SessionPage({
       }
     : null;
 
+  const showHNDraft = session.show_hn_draft_result as ShowHNDraft | null;
+
   const isAuthed = user?.email != null;
 
   return (
@@ -55,6 +58,7 @@ export default async function SessionPage({
       competitors={competitors}
       hnResult={hnThreads}
       redditScan={redditScan}
+      initialShowHNDraft={showHNDraft}
       isAuthed={isAuthed}
     />
   );

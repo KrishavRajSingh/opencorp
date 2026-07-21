@@ -1,9 +1,11 @@
 import { z } from "zod/v4";
+import { createHash } from "crypto";
 import { NextResponse } from "next/server";
 import { tasks } from "@trigger.dev/sdk/v3";
 import type { competitorResearchTask } from "@/trigger/research";
 import { getAuthedUser } from "@/lib/supabase/auth";
 import { getDbClient } from "@/lib/supabase/server";
+import { showHNDraftSchema } from "@/lib/types/session";
 
 const productAnalystResultSchema = z.object({
   url: z.string(),
@@ -51,7 +53,44 @@ const baseSchema = z.object({
   competitor_result: competitorResultSchema.optional(),
   hn_threads_result: hnThreadsResultSchema.optional(),
   reddit_scan_result: redditScanResultSchema.optional(),
+  show_hn_draft_result: showHNDraftSchema.optional(),
 });
+
+// Backend stage: product done → kick off competitors; task persists result.
+async function triggerCompetitors(
+  sessionId: string,
+  product: z.infer<typeof productAnalystResultSchema>,
+): Promise<{ competitorRunId?: string; publicAccessToken?: string }> {
+  try {
+    const payload = {
+      sessionId,
+      url: product.url,
+      productName: product.productName,
+      description: product.description ?? "",
+      keyFeatures: product.keyFeatures ?? [],
+    };
+    // Idempotency key = session + product revision: a retry of the same
+    // initial save reuses the existing run; a changed product enqueues a
+    // fresh run.
+    const revision = createHash("sha256")
+      .update(JSON.stringify(payload))
+      .digest("hex")
+      .slice(0, 16);
+    const handle = await tasks.trigger<typeof competitorResearchTask>(
+      "competitor-research",
+      payload,
+      { idempotencyKey: `competitor-research:${sessionId}:${revision}` },
+    );
+    return {
+      competitorRunId: handle.id,
+      publicAccessToken: handle.publicAccessToken,
+    };
+  } catch (triggerErr) {
+    // Session exists; competitors can be re-run from the session UI.
+    console.error("Failed to chain competitor-research:", triggerErr);
+    return {};
+  }
+}
 
 export async function POST(request: Request) {
   const { user } = await getAuthedUser();
@@ -90,27 +129,10 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
 
-    // Backend stage: product done → kick off competitors; task persists result.
-    const product = body.product_analyst_result;
-    let competitorRunId: string | undefined;
-    let publicAccessToken: string | undefined;
-    try {
-      const handle = await tasks.trigger<typeof competitorResearchTask>(
-        "competitor-research",
-        {
-          sessionId: data.id,
-          url: product.url,
-          productName: product.productName,
-          description: product.description ?? "",
-          keyFeatures: product.keyFeatures ?? [],
-        },
-      );
-      competitorRunId = handle.id;
-      publicAccessToken = handle.publicAccessToken;
-    } catch (triggerErr) {
-      // Session exists; competitors can be re-run from the session UI.
-      console.error("Failed to chain competitor-research:", triggerErr);
-    }
+    const { competitorRunId, publicAccessToken } = await triggerCompetitors(
+      data.id,
+      body.product_analyst_result,
+    );
 
     return NextResponse.json(
       {
@@ -135,6 +157,9 @@ export async function POST(request: Request) {
   if (body.reddit_scan_result !== undefined) {
     update.reddit_scan_result = body.reddit_scan_result;
   }
+  if (body.show_hn_draft_result !== undefined) {
+    update.show_hn_draft_result = body.show_hn_draft_result;
+  }
   if (body.input !== undefined) {
     update.input = body.input;
   }
@@ -149,5 +174,17 @@ export async function POST(request: Request) {
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
+
+  // Product result landing on an upfront-created session → chain competitors.
+  // Session-view updates never carry product_analyst_result, so this fires
+  // only for the initial save.
+  if (body.product_analyst_result) {
+    const { competitorRunId, publicAccessToken } = await triggerCompetitors(
+      body.id,
+      body.product_analyst_result,
+    );
+    return NextResponse.json({ id: data.id, competitorRunId, publicAccessToken });
+  }
+
   return NextResponse.json({ id: data.id });
 }

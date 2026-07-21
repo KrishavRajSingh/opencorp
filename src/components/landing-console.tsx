@@ -7,37 +7,15 @@ import { ProductFavicon } from "@/components/dashboard/product-favicon";
 import { RedditIcon } from "@/components/dashboard/reddit-icon";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
+import type { Competitor, HNThread } from "@/lib/types/session";
+import type { GtmBriefThread } from "@/components/ai-elements/gtm-brief";
 
-export type Competitor = {
-  name: string;
-  url: string;
-  description: string;
-  mentionSources: string[];
-};
-
-export type HNThread = {
-  objectID: string;
-  title: string;
-  url: string | null;
-  points: number;
-  comments: number;
-  author: string;
-  date: string;
-  whyRelevant: string;
-  topCommentSnippet: string | null;
-};
-
-export type RedditThread = {
-  id: string;
-  sub: string;
-  title: string;
-  link: string;
-  author?: string;
-  score?: number;
-  num_comments?: number;
+export type RedditThread = GtmBriefThread & {
   whyRelevant?: string;
   isExample?: boolean;
 };
+
+export type { Competitor, HNThread };
 
 export type LandingConsoleData = {
   domain: string;

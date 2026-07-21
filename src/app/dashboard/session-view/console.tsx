@@ -1,16 +1,21 @@
 "use client";
 
 import { ChevronDown } from "lucide-react";
-import { ProductFavicon } from "@/components/dashboard/product-favicon";
 import { DinoLoader } from "@/components/dashboard/dino-loader";
 import { GtmBriefView } from "@/components/ai-elements/gtm-brief";
 import { HNResultView } from "./results/hn-result-view";
+import { ShowHNDraftView } from "./results/show-hn-draft-view";
+import { HNActionRow, type HNActionState } from "./hn-action-row";
 import {
   ChannelWaitingBay,
   ChannelArmingBay,
   SubsSearchInput,
 } from "./channels";
-import type { HNResult, RedditScanResult } from "@/lib/types/session";
+import type {
+  HNResult,
+  RedditScanResult,
+  ShowHNDraft,
+} from "@/lib/types/session";
 import { cn } from "@/lib/utils";
 
 export type ConsoleProps = {
@@ -41,6 +46,13 @@ export type ConsoleProps = {
   readOnly?: boolean;
   isAuthed: boolean;
   signupHref: string;
+  showHNDraft: ShowHNDraft | null;
+  loadingShowHN: boolean;
+  onDraftShowHN: () => void;
+  onCancelDraft?: () => void;
+  onPersistShowHN?: (next: ShowHNDraft) => Promise<void> | void;
+  activeHNChannel: "find" | "draft" | null;
+  onActivateHNChannel: (next: "find" | "draft") => void;
 };
 
 export function Console({
@@ -70,13 +82,48 @@ export function Console({
   readOnly = false,
   isAuthed,
   signupHref,
+  showHNDraft,
+  loadingShowHN,
+  onDraftShowHN,
+  onCancelDraft,
+  onPersistShowHN,
+  activeHNChannel,
+  onActivateHNChannel,
 }: ConsoleProps) {
   const busy = status !== "idle";
   // Independent channels — both unlock after competitors; neither waits on the other.
   const waitingOnCompetitors = !hasCompetitors;
   const showRedditBtn = hasCompetitors && !hasReddit;
-  const showHNBtn = hasCompetitors && !hasHN;
   const allDone = hasCompetitors && hasReddit && hasHN && !busy;
+
+  const findState: HNActionState = loadingHN
+    ? "running"
+    : hasHN
+      ? "done"
+      : "idle";
+  const draftState: HNActionState = loadingShowHN
+    ? "running"
+    : showHNDraft
+      ? "done"
+      : "idle";
+
+  const findAvailable = loadingHN || hnResult !== null;
+  const draftAvailable = loadingShowHN || showHNDraft !== null;
+  const displayedChannel: "find" | "draft" | null =
+    activeHNChannel === "find" && findAvailable
+      ? "find"
+      : activeHNChannel === "draft" && draftAvailable
+        ? "draft"
+        : findAvailable
+          ? "find"
+          : draftAvailable
+            ? "draft"
+            : null;
+
+  // Read-only sessions hide the channel rows, so displayedChannel would
+  // lock to "find" — with both artifacts present, render both instead.
+  const showBothReadOnly =
+    readOnly && hnResult !== null && showHNDraft !== null;
 
   const statusMeta = {
     idle: {
@@ -298,53 +345,115 @@ export function Console({
             ) : null}
           </div>
         ) : (
-          <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-4 pb-4">
+          <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain pb-4">
             {waitingOnCompetitors && !readOnly ? (
               <ChannelWaitingBay channel="hn" active={competitorsRunning} />
-            ) : hnResult && hnResult.threads.length > 0 ? (
-              <HNResultView
-                result={hnResult}
-                isAuthed={isAuthed}
-                signupHref={signupHref}
-              />
-            ) : loadingHN ? (
-              <div className="flex min-h-full flex-col items-center justify-center py-8">
-                <DinoLoader
-                  instanceKey="hn"
-                  label="Searching Hacker News…"
-                  loading={loadingHN}
-                  sublabel="This usually takes 1–2 minutes. We're searching Hacker News for threads where your future users are already talking — hang tight."
-                  tone="orange"
-                />
-              </div>
-            ) : hnResult ? (
-              <div className="flex min-h-full flex-col items-center justify-center gap-2 py-10 text-center">
-                <p className="font-mono text-[11px] text-muted-foreground/60">
-                  No HN threads found.
-                </p>
-                {!readOnly && (
-                  <button
-                    type="button"
-                    onClick={onFindHN}
-                    disabled={busy}
-                    className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground/50 transition-colors hover:text-orange-400 disabled:opacity-50"
-                  >
-                    re-run
-                  </button>
-                )}
-              </div>
-            ) : showHNBtn && !readOnly ? (
-              <ChannelArmingBay
-                channel="hn"
-                label="Find HN threads"
-                onRun={onFindHN}
-                busy={busy}
-              />
-            ) : readOnly && !hnResult ? (
-              <p className="py-10 text-center font-mono text-[11px] text-muted-foreground/50">
-                No HN threads in this report.
+            ) : readOnly && !hnResult && !showHNDraft ? (
+              <p className="px-4 py-10 text-center font-mono text-[11px] text-muted-foreground/50">
+                No HN data in this report.
               </p>
-            ) : null}
+            ) : (
+              <>
+                {!readOnly && (
+                  <div className="border-y border-border/30">
+                    <HNActionRow
+                      action="find"
+                      state={findState}
+                      onRun={onFindHN}
+                      onActivate={() => onActivateHNChannel("find")}
+                      onCancel={loadingHN ? onCancel : undefined}
+                      busy={busy && !loadingHN}
+                      isActive={displayedChannel === "find"}
+                      resultSummary={
+                        hnResult
+                          ? `${hnResult.threads.length} thread${hnResult.threads.length === 1 ? "" : "s"}`
+                          : undefined
+                      }
+                    />
+                    <HNActionRow
+                      action="draft"
+                      state={draftState}
+                      onRun={onDraftShowHN}
+                      onActivate={() => onActivateHNChannel("draft")}
+                      onCancel={loadingShowHN ? onCancelDraft : undefined}
+                      busy={busy && !loadingShowHN}
+                      isActive={displayedChannel === "draft"}
+                      resultSummary={showHNDraft ? "1 draft" : undefined}
+                    />
+                  </div>
+                )}
+
+                {(displayedChannel === "find" || showBothReadOnly) && (
+                  <div>
+                    {loadingHN ? (
+                      <div className="flex flex-col items-center justify-center py-6">
+                        <DinoLoader
+                          instanceKey="hn"
+                          label="Searching Hacker News…"
+                          loading={loadingHN}
+                          sublabel="This usually takes 1–2 minutes. We're searching Hacker News for threads where your future users are already talking — hang tight."
+                          tone="orange"
+                        />
+                      </div>
+                    ) : hnResult && hnResult.threads.length > 0 ? (
+                      <HNResultView
+                        result={hnResult}
+                        isAuthed={isAuthed}
+                        signupHref={signupHref}
+                      />
+                    ) : hnResult ? (
+                      <div className="flex flex-col items-center justify-center gap-2 px-4 py-8 text-center">
+                        <p className="font-mono text-[11px] text-muted-foreground/60">
+                          No HN threads found.
+                        </p>
+                        {!readOnly && (
+                          <button
+                            type="button"
+                            onClick={onFindHN}
+                            disabled={busy}
+                            className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground/50 transition-colors hover:text-orange-400 disabled:opacity-50"
+                          >
+                            re-run
+                          </button>
+                        )}
+                      </div>
+                    ) : null}
+                  </div>
+                )}
+
+                {(displayedChannel === "draft" || showBothReadOnly) && (
+                  <div
+                    className={cn(
+                      showBothReadOnly && "mt-4 border-t border-border/30 pt-4",
+                    )}
+                  >
+                    {loadingShowHN && !showHNDraft ? (
+                      <div className="flex flex-col items-center justify-center py-6">
+                        <DinoLoader
+                          instanceKey="showhn"
+                          label="Drafting your Show HN post…"
+                          loading={loadingShowHN}
+                          sublabel="Ghostwriting from your product context. Usually takes 15–30 seconds."
+                          tone="brand"
+                        />
+                      </div>
+                    ) : showHNDraft ? (
+                      <ShowHNDraftView
+                        key={showHNDraft.run_id}
+                        draft={showHNDraft}
+                        onPersist={readOnly ? undefined : onPersistShowHN}
+                      />
+                    ) : null}
+                  </div>
+                )}
+
+                {!readOnly && displayedChannel === null && (
+                  <p className="px-4 py-6 text-center font-mono text-[10px] uppercase tracking-widest text-muted-foreground/40">
+                    pick a row to start
+                  </p>
+                )}
+              </>
+            )}
           </div>
         )}
       </div>

@@ -1,12 +1,12 @@
 import { runs } from "@trigger.dev/sdk/v3";
 import { getAuthedUser } from "@/lib/supabase/auth";
-import { ANON_BUCKET_USER_ID, createClient } from "@/lib/supabase/server";
+import { getDbClient } from "@/lib/supabase/server";
 
 export async function POST(request: Request) {
   const { user } = await getAuthedUser();
 
   let runId: string;
-  let sessionId: string | undefined;
+  let sessionId: string;
   try {
     const body = await request.json();
     runId = body.runId;
@@ -25,51 +25,86 @@ export async function POST(request: Request) {
     });
   }
 
-  if (sessionId !== undefined && (typeof sessionId !== "string" || !sessionId)) {
-    return new Response(
-      JSON.stringify({ error: "sessionId must be a non-empty string when provided" }),
-      { status: 400, headers: { "Content-Type": "application/json" } },
-    );
+  // sessionId is the ownership handle — without it there is nothing to
+  // authorize against, so reject before any run lookup or cancel.
+  if (!sessionId || typeof sessionId !== "string") {
+    return new Response(JSON.stringify({ error: "sessionId is required" }), {
+      status: 400,
+      headers: { "Content-Type": "application/json" },
+    });
   }
 
-  if (sessionId) {
-    const supabase = await createClient();
-    const { data, error } = await supabase
-      .from("research_sessions")
-      .select("id")
-      .eq("id", sessionId)
-      .single();
-    if (error || !data) {
-      return new Response(JSON.stringify({ error: "not found" }), {
-        status: 404,
-        headers: { "Content-Type": "application/json" },
-      });
-    }
-  } else if (user.id !== ANON_BUCKET_USER_ID) {
+  const supabase = await getDbClient();
+  const { data, error } = await supabase
+    .from("research_sessions")
+    .select("id, user_id")
+    .eq("id", sessionId)
+    .maybeSingle();
+  if (error) {
+    return new Response(JSON.stringify({ error: error.message }), {
+      status: 500,
+      headers: { "Content-Type": "application/json" },
+    });
+  }
+  if (!data || data.user_id !== user.id) {
     return new Response(JSON.stringify({ error: "not found" }), {
       status: 404,
       headers: { "Content-Type": "application/json" },
     });
   }
 
+  // Every run creator binds its sessionId into the run payload. Require
+  // the binding to match this session before canceling — a missing or
+  // mismatched payload sessionId means the run is not ours to cancel.
   try {
-    await runs.cancel(runId);
-    return new Response(JSON.stringify({ ok: true }), {
-      status: 200,
-      headers: { "Content-Type": "application/json" },
-    });
-  } catch (err) {
-    const message = err instanceof Error ? err.message : "Failed to cancel run";
-    // Already finished / missing run — treat as success for the client
-    if (/not found|already|canceled|cancelled|completed|finished/i.test(message)) {
-      return new Response(JSON.stringify({ ok: true, skipped: true }), {
-        status: 200,
+    const run = await runs.retrieve(runId);
+    const runSessionId = (run.payload as { sessionId?: unknown } | undefined)
+      ?.sessionId;
+    if (runSessionId !== sessionId) {
+      return new Response(JSON.stringify({ error: "not found" }), {
+        status: 404,
         headers: { "Content-Type": "application/json" },
       });
     }
-    return new Response(JSON.stringify({ error: message }), {
-      status: 500,
-      headers: { "Content-Type": "application/json" },
-    });
+  } catch (err) {
+    // Confirmed missing run (404) → let runs.cancel below no-op it.
+    // Anything else (network, auth, upstream 5xx) fails closed — the
+    // binding check did not complete, so do not cancel.
+    if ((err as { status?: number })?.status !== 404) {
+      const message = err instanceof Error ? err.message : "Run lookup failed";
+      return new Response(JSON.stringify({ error: message }), {
+        status: 500,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
   }
+
+  let skipped = false;
+  try {
+    await runs.cancel(runId);
+  } catch (err) {
+    const message = err instanceof Error ? err.message : "Failed to cancel run";
+    // Already finished / missing run — treat as success for the client
+    if (!/not found|already|canceled|cancelled|completed|finished/i.test(message)) {
+      return new Response(JSON.stringify({ error: message }), {
+        status: 500,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+    skipped = true;
+  }
+
+  // A session canceled before its product result holds nothing worth
+  // keeping — drop the stub row. Sessions with results are untouched.
+  // Best-effort: the run is already canceled, so ignore delete errors.
+  await supabase
+    .from("research_sessions")
+    .delete()
+    .eq("id", sessionId)
+    .is("product_analyst_result", null);
+
+  return new Response(JSON.stringify({ ok: true, ...(skipped ? { skipped: true } : {}) }), {
+    status: 200,
+    headers: { "Content-Type": "application/json" },
+  });
 }
