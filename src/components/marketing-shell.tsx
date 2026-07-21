@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { Mail } from "lucide-react";
+import { Mail, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { trackEvent } from "@/lib/analytics";
 
@@ -110,7 +110,8 @@ function GitHubStarsLink() {
       <GitHubIcon className="size-5" />
       {stars !== null && (
         <span className="inline-flex items-center gap-1 rounded-md border border-border/60 px-1.5 py-0.5 font-mono text-[10px] tabular-nums text-muted-foreground">
-          ★ {formatStars(stars)}
+          <Star className="size-3 fill-current" />
+          {formatStars(stars)}
         </span>
       )}
     </a>
