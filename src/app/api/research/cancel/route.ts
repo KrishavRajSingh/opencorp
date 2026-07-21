@@ -35,11 +35,17 @@ export async function POST(request: Request) {
   }
 
   const supabase = await getDbClient();
-  const { data } = await supabase
+  const { data, error } = await supabase
     .from("research_sessions")
     .select("id, user_id")
     .eq("id", sessionId)
     .maybeSingle();
+  if (error) {
+    return new Response(JSON.stringify({ error: error.message }), {
+      status: 500,
+      headers: { "Content-Type": "application/json" },
+    });
+  }
   if (!data || data.user_id !== user.id) {
     return new Response(JSON.stringify({ error: "not found" }), {
       status: 404,
@@ -47,14 +53,14 @@ export async function POST(request: Request) {
     });
   }
 
-  // Reject runs bound to a different session. Only competitor-research
-  // payloads carry sessionId; other tasks leave the run unbound, so
-  // there is nothing to compare for them.
+  // Every run creator binds its sessionId into the run payload. Require
+  // the binding to match this session before canceling — a missing or
+  // mismatched payload sessionId means the run is not ours to cancel.
   try {
     const run = await runs.retrieve(runId);
     const runSessionId = (run.payload as { sessionId?: unknown } | undefined)
       ?.sessionId;
-    if (typeof runSessionId === "string" && runSessionId !== sessionId) {
+    if (runSessionId !== sessionId) {
       return new Response(JSON.stringify({ error: "not found" }), {
         status: 404,
         headers: { "Content-Type": "application/json" },

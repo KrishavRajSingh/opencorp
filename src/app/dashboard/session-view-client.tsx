@@ -262,6 +262,7 @@ export function SessionViewClient({
 
   const hnBuildBody = useCallback(
     () => ({
+      sessionId,
       url: product.url,
       productName: product.productName,
       description: product.description,
@@ -269,7 +270,7 @@ export function SessionViewClient({
       competitors:
         competitors?.competitors?.map((c) => ({ name: c.name, url: c.url })) ?? [],
     }),
-    [product, competitors],
+    [sessionId, product, competitors],
   );
 
   const hn = useSseChannel<HNResult>({
@@ -321,6 +322,7 @@ export function SessionViewClient({
 
   const redditBuildBody = useCallback(
     () => ({
+      sessionId,
       url: product.url,
       productName: product.productName,
       description: product.description,
@@ -331,7 +333,7 @@ export function SessionViewClient({
       competitors:
         competitors?.competitors?.map((c) => ({ name: c.name, url: c.url })) ?? [],
     }),
-    [product, subsSearch, competitors],
+    [sessionId, product, subsSearch, competitors],
   );
 
   const reddit = useSseChannel<RedditScanResult>({

@@ -211,7 +211,7 @@ const productSchema = z.object({
 export const productResearchTask = task({
   id: "product-research",
   maxDuration: 3600,
-  run: async (payload: { url: string }, { signal }) => {
+  run: async (payload: { url: string; sessionId: string }, { signal }) => {
     const agent = mastra.getAgent("productAnalystAgent");
     if (!agent) {
       await researchStream.append(JSON.stringify({ type: "error", error: "Product analyst agent not found" }));

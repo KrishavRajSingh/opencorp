@@ -58,7 +58,10 @@ export async function POST(request: Request) {
   }
 
   try {
-    const handle = await tasks.trigger<typeof productResearchTask>("product-research", { url });
+    const handle = await tasks.trigger<typeof productResearchTask>("product-research", {
+      url,
+      sessionId: session.id,
+    });
     return new Response(
       JSON.stringify({
         runId: handle.id,

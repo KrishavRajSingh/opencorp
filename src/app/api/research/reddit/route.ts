@@ -4,6 +4,7 @@ import { z } from "zod/v4";
 import { getAuthedUser } from "@/lib/supabase/auth";
 
 const inputSchema = z.object({
+  sessionId: z.string().uuid(),
   url: z.string(),
   productName: z.string(),
   description: z.string(),
