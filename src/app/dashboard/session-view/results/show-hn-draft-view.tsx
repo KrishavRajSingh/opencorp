@@ -65,6 +65,8 @@ export function ShowHNDraftView({
       const next: ShowHNDraft = { ...draft, title, body };
       try {
         await onPersist(next);
+      } catch {
+        /* save failed — indicator clears; next edit retries */
       } finally {
         setSaving(false);
       }

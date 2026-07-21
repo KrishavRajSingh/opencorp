@@ -412,20 +412,23 @@ export function SessionViewClient({
     (next: ShowHNDraft) => {
       setShowHNDraft(next);
       const queued = showHNSaveQueueRef.current.then(async () => {
-        try {
-          await fetch("/api/research/save", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              id: sessionId,
-              show_hn_draft_result: next,
-            }),
-          });
-        } catch {
-          /* swallow — silent retry on next edit */
+        const res = await fetch("/api/research/save", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            id: sessionId,
+            show_hn_draft_result: next,
+          }),
+        });
+        if (!res.ok) {
+          const body = await res.json().catch(() => ({}));
+          throw new Error(body.error ?? `Save failed (${res.status})`);
         }
       });
-      showHNSaveQueueRef.current = queued;
+      // Queue must survive a failed save — store the caught chain, but hand
+      // the editor the raw promise so HTTP/network failures reach its
+      // try/finally instead of resolving as if persisted.
+      showHNSaveQueueRef.current = queued.catch(() => {});
       return queued;
     },
     [sessionId],
