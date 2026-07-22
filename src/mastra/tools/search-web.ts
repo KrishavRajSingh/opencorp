@@ -3,15 +3,105 @@ import { z } from 'zod';
 
 const EXA_API_BASE = 'https://api.exa.ai/search';
 
+export interface SearchExaInput {
+  query: string;
+  numResults?: number;
+  category?: 'company' | 'research paper' | 'news' | 'personal site' | 'financial report';
+  maxTextCharacters?: number;
+}
+
+export interface SearchExaResult {
+  title: string;
+  url: string;
+  publishedDate: string | null;
+  author: string | null;
+  highlights: string[] | null;
+  highlightsScores: number[] | null;
+  text: string;
+}
+
+export interface SearchExaOutput {
+  query: string;
+  results: SearchExaResult[];
+  resultCount: number;
+  costDollars: number | null;
+}
+
+export async function searchExa(
+  input: SearchExaInput,
+): Promise<SearchExaOutput> {
+  const { query, numResults = 10, category, maxTextCharacters = 2000 } = input;
+  const apiKey = process.env.EXA_API_KEY;
+  if (!apiKey) throw new Error('EXA_API_KEY environment variable is not set');
+
+  const body: Record<string, unknown> = {
+    query,
+    type: 'auto',
+    numResults,
+    contents: {
+      text: { maxCharacters: maxTextCharacters },
+      highlights: { numSentences: 3 },
+    },
+  };
+
+  if (category) {
+    body.category = category;
+  }
+
+  const response = await fetch(EXA_API_BASE, {
+    method: 'POST',
+    headers: {
+      'x-api-key': apiKey,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(body),
+  });
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(`Exa search failed: ${response.status} \u2014 ${errorText}`);
+  }
+
+  const data = (await response.json()) as {
+    results?: Array<{
+      title?: string;
+      url?: string;
+      publishedDate?: string;
+      author?: string;
+      highlights?: string[];
+      highlightScores?: number[];
+      text?: string;
+    }>;
+    costDollars?: { total: number };
+  };
+
+  const items = data.results ?? [];
+
+  return {
+    query,
+    results: items.map((item) => ({
+      title: item.title ?? 'Untitled',
+      url: item.url ?? '',
+      publishedDate: item.publishedDate ?? null,
+      author: item.author ?? null,
+      highlights: item.highlights ?? null,
+      highlightsScores: item.highlightScores ?? null,
+      text: item.text ?? '',
+    })),
+    resultCount: items.length,
+    costDollars: data.costDollars?.total ?? null,
+  };
+}
+
 export const searchWebTool = createTool({
   id: 'search-web',
   description:
-    'Search the web using Exa neural/semantic search. Returns relevant pages with content highlights and full text. Exa is semantic — paraphrasing the same question returns ~40% duplicate results. Vary your angle (audience, use case, feature, competitive framing) to find new products. Use category "company" for competitor pages, "news" for recent coverage, "research paper" for academic analysis.',
+    'Search the web using Exa neural/semantic search. Returns relevant pages with content highlights and full text. Exa is semantic \u2014 paraphrasing the same question returns ~40% duplicate results. Vary your angle (audience, use case, feature, competitive framing) to find new products. Use category "company" for competitor pages, "news" for recent coverage, "research paper" for academic analysis.',
   inputSchema: z.object({
     query: z
       .string()
       .describe(
-        'Search query. Write naturally — Exa uses neural search, not keywords. E.g. "companies competing with Notion for project management" or "user complaints about slow database queries" or "best alternative to Salesforce for small business".',
+        'Search query. Write naturally \u2014 Exa uses neural search, not keywords. E.g. "companies competing with Notion for project management" or "user complaints about slow database queries" or "best alternative to Salesforce for small business".',
       ),
     numResults: z
       .number()
@@ -50,67 +140,5 @@ export const searchWebTool = createTool({
     resultCount: z.number(),
     costDollars: z.number().nullable(),
   }),
-  execute: async (inputData) => {
-    const { query, numResults, category, maxTextCharacters } = inputData;
-    const apiKey = process.env.EXA_API_KEY;
-    if (!apiKey) throw new Error('EXA_API_KEY environment variable is not set');
-
-    const body: Record<string, unknown> = {
-      query,
-      type: 'auto',
-      numResults,
-      contents: {
-        text: { maxCharacters: maxTextCharacters },
-        highlights: { numSentences: 3 },
-      },
-    };
-
-    if (category) {
-      body.category = category;
-    }
-
-    const response = await fetch(EXA_API_BASE, {
-      method: 'POST',
-      headers: {
-        'x-api-key': apiKey,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(body),
-    });
-
-    if (!response.ok) {
-      const errorText = await response.text();
-      throw new Error(`Exa search failed: ${response.status} — ${errorText}`);
-    }
-
-    const data = (await response.json()) as {
-      results?: Array<{
-        title?: string;
-        url?: string;
-        publishedDate?: string;
-        author?: string;
-        highlights?: string[];
-        highlightScores?: number[];
-        text?: string;
-      }>;
-      costDollars?: { total: number };
-    };
-
-    const items = data.results ?? [];
-
-    return {
-      query,
-      results: items.map((item) => ({
-        title: item.title ?? 'Untitled',
-        url: item.url ?? '',
-        publishedDate: item.publishedDate ?? null,
-        author: item.author ?? null,
-        highlights: item.highlights ?? null,
-        highlightsScores: item.highlightScores ?? null,
-        text: item.text ?? '',
-      })),
-      resultCount: items.length,
-      costDollars: data.costDollars?.total ?? null,
-    };
-  },
+  execute: async (inputData) => searchExa(inputData),
 });

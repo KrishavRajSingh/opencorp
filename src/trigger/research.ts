@@ -269,18 +269,6 @@ export const productResearchTask = task({
   },
 });
 
-const competitorSchema = z.object({
-  competitors: z.array(
-    z.object({
-      name: z.string(),
-      url: z.string(),
-      description: z.string(),
-      mentionSources: z.array(z.string()),
-    }),
-  ),
-  searchQueriesUsed: z.array(z.string()),
-});
-
 const productContextSchema = z.object({
   url: z.string(),
   productName: z.string(),
@@ -326,64 +314,72 @@ async function persistCompetitorResult(
 export const competitorResearchTask = task({
   id: "competitor-research",
   maxDuration: 3600,
-  run: async (payload: z.infer<typeof competitorTaskPayloadSchema>, { signal }) => {
+  run: async (payload: z.infer<typeof competitorTaskPayloadSchema>) => {
     const input = competitorTaskPayloadSchema.parse(payload);
-    const agent = mastra.getAgent("discoveryAgent");
-    if (!agent) {
-      await researchStream.append(JSON.stringify({ type: "error", error: "Discovery agent not found" }));
-      throw new Error("Discovery agent not found");
+    const wf = mastra.getWorkflow("competitorDiscoveryWorkflow") as unknown as {
+      createRun: (opts?: { runId?: string }) => Promise<{
+        runId: string;
+        start: (input: { inputData: z.infer<typeof productContextSchema> }) => Promise<{
+          result: unknown;
+        }>;
+      }>;
+    };
+    if (!wf) {
+      await researchStream.append(JSON.stringify({ type: "error", error: "Competitor workflow not registered" }));
+      throw new Error("Competitor workflow not registered");
     }
 
-    const prompt = `Find competitors for: ${input.url}
-
-Product name: ${input.productName}
-Description: ${input.description}
-Features: ${input.keyFeatures.join(", ")}`;
-
     try {
-      const object = await runWithRetry(
-        agent,
-        prompt,
-        {
-          structuredOutput: { schema: competitorSchema, model: "openrouter/deepseek/deepseek-v4-flash" },
-          maxSteps: 8,
-        },
-        (step) => {
-          const toolCalls = step.toolCalls ?? [];
-          const toolResults = step.toolResults ?? [];
-          for (let i = 0; i < toolCalls.length; i++) {
-            const tc = toolCalls[i];
-            const tr = toolResults[i];
-            const summary = summarizeToolResult(
-              tc.payload.toolName ?? "unknown",
-              tc.payload.args,
-              tr?.payload,
-            );
-            researchStream.append(JSON.stringify({
-              type: "tool-call",
-              toolCallId: tc.payload.toolCallId ?? crypto.randomUUID(),
-              toolName: tc.payload.toolName ?? "unknown",
-              args: tc.payload.args as { url?: string } | undefined,
-              ...summary,
-            }));
-          }
-        },
-        signal,
-      );
+      await researchStream.append(JSON.stringify({
+        type: "tool-call",
+        toolName: "competitor-discovery",
+        toolCallId: crypto.randomUUID(),
+        snippet: `Searching competitors\u2026`,
+      }));
 
-      const obj = object as { competitors: Array<Record<string, unknown>>; searchQueriesUsed: string[] };
-      const result = {
-        competitors: obj.competitors,
-        searchQueriesUsed: obj.searchQueriesUsed ?? [],
+      const run = await wf.createRun({ runId: `comp_${Date.now().toString(36)}` });
+      const result = await run.start({
+        inputData: {
+          url: input.url,
+          productName: input.productName,
+          description: input.description,
+          keyFeatures: input.keyFeatures,
+        },
+      });
+
+      const r = result as {
+        status?: "success" | "failed" | string;
+        error?: unknown;
+        result?: Record<string, unknown>;
       };
 
-      if (input.sessionId) {
-        // Errors propagate to the outer catch, which appends once to the stream.
-        await persistCompetitorResult(input.sessionId, result);
+      if (r.status === "failed") {
+        const e = r.error;
+        const message =
+          e instanceof Error
+            ? e.message
+            : typeof e === "string"
+              ? e
+              : e && typeof e === "object" && typeof (e as { message?: unknown }).message === "string"
+                ? (e as { message: string }).message
+                : "Competitor discovery failed";
+        await researchStream.append(
+          JSON.stringify({ type: "error", error: message }),
+        );
+        throw new Error(message);
       }
 
-      await researchStream.append(JSON.stringify({ type: "result", ...result }));
-      return result;
+      const brief = r.result ?? {};
+      const competitors = (brief.competitors as Array<Record<string, unknown>> | undefined) ?? [];
+      const searchQueriesUsed = (brief.searchQueriesUsed as string[] | undefined) ?? [];
+      const out = { competitors, searchQueriesUsed };
+
+      if (input.sessionId) {
+        await persistCompetitorResult(input.sessionId, out);
+      }
+
+      await researchStream.append(JSON.stringify({ type: "result", ...out }));
+      return out;
     } catch (err) {
       const message = err instanceof Error ? err.message : "Unknown error";
       await researchStream.append(JSON.stringify({ type: "error", error: message }));

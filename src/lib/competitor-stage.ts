@@ -173,19 +173,8 @@ export function createCompetitorStage(opts: {
     if (gen !== state.gen) return true;
     switch (event.type) {
       case "tool-call": {
-        const title = typeof event.title === "string" ? event.title : undefined;
-        const query = typeof event.query === "string" ? event.query : undefined;
-        const url = typeof event.url === "string" ? event.url : undefined;
-        const toolName =
-          typeof event.toolName === "string" ? event.toolName : "tool";
-        const label = title
-          ? `Read: ${title}`
-          : query
-            ? `Searching "${query}"`
-            : url
-              ? `Reading ${url}...`
-              : toolName;
-        setStreamStatus(label, gen);
+        const snippet = typeof event.snippet === "string" ? event.snippet : undefined;
+        setStreamStatus(snippet ?? "Searching competitors\u2026", gen);
         return false;
       }
       case "result": {
