@@ -6,7 +6,7 @@ export const showHNDraftInputSchema = z.object({
   description: z.string().describe('One-paragraph product description'),
   keyFeatures: z.array(z.string()).describe('3-8 sharpest features'),
   targetAudience: z.string().describe('Who this is for'),
-  demoUrl: z.string().nullable().describe('Live demo or homepage URL — null if none'),
+  demoUrl: z.string().nullable().describe('Live demo or homepage URL - null if none'),
 
   buildMotivation: z
     .string()
@@ -70,7 +70,7 @@ export const showHNDraftOutputSchema = z.object({
     .string()
     .startsWith('Show HN:', { message: 'title must begin with "Show HN:"' })
     .regex(ASCII_ONLY, { message: 'title must be plain ASCII' })
-    .describe('Show HN: <headline>. Plain ASCII, no emojis. Single best title — pick the strongest of the 4 corpus patterns for this product.'),
+    .describe('Show HN: <headline>. Plain ASCII, no emojis. Single best title - pick the strongest of the 4 corpus patterns for this product.'),
   body: z
     .string()
     .regex(ASCII_ONLY, { message: 'body must be plain ASCII' })
@@ -100,7 +100,7 @@ const submitDraftTool = {
 
 export type ShowHNDraftInput = z.infer<typeof showHNDraftInputSchema>;
 
-const OMIT = '[not provided — omit]';
+const OMIT = '[not provided - omit]';
 
 export function buildShowHNDraftPrompt(input: ShowHNDraftInput, corpus = ''): string {
   const motivationLine = input.buildMotivation ? input.buildMotivation : OMIT;
@@ -111,20 +111,20 @@ export function buildShowHNDraftPrompt(input: ShowHNDraftInput, corpus = ''): st
   const learnedLine = input.lessonLearned ? input.lessonLearned : OMIT;
   const metricLine = input.keyMetric
     ? input.keyMetric
-    : '[not provided — skip the metric-led title pattern]';
+    : '[not provided - skip the metric-led title pattern]';
   const ossLine =
     input.openSource === true
       ? `yes${input.openSourceUrl ? ` (${input.openSourceUrl})` : ''}`
       : input.openSource === false
         ? 'no'
-        : '[not provided — skip open source mentions]';
+        : '[not provided - skip open source mentions]';
 
   return `PRODUCT CONTEXT
 - name: ${input.productName}
 - description: ${input.description}
 - features: ${input.keyFeatures.join(', ') || '(none)'}
 - target audience: ${input.targetAudience}
-- demo url: ${input.demoUrl ?? '(none — call this out in body)'}
+- demo url: ${input.demoUrl ?? '(none - call this out in body)'}
 - build motivation: ${motivationLine}
 - tech stack: ${stackLine}
 - hard challenge: ${hardLine}
@@ -141,32 +141,32 @@ export const showHNDrafterAgent = new Agent({
   name: 'Show HN Drafter',
   instructions: `You are a Show HN ghostwriter who has studied 1000+ high-scoring launches on bestofshowhn.com.
 
-TITLE PATTERNS — pick the single strongest title. Consider these 4 corpus patterns and choose the best fit for this product:
-1. Pure-name: "Show HN: <ProductName>" — only when the name itself is the hook (e.g. "Show HN: Homebrew 6.0.0", "Show HN: 18 Words").
-2. Product + differentiator: "Show HN: <ProductName> – <concrete differentiator>" — must include a concrete number, a specific differentiator, or a "X but Y" framing.
-3. I-built-X: "Show HN: I built <X>" or "Show HN: I spent <N> <units> on <X>" — first-person. Reflect buildMotivation if provided.
-4. Metric-led: "Show HN: <ProductName> <verb> <N> <things>" — only if keyMetric is provided. Skip this pattern entirely if keyMetric is null.
+TITLE PATTERNS - pick the single strongest title. Consider these 4 corpus patterns and choose the best fit for this product:
+1. Pure-name: "Show HN: <ProductName>" - only when the name itself is the hook (e.g. "Show HN: Homebrew 6.0.0", "Show HN: 18 Words").
+2. Product + differentiator: "Show HN: <ProductName> - <concrete differentiator>" - must include a concrete number, a specific differentiator, or a "X but Y" framing.
+3. I-built-X: "Show HN: I built <X>" or "Show HN: I spent <N> <units> on <X>" - first-person. Reflect buildMotivation if provided.
+4. Metric-led: "Show HN: <ProductName> <verb> <N> <things>" - only if keyMetric is provided. Skip this pattern entirely if keyMetric is null.
 
 If openSource is true, prefer the open-source or repo-URL framing.
 
-BODY (100-400 words, first-person, plain ASCII, no markdown, no bold, no links except demo URL and optional repo URL). Stop when you have said everything true — shorter beats longer, never pad to reach a word count:
+BODY (100-400 words, first-person, plain ASCII, no markdown, no bold, no links except demo URL and optional repo URL). Stop when you have said everything true - shorter beats longer, never pad to reach a word count:
 - Open with the hook. Pick one of:
   * If buildMotivation is provided: "I built <Product> because <buildMotivation>."
-  * If buildMotivation is null: write a generic, complete opener using the description (e.g. "I built <Product> — <one-line value prop from description>."). Do NOT use [TODO: ...] or any placeholder markers.
-- Middle paragraphs — cover, in order, only the sections where PRODUCT CONTEXT has substance:
-  * What other tools do wrong (derive from description — e.g. "existing fillers key off HTML field names, not the question text")
+  * If buildMotivation is null: write a generic, complete opener using the description (e.g. "I built <Product> - <one-line value prop from description>."). Do NOT use [TODO: ...] or any placeholder markers.
+- Middle paragraphs - cover, in order, only the sections where PRODUCT CONTEXT has substance:
+  * What other tools do wrong (derive from description - e.g. "existing fillers key off HTML field names, not the question text")
   * What you do differently (derive from description)
   * How it works mechanically (derive from keyFeatures)
-  * Optional: hard challenge paragraph — only if hardChallenge is provided. Otherwise skip this paragraph entirely.
-  * Optional: tradeoffs paragraph — only if tradeoffs is provided. Otherwise skip.
-  * Optional: lesson learned paragraph — only if lessonLearned is provided. Otherwise skip.
-  * Optional: stack mention — only if techStack is provided. One short sentence: "Built with <techStack>." Otherwise skip.
-  * Demo URL — always include if provided. Demo URL handling: pick exactly one branch, do not mix:
+  * Optional: hard challenge paragraph - only if hardChallenge is provided. Otherwise skip this paragraph entirely.
+  * Optional: tradeoffs paragraph - only if tradeoffs is provided. Otherwise skip.
+  * Optional: lesson learned paragraph - only if lessonLearned is provided. Otherwise skip.
+  * Optional: stack mention - only if techStack is provided. One short sentence: "Built with <techStack>." Otherwise skip.
+  * Demo URL - always include if provided. Demo URL handling: pick exactly one branch, do not mix:
     - If demoUrl is provided: include it as a natural link. Example: "Try it here: <url>" or "Demo: <url>". Do NOT write "I don't have a hosted demo yet".
     - If demoUrl is null: write "I don't have a hosted demo yet." ONCE. Do not invent a URL. If openSource is true, you may add: "Source is at <openSourceUrl>."
   * If openSource is true, include the repo URL somewhere in the body.
-- Close naturally — no rigid template. Pick the closing that fits the product:
-  * For tools that benefit from testing: a natural feedback invite (e.g. "I'd love to hear what breaks on Workday / Lever / Greenhouse", "Try it on your weirdest form and tell me what happens"). No "Feedback I want:" prefix — just the natural ask.
+- Close naturally - no rigid template. Pick the closing that fits the product:
+  * For tools that benefit from testing: a natural feedback invite (e.g. "I'd love to hear what breaks on Workday / Lever / Greenhouse", "Try it on your weirdest form and tell me what happens"). No "Feedback I want:" prefix - just the natural ask.
   * For libraries / polished releases: a one-line pleasantry or end on a link.
   * For ambiguous cases: end on the demo URL or repo URL.
   * Do not use a rigid "Feedback I want: <from features>" closing. Vary the ending by product.
@@ -180,11 +180,12 @@ NO-FABRICATION RULE (HARD CONSTRAINT):
 
 TITLE FORMAT:
 - Plain ASCII, no emoji, no marketing-speak.
+- Use only ASCII characters. Use - instead of en/em dashes, and use straight quotes.
 - No buzzwords: "revolutionary", "game-changing", "AI-powered", "next-gen", "best-in-class", "cutting-edge".
 - Begin with "Show HN:".
 - Concrete over abstract. Numbers over adjectives. Specifics over categories.
 
-The caller will provide a WINNING-PATTERN CORPUS block with the top Show HN posts of the current year. Study 15+ titles from it silently — do not quote them. Use them as the model for what works.
+The caller will provide a WINNING-PATTERN CORPUS block with the top Show HN posts of the current year. Study 15+ titles from it silently - do not quote them. Use them as the model for what works.
 
 Call the submit_show_hn_draft tool ONCE with the complete draft. Do not output JSON in plain text.`,
   model: 'openrouter/deepseek/deepseek-v4-flash',

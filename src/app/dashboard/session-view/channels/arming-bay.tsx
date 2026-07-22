@@ -15,6 +15,7 @@ export function ChannelArmingBay({
   busy,
   badge,
   footer,
+  secondaryAction,
 }: {
   channel: "reddit" | "hn";
   label: string;
@@ -22,6 +23,12 @@ export function ChannelArmingBay({
   busy: boolean;
   badge?: string;
   footer?: ReactNode;
+  /** Peer second CTA, identical weight — channels with two actions (HN find/draft). */
+  secondaryAction?: {
+    label: string;
+    description?: string;
+    onRun: () => void;
+  };
 }) {
   const reduceMotion = useReducedMotion();
   const isReddit = channel === "reddit";
@@ -187,6 +194,62 @@ export function ChannelArmingBay({
             )}
           />
         </button>
+
+        {secondaryAction && (
+          <button
+            type="button"
+            onClick={secondaryAction.onRun}
+            disabled={busy}
+            className={cn(
+              "group/arm-alt relative mt-2.5 flex w-full items-center justify-between gap-3 overflow-hidden rounded-lg border px-4 py-3.5 text-left transition-all",
+              "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+              busy
+                ? "cursor-not-allowed border-border/40 bg-card/30 text-muted-foreground/50"
+                : cn(
+                    "bg-card/50 text-foreground",
+                    accentBorder,
+                    accentBorderHover,
+                    isReddit
+                      ? "focus-visible:ring-[#FF4500]/50"
+                      : "focus-visible:ring-[#FF6600]/50",
+                  ),
+            )}
+          >
+            {!busy && (
+              <span
+                aria-hidden
+                className="pointer-events-none absolute inset-y-0 left-0 w-px"
+                style={{ background: accent, boxShadow: `0 0 12px ${accent}` }}
+              />
+            )}
+            <span className="min-w-0">
+              <span className="block font-heading text-[15px] leading-none tracking-tight">
+                {secondaryAction.label}
+              </span>
+              {secondaryAction.description && (
+                <span
+                  className={cn(
+                    "mt-1.5 inline-block font-mono text-[9px] uppercase tracking-wider",
+                    accentText,
+                  )}
+                >
+                  {secondaryAction.description}
+                </span>
+              )}
+            </span>
+            <ArrowRight
+              className={cn(
+                "size-4 shrink-0 transition-transform",
+                busy
+                  ? "text-muted-foreground/40"
+                  : cn(
+                      accentText,
+                      "opacity-70 group-hover/arm-alt:translate-x-0.5 group-hover/arm-alt:opacity-100",
+                    ),
+              )}
+            />
+          </button>
+        )}
 
         {footer && <div className="mt-3 w-full">{footer}</div>}
       </div>

@@ -354,7 +354,18 @@ export function Console({
               </p>
             ) : (
               <>
-                {!readOnly && (
+                {!readOnly && findState === "idle" && draftState === "idle" ? (
+                  <ChannelArmingBay
+                    channel="hn"
+                    label="Find HN threads"
+                    onRun={onFindHN}
+                    busy={busy}
+                    secondaryAction={{
+                      label: "Draft my launch post",
+                      onRun: onDraftShowHN,
+                    }}
+                  />
+                ) : !readOnly ? (
                   <div className="border-y border-border/30">
                     <HNActionRow
                       action="find"
@@ -381,7 +392,7 @@ export function Console({
                       resultSummary={showHNDraft ? "1 draft" : undefined}
                     />
                   </div>
-                )}
+                ) : null}
 
                 {(displayedChannel === "find" || showBothReadOnly) && (
                   <div>
@@ -447,11 +458,6 @@ export function Console({
                   </div>
                 )}
 
-                {!readOnly && displayedChannel === null && (
-                  <p className="px-4 py-6 text-center font-mono text-[10px] uppercase tracking-widest text-muted-foreground/40">
-                    pick a row to start
-                  </p>
-                )}
               </>
             )}
           </div>

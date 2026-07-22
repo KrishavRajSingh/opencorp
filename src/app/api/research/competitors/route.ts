@@ -2,6 +2,7 @@ import type { competitorResearchTask } from "@/trigger/research";
 import { tasks } from "@trigger.dev/sdk/v3";
 import { z } from "zod/v4";
 import { getAuthedUser } from "@/lib/supabase/auth";
+import { getDbClient } from "@/lib/supabase/server";
 
 const inputSchema = z.object({
   sessionId: z.string().uuid(),
@@ -12,7 +13,7 @@ const inputSchema = z.object({
 });
 
 export async function POST(request: Request) {
-  await getAuthedUser();
+  const { user } = await getAuthedUser();
 
   let input: z.infer<typeof inputSchema>;
   try {
@@ -25,6 +26,28 @@ export async function POST(request: Request) {
       }),
       { status: 400, headers: { "Content-Type": "application/json" } },
     );
+  }
+
+  // Authorize against the session before queuing work: the run persists into
+  // this sessionId, so its owner must be the caller.
+  const supabase = await getDbClient();
+  const { data: session, error: sessionError } = await supabase
+    .from("research_sessions")
+    .select("id, user_id")
+    .eq("id", input.sessionId)
+    .maybeSingle();
+  if (sessionError) {
+    console.error("[api/research/competitors] session lookup failed:", sessionError);
+    return new Response(
+      JSON.stringify({ error: "Failed to authorize session" }),
+      { status: 500, headers: { "Content-Type": "application/json" } },
+    );
+  }
+  if (!session || session.user_id !== user.id) {
+    return new Response(JSON.stringify({ error: "not found" }), {
+      status: 404,
+      headers: { "Content-Type": "application/json" },
+    });
   }
 
   try {

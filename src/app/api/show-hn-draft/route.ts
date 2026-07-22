@@ -2,8 +2,6 @@ import { z } from 'zod';
 import { mastra } from '@/mastra';
 import { showHNDraftInputSchema, showHNDraftOutputSchema, buildShowHNDraftPrompt } from '@/mastra/agents/show-hn-drafter';
 import { fetchPageTool } from '@/mastra/tools/fetch-page';
-import { getAuthedUser } from '@/lib/supabase/auth';
-import { ANON_BUCKET_USER_ID } from '@/lib/supabase/server';
 
 const requestSchema = showHNDraftInputSchema;
 
@@ -17,7 +15,10 @@ async function fetchCorpus(): Promise<string> {
     const result = (await tool.execute({
       url: `https://bestofshowhn.com/${year}`,
     } as never)) as { content?: string };
-    const content = result.content ?? '';
+    const content = (result.content ?? '')
+      .replace(/[—–]/g, '-')
+      .replace(/['']/g, "'")
+      .replace(/[""]/g, '"');
     return `\nWINNING-PATTERN CORPUS (top Show HN posts of ${year} from bestofshowhn.com):\n${content.slice(0, CORPUS_FETCH_LIMIT)}\n`;
   } catch (err) {
     console.warn('[api/show-hn-draft] corpus fetch failed, continuing without:', err);
@@ -26,14 +27,6 @@ async function fetchCorpus(): Promise<string> {
 }
 
 export async function POST(request: Request) {
-  const { user } = await getAuthedUser();
-  if (user.id === ANON_BUCKET_USER_ID) {
-    return new Response(JSON.stringify({ error: 'unauthorized' }), {
-      status: 401,
-      headers: { 'Content-Type': 'application/json' },
-    });
-  }
-
   let input: z.infer<typeof requestSchema>;
   try {
     const body = await request.json();
@@ -77,6 +70,19 @@ export async function POST(request: Request) {
       const match = text.match(/\{[\s\S]*\}/);
       if (!match) throw new Error('showHNDrafter did not call submit tool or return JSON');
       parsed = JSON.parse(match[0]);
+    }
+
+    // DeepSeek sometimes wraps tool call args in objects instead of strings.
+    // Coerce to strings before Zod validation.
+    if (parsed && typeof parsed.title === 'object') {
+      parsed.title = typeof (parsed.title as Record<string, unknown>).text === 'string'
+        ? (parsed.title as Record<string, unknown>).text as string
+        : JSON.stringify(parsed.title);
+    }
+    if (parsed && typeof parsed.body === 'object') {
+      parsed.body = typeof (parsed.body as Record<string, unknown>).text === 'string'
+        ? (parsed.body as Record<string, unknown>).text as string
+        : JSON.stringify(parsed.body);
     }
 
     const draft = showHNDraftOutputSchema.parse(parsed);

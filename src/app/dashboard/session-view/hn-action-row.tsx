@@ -18,7 +18,7 @@ const META: Record<HNAction, Meta> = {
   },
   draft: {
     verb: "draft",
-    description: "ghostwrite a launch post — title, body, first comment",
+    description: "launch title + body",
   },
 };
 
