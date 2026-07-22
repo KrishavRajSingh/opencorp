@@ -27,16 +27,6 @@ async function main() {
       targetAudience:
         "job applicants filling multiple applications, students filling surveys, anyone repeating same answers",
       pricingModel: "Free",
-      subsSearch: [
-        "jobs",
-        "jobsearchhacks",
-        "careerguidance",
-        "cscareerquestions",
-        "ExperiencedDevs",
-        "recruitinghell",
-        "AskHR",
-        "jobboard",
-      ],
       competitors: [
         { name: "JobWizard", url: "https://jobwizard.ai" },
         { name: "Simplify", url: "https://simplify.jobs" },
@@ -59,7 +49,6 @@ async function main() {
       targetAudience:
         "small business owners doing their own marketing, indie founders, solopreneurs",
       pricingModel: "$49/mo starter, $149/mo growth",
-      subsSearch: [],
       competitors: [
         { name: "Jasper", url: "https://jasper.ai" },
         { name: "Surfer SEO", url: "https://surferseo.com" },
@@ -85,7 +74,6 @@ async function main() {
     intent: {
       pain_signals: string[];
       query_angles: string[];
-      target_subs: string[];
       exclude_patterns: string[];
       competitor_deflection_queries: string[];
     };
@@ -93,7 +81,6 @@ async function main() {
   console.log(`\n=== Intent classifier LLM output (${productArg}) ===`);
   console.log("pain_signals:", JSON.stringify(r.intent.pain_signals, null, 2));
   console.log("query_angles:", JSON.stringify(r.intent.query_angles, null, 2));
-  console.log("target_subs:", JSON.stringify(r.intent.target_subs, null, 2));
   console.log("exclude_patterns:", JSON.stringify(r.intent.exclude_patterns, null, 2));
   console.log(
     "competitor_deflection_queries:",

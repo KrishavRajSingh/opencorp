@@ -6,9 +6,9 @@ export const gtmIntentClassifier = new Agent({
   name: 'GTM Intent Classifier',
   instructions: `You generate Reddit search parameters for finding potential users of a specific product.
 
-You receive the product context as input. Your job is to translate it into Reddit-native search phrases and sub picks. You do NOT redefine the product — that's already given to you.
+You receive the product context as input. Your job is to translate it into Reddit-native search phrases. You do NOT redefine the product — that's already given to you.
 
-Output JSON with exactly 4 fields:
+Output JSON with exactly 3 fields:
 
 - pain_signals: 5-8 short phrases (2-4 words each) that real users say about the problem this product solves. These are used DIRECTLY as Reddit /search queries.
 
@@ -25,12 +25,6 @@ Output JSON with exactly 4 fields:
   - AVOID generic framing words: "tired of", "looking for", "best", "smart", "need help", "is there a", "how do I", "I keep", "fed up with", "anyone else", "fatigue", "frustration", "redundancy issue", "tedium".
   - DO NOT use the product name, product category, or competitor names in the phrase.
   - Imagine a Reddit user venting. What exact 2-4 word fragment would appear in their post? Use that.
-
-- target_subs: 5-12 subreddit slugs (without r/ prefix) where the target audience actually posts. Rules:
-  - Prefer niche subs with < 1M subscribers.
-  - AVOID broad generic subs like jobs, Entrepreneur, startups, marketing, all (these return too much noise).
-  - Pair broad subs with 1-2 niche subs if needed.
-  - Each sub should have a clear reason: "this is where the persona complains about this pain."
 
 - exclude_patterns: 1-5 phrases that indicate OFF-topic threads to skip (e.g. "I already have 10k users", "just sold my company", "looking for co-founder", "I built my own").
 
@@ -50,9 +44,7 @@ Output JSON with exactly 4 fields:
 
   Cap at 6 queries total. Return [] if no competitors provided or none are well-known.
 
-The user may pin specific subs (subsSearch override). If so, use those EXACTLY in target_subs and skip your own sub selection.
-
-Output ONLY the JSON object with these 4 fields.`,
+Output ONLY the JSON object with these 3 fields.`,
   model: 'openrouter/deepseek/deepseek-v4-flash',
   tools: {},
 });
@@ -64,13 +56,11 @@ export const gtmIntentInputSchema = z.object({
   targetAudience: z.string().describe('From productAnalyst result'),
   pricingModel: z.string().describe('From productAnalyst result'),
   userQuery: z.string().describe('Raw user request — usually "find me users for X"'),
-  subsSearch: z.array(z.string()).optional().describe('User-pinned sub slugs; overrides target_subs if non-empty'),
   competitors: z.array(z.object({ name: z.string(), url: z.string().optional().default('') })).optional().default([]).describe('Discovered competitors; if non-empty, generate deflection queries'),
 });
 
 export const gtmIntentOutputSchema = z.object({
   pain_signals: z.array(z.string()).min(5).max(8),
-  target_subs: z.array(z.string()).min(5).max(12),
   exclude_patterns: z.array(z.string()).min(0).max(5),
   competitor_deflection_queries: z.array(z.string()).max(6).default([]),
 });

@@ -9,7 +9,6 @@ const intentSchema = z.object({
   personas: z.array(z.string()),
   pain_signals: z.array(z.string()),
   query_angles: z.array(z.string()),
-  target_subs: z.array(z.string()),
   exclude_patterns: z.array(z.string()),
   competitor_deflection_queries: z.array(z.string()).default([]),
 });
@@ -54,7 +53,6 @@ const statsSchema = z.object({
   top_threads: z.number(),
   runtime_s: z.number(),
   queries: z.number(),
-  subs_source: z.enum(['override', 'classifier']),
 });
 
 const classifyIntentSchema = z.object({
@@ -64,7 +62,6 @@ const classifyIntentSchema = z.object({
   keyFeatures: z.array(z.string()),
   targetAudience: z.string(),
   pricingModel: z.string(),
-  subsSearch: z.array(z.string()).optional().describe('Optional per-product sub slug override. If provided, replaces target_subs from the LLM entirely.'),
   competitors: z.array(z.object({ name: z.string(), url: z.string().optional().default('') })).optional().default([]).describe('Discovered competitors for deflection queries'),
 });
 
@@ -87,21 +84,15 @@ function isBuyerThread(t: z.infer<typeof threadSchema>): boolean {
 
 const classifyIntent = createStep({
   id: 'classify-intent',
-  description: 'Generate pain signals + target subs + deflection queries from product context',
+  description: 'Generate pain signals + deflection queries from product context',
   inputSchema: classifyIntentSchema,
   outputSchema: intentSchema.extend({
-    subsSource: z.enum(['override', 'classifier']),
     usedQueries: z.array(z.string()),
   }),
   execute: async ({ inputData, mastra }) => {
     if (!inputData) throw new Error('inputData required');
     const agent = mastra?.getAgent('gtmIntentClassifier');
     if (!agent) throw new Error('gtmIntentClassifier not registered');
-
-    const override =
-      inputData.subsSearch && inputData.subsSearch.length > 0
-        ? inputData.subsSearch.map((s) => s.replace(/^r\//, '').trim()).filter(Boolean)
-        : null;
 
     const userQ = `PRODUCT: ${inputData.productName}
 DESCRIPTION: ${inputData.description}
@@ -111,18 +102,12 @@ TARGET AUDIENCE: ${inputData.targetAudience}
 USER REQUEST: "${inputData.userQuery}"
 
 ${
-  override
-    ? `HARD CONSTRAINT — use these subreddits EXACTLY in target_subs: ${override.map((s) => `r/${s}`).join(', ')}. Skip your own sub selection.`
-    : `Pick target_subs yourself — focused communities preferred over broad ones (r/SaaS, r/sideproject, r/indiehackers over r/Entrepreneur, r/startups).`
-}
-
-${
   inputData.competitors && inputData.competitors.length > 0
     ? `\nCOMPETITORS (top ${inputData.competitors.length} from discovery):\n${inputData.competitors.map((c) => `- ${c.name}${c.url ? ` (${c.url})` : ''}`).join('\n')}\n\nFor these, output 1-2 competitor_deflection_queries per top 2-3 competitors using DISTINCT templates from {name} alternative | {name} too expensive | leaving {name} | better than {name} | {name} complaints | {name} not worth it. Do not output both {name} alternative AND alternative to {name} — same intent.`
     : `\nNo competitors provided. Return competitor_deflection_queries: [].`
 }
 
-Output strict JSON with EXACTLY 4 fields: pain_signals, target_subs, exclude_patterns, competitor_deflection_queries.`;
+Output strict JSON with EXACTLY 3 fields: pain_signals, exclude_patterns, competitor_deflection_queries.`;
 
     const response = await agent.stream([{ role: 'user', content: userQ }]);
     let text = '';
@@ -130,7 +115,6 @@ Output strict JSON with EXACTLY 4 fields: pain_signals, target_subs, exclude_pat
 
     let parsed: {
       pain_signals: string[];
-      target_subs: string[];
       exclude_patterns: string[];
       competitor_deflection_queries: string[];
     };
@@ -152,10 +136,8 @@ Output strict JSON with EXACTLY 4 fields: pain_signals, target_subs, exclude_pat
       personas: inputData.targetAudience ? [inputData.targetAudience] : [],
       pain_signals: painSignals,
       query_angles: painSignals,
-      target_subs: override ?? parsed.target_subs ?? [],
       exclude_patterns: parsed.exclude_patterns ?? [],
       competitor_deflection_queries: deflectionQueries,
-      subsSource: (override ? 'override' : 'classifier') as 'override' | 'classifier',
       usedQueries: painSignals,
     };
   },
@@ -174,7 +156,6 @@ const fetchThreads = createStep({
   id: 'fetch-threads',
   description: 'Run pain_signals + competitor_deflection_queries in parallel against Google site:reddit.com, dedupe, apply regex demote, sort by engagement',
   inputSchema: intentSchema.extend({
-    subsSource: z.enum(['override', 'classifier']),
     usedQueries: z.array(z.string()),
   }),
   outputSchema: workflowOutputSchema,
@@ -197,12 +178,8 @@ const fetchThreads = createStep({
 
     const rawThreads = await fetchGoogleRedditThreads({
       queries: validQueries,
-      subs: inputData.target_subs,
       limit: 5,
       time: 'm',
-    }).catch((err) => {
-      console.error('[google-reddit] fetch failed:', err);
-      return [];
     });
 
     const deduped = dedupe(rawThreads);
@@ -225,7 +202,6 @@ const fetchThreads = createStep({
         personas: inputData.personas,
         pain_signals: inputData.pain_signals,
         query_angles: inputData.query_angles,
-        target_subs: inputData.target_subs,
         exclude_patterns: inputData.exclude_patterns,
         competitor_deflection_queries: inputData.competitor_deflection_queries ?? [],
       },
@@ -235,7 +211,6 @@ const fetchThreads = createStep({
         top_threads: ranked.length,
         runtime_s: elapsed,
         queries: validQueries.length,
-        subs_source: inputData.subsSource,
       },
     };
   },

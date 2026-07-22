@@ -497,7 +497,6 @@ const gtmRedditInputSchema = z.object({
   keyFeatures: z.array(z.string()).optional().default([]),
   targetAudience: z.string().optional().default(""),
   pricingModel: z.string().optional().default(""),
-  subsSearch: z.array(z.string()).optional().default([]),
   competitors: z.array(
     z.object({
       name: z.string(),
@@ -520,7 +519,6 @@ export const gtmRedditScanTask = task({
           keyFeatures: string[];
           targetAudience: string;
           pricingModel: string;
-          subsSearch?: string[];
           competitors?: Array<{ name: string; url: string }>;
         } }) => Promise<{ result: unknown }>;
       }>;
@@ -535,7 +533,6 @@ export const gtmRedditScanTask = task({
       `Target audience: ${input.targetAudience}. Pricing: ${input.pricingModel}. ` +
       `Look for potential users who match the target persona and exhibit the product's core pain points.`;
 
-    const subsSearch = input.subsSearch.filter((s) => s.trim().length > 0);
     // Optional enrichment only — never discover competitors here. 0 is fine:
     // workflow emits competitor_deflection_queries: [] and still ranks pain/user threads.
     const competitors = (input.competitors ?? [])
@@ -563,12 +560,33 @@ export const gtmRedditScanTask = task({
           keyFeatures: input.keyFeatures,
           targetAudience: input.targetAudience,
           pricingModel: input.pricingModel,
-          subsSearch,
           competitors,
         },
       });
-      const brief = (result as { result?: Record<string, unknown> }).result ?? {};
 
+      const r = result as {
+        status?: "success" | "failed" | string;
+        error?: unknown;
+        result?: Record<string, unknown>;
+      };
+
+      if (r.status === "failed") {
+        const e = r.error;
+        const message =
+          e instanceof Error
+            ? e.message
+            : typeof e === "string"
+              ? e
+              : e && typeof e === "object" && typeof (e as { message?: unknown }).message === "string"
+                ? (e as { message: string }).message
+                : "Reddit scan failed";
+        await researchStream.append(
+          JSON.stringify({ type: "error", track: "reddit", error: message }),
+        );
+        throw new Error(message);
+      }
+
+      const brief = r.result ?? {};
       await researchStream.append(JSON.stringify({ type: "result", track: "reddit", ...brief }));
       return brief;
     } catch (err) {

@@ -25,7 +25,6 @@ async function main() {
       ],
       targetAudience: "job applicants filling multiple applications, students filling surveys, anyone repeating same answers",
       pricingModel: "Free",
-      subsSearch: ["jobs", "jobsearchhacks", "careerguidance", "cscareerquestions", "ExperiencedDevs", "recruitinghell", "AskHR", "jobboard"],
     },
   });
   // Matches workflowOutputSchema.top_threads: flat threadSchema[] (not rank/thread wrapper).
@@ -43,7 +42,6 @@ async function main() {
       top_threads: number;
       runtime_s: number;
       queries: number;
-      subs_source: string;
     };
   };
 

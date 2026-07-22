@@ -16,18 +16,9 @@ export type GoogleRedditThread = {
 
 export type FetchGoogleRedditOpts = {
   queries: string[];
-  subs?: string[];
   limit?: number;
   time?: "d" | "w" | "m" | "y";
 };
-
-function buildSearchQuery(q: string, subs?: string[]): string {
-  if (!subs || subs.length === 0) return q;
-  const subScope = subs
-    .map((s) => `"r/${s}"`)
-    .join(" OR ");
-  return `${q} (${subScope})`;
-}
 
 function googleToThread(g: GoogleRedditResult): GoogleRedditThread {
   return {
@@ -46,20 +37,37 @@ export async function fetchGoogleRedditThreads(
   const limit = opts.limit ?? 10;
   const time = opts.time ?? "m";
 
-  const results = await Promise.all(
+  const settled = await Promise.allSettled(
     opts.queries.map((q) =>
-      serperRedditSearch(buildSearchQuery(q, opts.subs), {
+      serperRedditSearch(q, {
         num: limit,
         time,
-      }).catch((err) => {
-        console.error(`[serper] query failed: ${q}`, err);
-        return [] as GoogleRedditResult[];
       }),
     ),
   );
 
   const acc: GoogleRedditResult[] = [];
-  for (const r of results) acc.push(...r);
+  let failures = 0;
+  let firstMessage: string | null = null;
+  for (let i = 0; i < settled.length; i++) {
+    const r = settled[i];
+    if (r.status === "fulfilled") {
+      acc.push(...r.value);
+    } else {
+      failures++;
+      const q = opts.queries[i];
+      console.error(`[serper] query failed: ${q}`, r.reason);
+      if (!firstMessage) {
+        firstMessage = r.reason instanceof Error ? r.reason.message : String(r.reason);
+      }
+    }
+  }
+
+  if (opts.queries.length > 0 && failures === opts.queries.length) {
+    throw new Error(
+      `All ${failures} Reddit search queries failed: ${firstMessage ?? "unknown error"}`,
+    );
+  }
 
   const seen = new Set<string>();
   const deduped: GoogleRedditResult[] = [];

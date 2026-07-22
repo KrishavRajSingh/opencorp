@@ -186,9 +186,6 @@ export function SessionViewClient({
         : null,
   );
 
-  const [subsSearch, setSubsSearch] = useState<string[]>([]);
-  const [subsSearchOpen, setSubsSearchOpen] = useState(false);
-
   const [shareCopied, setShareCopied] = useState(false);
   const shareTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -329,11 +326,10 @@ export function SessionViewClient({
       keyFeatures: product.keyFeatures,
       targetAudience: product.targetAudience,
       pricingModel: product.pricingModel,
-      subsSearch: subsSearch.length > 0 ? subsSearch : undefined,
       competitors:
         competitors?.competitors?.map((c) => ({ name: c.name, url: c.url })) ?? [],
     }),
-    [sessionId, product, subsSearch, competitors],
+    [sessionId, product, competitors],
   );
 
   const reddit = useSseChannel<RedditScanResult>({
@@ -907,10 +903,6 @@ export function SessionViewClient({
             loadingHN={hn.loading}
             activeResult={activeResult}
             onSwitchResult={handleTabSwitch}
-            subsSearch={subsSearch}
-            subsSearchOpen={subsSearchOpen}
-            onToggleSubsSearch={() => setSubsSearchOpen((p) => !p)}
-            onChangeSubsSearch={setSubsSearch}
             readOnly={readOnly}
             isAuthed={isAuthed}
             signupHref={signupHref}

@@ -12,7 +12,6 @@ const inputSchema = z.object({
   keyFeatures: z.array(z.string()).optional().default([]),
   targetAudience: z.string().optional().default(""),
   pricingModel: z.string().optional().default(""),
-  subsSearch: z.array(z.string()).optional().default([]),
   competitors: z.array(
     z.object({
       name: z.string(),

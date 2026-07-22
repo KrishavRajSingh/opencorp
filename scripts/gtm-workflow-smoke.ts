@@ -19,7 +19,6 @@ async function main() {
       keyFeatures: ["AI content writer", "social media automation", "weekly post drafts"],
       targetAudience: "solo SaaS founder, indie hacker",
       pricingModel: "$49/month",
-      subsSearch: ["SaaS", "startups", "sideproject", "indiehackers", "Entrepreneur"],
     },
   });
   const r = (out as { result?: Record<string, unknown> }).result;

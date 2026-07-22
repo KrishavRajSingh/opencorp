@@ -1,6 +1,5 @@
 "use client";
 
-import { ChevronDown } from "lucide-react";
 import { DinoLoader } from "@/components/dashboard/dino-loader";
 import { GtmBriefView } from "@/components/ai-elements/gtm-brief";
 import { HNResultView } from "./results/hn-result-view";
@@ -9,7 +8,6 @@ import { HNActionRow, type HNActionState } from "./hn-action-row";
 import {
   ChannelWaitingBay,
   ChannelArmingBay,
-  SubsSearchInput,
 } from "./channels";
 import type {
   HNResult,
@@ -39,10 +37,6 @@ export type ConsoleProps = {
   loadingHN: boolean;
   activeResult: "reddit" | "hn";
   onSwitchResult: (tab: "reddit" | "hn") => void;
-  subsSearch: string[];
-  subsSearchOpen: boolean;
-  onToggleSubsSearch: () => void;
-  onChangeSubsSearch: (next: string[]) => void;
   readOnly?: boolean;
   isAuthed: boolean;
   signupHref: string;
@@ -75,10 +69,6 @@ export function Console({
   loadingHN,
   activeResult,
   onSwitchResult,
-  subsSearch,
-  subsSearchOpen,
-  onToggleSubsSearch,
-  onChangeSubsSearch,
   readOnly = false,
   isAuthed,
   signupHref,
@@ -301,42 +291,6 @@ export function Console({
                 label="Find Reddit users"
                 onRun={onFindReddit}
                 busy={busy}
-                badge={
-                  subsSearch.length > 0
-                    ? `${subsSearch.length} subs pinned`
-                    : undefined
-                }
-                footer={
-                  <>
-                    <button
-                      type="button"
-                      onClick={onToggleSubsSearch}
-                      disabled={busy}
-                      className="flex w-full items-center justify-center gap-1.5 rounded-md py-1 font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground/50 transition-colors hover:text-foreground/75 disabled:cursor-not-allowed disabled:opacity-50"
-                    >
-                      <span>
-                        {subsSearch.length > 0
-                          ? `${subsSearch.length} pinned · edit`
-                          : "pin subreddits"}
-                      </span>
-                      <ChevronDown
-                        className={cn(
-                          "size-3 transition-transform",
-                          subsSearchOpen && "rotate-180",
-                        )}
-                      />
-                    </button>
-                    {subsSearchOpen && (
-                      <div className="mt-2">
-                        <SubsSearchInput
-                          value={subsSearch}
-                          onChange={onChangeSubsSearch}
-                          disabled={busy || !!redditScan}
-                        />
-                      </div>
-                    )}
-                  </>
-                }
               />
             ) : readOnly && !redditScan ? (
               <p className="py-10 text-center font-mono text-[11px] text-muted-foreground/50">
