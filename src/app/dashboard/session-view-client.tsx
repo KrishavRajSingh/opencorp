@@ -264,10 +264,9 @@ export function SessionViewClient({
       productName: product.productName,
       description: product.description,
       keyFeatures: product.keyFeatures,
-      competitors:
-        competitors?.competitors?.map((c) => ({ name: c.name, url: c.url })) ?? [],
+      targetAudience: product.targetAudience,
     }),
-    [sessionId, product, competitors],
+    [sessionId, product],
   );
 
   const hn = useSseChannel<HNResult>({

@@ -10,15 +10,7 @@ const inputSchema = z.object({
   productName: z.string(),
   description: z.string(),
   keyFeatures: z.array(z.string()),
-  competitors: z
-    .array(
-      z.object({
-        name: z.string(),
-        url: z.string().optional().default(""),
-      }).passthrough(),
-    )
-    .optional()
-    .default([]),
+  targetAudience: z.string().optional().default(""),
 });
 
 export async function POST(request: Request) {

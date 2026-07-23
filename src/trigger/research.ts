@@ -405,12 +405,7 @@ const hnThreadsSchema = z.object({
 });
 
 const hnContextSchema = productContextSchema.extend({
-  competitors: z.array(
-    z.object({
-      name: z.string(),
-      url: z.string().optional().default(""),
-    }).passthrough(),
-  ).optional().default([]),
+  targetAudience: z.string().optional().default(""),
 });
 
 export const hnThreadsTask = task({
@@ -425,21 +420,20 @@ export const hnThreadsTask = task({
 
     const input = hnContextSchema.parse(payload);
 
-    const competitorList = input.competitors
-      .map((c) => `- ${c.name}${c.url ? ` (${c.url})` : ""}`)
-      .join("\n");
+    const hasAudience = input.targetAudience.trim().length > 0;
+    const audienceLine = hasAudience ? `Target audience (ICP): ${input.targetAudience}\n` : "";
 
-    const prompt = `Find Hacker News posts where I can pitch my product — Show HN launches by adjacent tools, Ask HN threads about the problem space, and discussions where users complain about the current way of doing things.
+    const prompt = `Find Hacker News threads where my ideal customer is actively discussing the problem space — Ask HN questions, complaint threads about current workflows, and discussions where the audience describes the pain my product solves. Purpose: research/intel — understand where the ICP talks and what they say. NOT for pitching; do not surface Show HN launch threads (those are other founders' product launches, not ICP discussions).
 
-For searchHNTool calls: pass 1-3 short keyword terms (e.g. "autofill extension", "job application AI", "form filling Show HN"), not full sentences. The tool uses Algolia's built-in similarQuery (OR-match with stop-word removal) so it handles both short and verbose queries. One call per distinct angle is enough. Vary the angle (problem framing, competitor name, audience) between calls — never call twice with a longer paraphrase of the same angle.
+For searchHNTool calls: pass 1-3 short keyword terms (e.g. "autofill extension", "job application AI", "form filling Show HN"), not full sentences. The tool uses Algolia's built-in similarQuery (OR-match with stop-word removal) so it handles both short and verbose queries. One call per distinct angle is enough. Vary the angle (problem framing, audience terms, use case, pain complaints) between calls — never call twice with a longer paraphrase of the same angle.
 
-Aim for 3-6 searchHNTool calls total, each with a different angle, then stop. Read the top results and pick the most relevant threads to surface in the output.
+Pass excludeShowHN: true on every call so Show HN launch stories are filtered out. Pass daysBack: 90 to find live, recent threads. If every angle returns 0 results, retry your best 1-2 angles without daysBack (all-time) as a fallback — keep excludeShowHN: true on retries too.
+
+Aim for 3-6 searchHNTool calls total, then stop. Read the top results and pick the most relevant threads to surface in the output.
 
 Description: ${input.description}
 Features: ${input.keyFeatures.join(", ")}
-
-Competitors:
-${competitorList || "(none provided)"}`;
+${audienceLine}`;
 
     try {
       const object = await runWithRetry(

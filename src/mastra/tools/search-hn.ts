@@ -13,6 +13,7 @@ interface HNResult {
   objectID: string;
   story_text?: string;
   comment_text?: string;
+  _tags?: string[];
 }
 
 interface HNComment {
@@ -102,7 +103,7 @@ function buildWhyRelevant(hit: HNResult, query: string): string | null {
 export const searchHNTool = createTool({
   id: 'search-hn',
   description:
-    "Search Hacker News for relevant discussions and product launches. Pass 1-3 short keyword terms (e.g. 'autofill extension', 'job application AI'). The tool uses Algolia's built-in 'similarQuery' under the hood, which OR-matches all words from your query (with stop words removed) and ranks by word-match count — so it handles both short keyword queries and verbose natural-language ones. Use tags='all' (default) to catch both stories and comments, 'story' for stories only, 'comment' for comments only. Set semantic=false to use a strict AND keyword match instead. Hacker News has a small, narrow index — vary the angle (e.g. competitor name vs. user pain) between calls, never with a longer paraphrase of the same angle.",
+    "Search Hacker News for relevant discussions and product launches. Pass 1-3 short keyword terms (e.g. 'autofill extension', 'job application AI'). The tool uses Algolia's built-in 'similarQuery' under the hood, which OR-matches all words from your query (with stop words removed) and ranks by word-match count — so it handles both short keyword queries and verbose natural-language ones. Use tags='all' (default) to catch both stories and comments, 'story' for stories only, 'comment' for comments only. Set semantic=false to use a strict AND keyword match instead. Set excludeShowHN=true to drop Show HN launch stories (other founders' product launches) while keeping comments — useful when you only want ICP discussion threads, not pitchable launch surfaces. Hacker News has a small, narrow index — vary the angle (e.g. problem framing vs. user pain) between calls, never with a longer paraphrase of the same angle. Pass daysBack to restrict to recent threads; omit for all-time.",
   inputSchema: z.object({
     query: z
       .string()
@@ -137,6 +138,22 @@ export const searchHNTool = createTool({
       .describe(
         'When true (default), use Algolia similarQuery (broad OR-match — handles verbose queries). When false, use a strict keyword AND-match (precise but misses verbose queries).',
       ),
+    daysBack: z
+      .number()
+      .int()
+      .min(1)
+      .max(3650)
+      .optional()
+      .describe(
+        'Restrict to threads from the last N days. Omit for all-time. Useful for finding live, recent discussions rather than stale canonical threads.',
+      ),
+    excludeShowHN: z
+      .boolean()
+      .optional()
+      .default(false)
+      .describe(
+        "When true, drop Show HN launch stories (Algolia tag 'show_hn') from results. Comments are never tagged show_hn so they are unaffected. Use when you want ICP discussion threads only, not other founders' launch surfaces.",
+      ),
   }),
   outputSchema: z.object({
     query: z.string(),
@@ -166,7 +183,7 @@ export const searchHNTool = createTool({
     totalHits: z.number(),
   }),
   execute: async (inputData) => {
-    const { query, tags, limit, includeComments, semantic } = inputData;
+    const { query, tags, limit, includeComments, semantic, daysBack, excludeShowHN } = inputData;
     const limitNum = limit ?? 20;
 
     // single Algolia call:
@@ -174,11 +191,23 @@ export const searchHNTool = createTool({
     //   semantic=false → query       (AND-match, strict keyword)
     const params = new URLSearchParams();
     params.set(semantic === false ? 'query' : 'similarQuery', query);
-    params.set('hitsPerPage', String(limitNum));
+    if (excludeShowHN) {
+      const overFetch = Math.min(50, limitNum * 3);
+      params.set('hitsPerPage', String(overFetch));
+    } else {
+      params.set('hitsPerPage', String(limitNum));
+    }
     if (tags && tags !== 'all') params.set('tags', tags);
+    if (daysBack !== undefined) {
+      const since = Math.floor(Date.now() / 1000) - daysBack * 86400;
+      params.set('numericFilters', `created_at_i>${since}`);
+    }
 
     const hits = await algoliaSearch(params);
-    const finalHits = hits.slice(0, limitNum);
+    const filteredHits = excludeShowHN
+      ? hits.filter((h) => !h._tags?.includes('show_hn'))
+      : hits;
+    const finalHits = filteredHits.slice(0, limitNum);
 
     const results = await Promise.all(
       finalHits.map(async (hit) => {
