@@ -254,11 +254,35 @@ export function Console({
                 active={competitorsRunning}
               />
             ) : redditScan && (redditScan.top_threads?.length ?? 0) > 0 ? (
-              <GtmBriefView
-                brief={redditScan}
-                isAuthed={isAuthed}
-                signupHref={signupHref}
-              />
+              <>
+                {!readOnly && !hasHN && !loadingHN && (
+                  <div className="mb-4 flex items-center justify-between gap-3 rounded-lg border border-orange-400/25 bg-orange-400/5 px-3.5 py-3">
+                    <p className="text-xs leading-relaxed text-muted-foreground">
+                      <span className="font-medium text-foreground/85">
+                        Reddit done — {redditCount} thread
+                        {redditCount === 1 ? "" : "s"}.
+                      </span>{" "}
+                      Hacker News is still unscanned.
+                    </p>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        onSwitchResult("hn");
+                        onFindHN();
+                      }}
+                      disabled={busy}
+                      className="shrink-0 text-xs font-medium text-orange-400 transition-colors hover:underline disabled:opacity-50"
+                    >
+                      Scan HN →
+                    </button>
+                  </div>
+                )}
+                <GtmBriefView
+                  brief={redditScan}
+                  isAuthed={isAuthed}
+                  signupHref={signupHref}
+                />
+              </>
             ) : loadingReddit ? (
               <div className="flex min-h-full flex-col items-center justify-center py-8">
                 <DinoLoader
