@@ -94,6 +94,14 @@ export default function RootLayout({
               strategy="afterInteractive"
             />
           )}
+        {process.env.NEXT_PUBLIC_DATAFAST_WEBSITE_ID && (
+            <Script
+              data-website-id={process.env.NEXT_PUBLIC_DATAFAST_WEBSITE_ID}
+              data-domain="opencorp.live"
+              src="https://datafa.st/js/script.js"
+              strategy="afterInteractive"
+            />
+          )}
       </body>
     </html>
   );
