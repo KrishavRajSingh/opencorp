@@ -82,6 +82,16 @@ export default function RootLayout({
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} ${geistPixelSquare.variable} h-full antialiased`}
     >
+      <head>
+        {process.env.NEXT_PUBLIC_DATAFAST_WEBSITE_ID && (
+          <Script
+            data-website-id={process.env.NEXT_PUBLIC_DATAFAST_WEBSITE_ID}
+            data-domain="opencorp.live"
+            src="https://datafa.st/js/script.js"
+            strategy="afterInteractive"
+          />
+        )}
+      </head>
       <body className="min-h-full dark flex flex-col">
         {children}
         <Analytics />
@@ -91,14 +101,6 @@ export default function RootLayout({
               src={`${process.env.NEXT_PUBLIC_UMAMI_HOST_URL}/script.js`}
               data-website-id={process.env.NEXT_PUBLIC_UMAMI_WEBSITE_ID}
               data-host-url={process.env.NEXT_PUBLIC_UMAMI_HOST_URL}
-              strategy="afterInteractive"
-            />
-          )}
-        {process.env.NEXT_PUBLIC_DATAFAST_WEBSITE_ID && (
-            <Script
-              data-website-id={process.env.NEXT_PUBLIC_DATAFAST_WEBSITE_ID}
-              data-domain="opencorp.live"
-              src="https://datafa.st/js/script.js"
               strategy="afterInteractive"
             />
           )}
