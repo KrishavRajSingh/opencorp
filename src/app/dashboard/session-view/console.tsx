@@ -15,6 +15,7 @@ import type {
   ShowHNDraft,
 } from "@/lib/types/session";
 import { cn } from "@/lib/utils";
+import { trackEvent } from "@/lib/analytics";
 
 export type ConsoleProps = {
   status: "idle" | "competitors" | "reddit" | "hn";
@@ -267,6 +268,10 @@ export function Console({
                     <button
                       type="button"
                       onClick={() => {
+                        trackEvent({
+                          name: "channel_run_click",
+                          data: { channel: "hn" },
+                        });
                         onSwitchResult("hn");
                         onFindHN();
                       }}
@@ -301,7 +306,13 @@ export function Console({
                 {!readOnly && (
                   <button
                     type="button"
-                    onClick={onFindReddit}
+                    onClick={() => {
+                      trackEvent({
+                        name: "channel_run_click",
+                        data: { channel: "reddit" },
+                      });
+                      onFindReddit();
+                    }}
                     disabled={busy}
                     className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground/50 transition-colors hover:text-[#FF4500] disabled:opacity-50"
                   >
@@ -396,14 +407,20 @@ export function Console({
                           No HN threads found.
                         </p>
                         {!readOnly && (
-                          <button
-                            type="button"
-                            onClick={onFindHN}
-                            disabled={busy}
-                            className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground/50 transition-colors hover:text-orange-400 disabled:opacity-50"
-                          >
-                            re-run
-                          </button>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          trackEvent({
+                            name: "channel_run_click",
+                            data: { channel: "hn" },
+                          });
+                          onFindHN();
+                        }}
+                        disabled={busy}
+                        className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground/50 transition-colors hover:text-orange-400 disabled:opacity-50"
+                      >
+                        re-run
+                      </button>
                         )}
                       </div>
                     ) : null}

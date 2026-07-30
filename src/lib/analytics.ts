@@ -5,6 +5,7 @@ type WithData<TName extends string, TData> = { name: TName; data: TData };
 export type AnalyticsEvent =
   | WithData<"cta_open_dashboard", { location: "nav" }>
   | WithData<"cta_try_with_link", { location: "hero" | "footer" }>
+  | WithData<"channel_run_click", { channel: "reddit" | "hn" | "hn_draft" }>
   | { name: "auth_google_oauth_click" }
   | { name: "auth_signin_submit" }
   | { name: "auth_signup_submit" }

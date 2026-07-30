@@ -4,6 +4,7 @@ import { motion, useReducedMotion } from "motion/react";
 import { ArrowRight } from "lucide-react";
 import type { ReactNode } from "react";
 import { cn } from "@/lib/utils";
+import { trackEvent } from "@/lib/analytics";
 import { RedditIcon } from "@/components/dashboard/reddit-icon";
 import { HNIcon } from "@/components/dashboard/hn-icon";
 
@@ -143,7 +144,10 @@ export function ChannelArmingBay({
 
         <button
           type="button"
-          onClick={onRun}
+          onClick={() => {
+            trackEvent({ name: "channel_run_click", data: { channel } });
+            onRun();
+          }}
           disabled={busy}
           className={cn(
             "group/arm relative mt-4 flex w-full items-center justify-between gap-3 overflow-hidden rounded-lg border px-4 py-3.5 text-left transition-all",
@@ -198,7 +202,13 @@ export function ChannelArmingBay({
         {secondaryAction && (
           <button
             type="button"
-            onClick={secondaryAction.onRun}
+            onClick={() => {
+              trackEvent({
+                name: "channel_run_click",
+                data: { channel: "hn_draft" },
+              });
+              secondaryAction.onRun();
+            }}
             disabled={busy}
             className={cn(
               "group/arm-alt relative mt-2.5 flex w-full items-center justify-between gap-3 overflow-hidden rounded-lg border px-4 py-3.5 text-left transition-all",
