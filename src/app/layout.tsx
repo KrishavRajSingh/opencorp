@@ -98,9 +98,9 @@ export default function RootLayout({
         {process.env.NEXT_PUBLIC_UMAMI_WEBSITE_ID &&
           process.env.NEXT_PUBLIC_UMAMI_HOST_URL && (
             <Script
-              src={`${process.env.NEXT_PUBLIC_UMAMI_HOST_URL}/script.js`}
+              src="/u/script.js"
               data-website-id={process.env.NEXT_PUBLIC_UMAMI_WEBSITE_ID}
-              data-host-url={process.env.NEXT_PUBLIC_UMAMI_HOST_URL}
+              data-host-url="/u"
               strategy="afterInteractive"
             />
           )}
