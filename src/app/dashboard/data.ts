@@ -6,12 +6,14 @@ export const fetchSessions = cache(async (): Promise<SessionSummary[]> => {
   const supabase = await getDbClient();
   const { data, error } = await supabase
     .from("research_sessions")
-    .select("id, input, product_analyst_result, competitor_result, hn_threads_result, reddit_scan_result, updated_at")
+    .select(
+      "id, input, product_analyst_result, competitor_result, updated_at",
+    )
     // Upfront-created rows without a product result are in-flight or
     // abandoned stubs — never listed.
     .not("product_analyst_result", "is", null)
     .order("updated_at", { ascending: false })
-    .limit(50);
+    .limit(200);
 
   if (error) return [];
 
@@ -27,8 +29,6 @@ export const fetchSessions = cache(async (): Promise<SessionSummary[]> => {
       product_name: product?.productName ?? null,
       has_product: !!r.product_analyst_result,
       has_competitor: !!r.competitor_result,
-      has_hn: !!r.hn_threads_result,
-      has_reddit: !!r.reddit_scan_result,
       updated_at: r.updated_at as string,
     };
   });

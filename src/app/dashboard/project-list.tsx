@@ -17,8 +17,6 @@ export type SessionSummary = {
   product_name: string | null;
   has_product: boolean;
   has_competitor: boolean;
-  has_hn: boolean;
-  has_reddit: boolean;
   updated_at: string;
 };
 
