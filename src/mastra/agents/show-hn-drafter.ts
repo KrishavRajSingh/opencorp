@@ -84,9 +84,10 @@ export const showHNDraftOutputSchema = z.object({
       z
         .string()
         .startsWith('Show HN:', { message: 'title must begin with "Show HN:"' })
+        .max(80, { message: 'title must be 80 chars or fewer (HN limit)' })
         .regex(ASCII_ONLY, { message: 'title must be plain ASCII' }),
     )
-    .describe('Show HN: <headline>. Plain ASCII, no emojis. Single best title - pick the strongest of the 4 corpus patterns for this product.'),
+    .describe('Show HN: <headline>. Max 80 chars total (HN limit). Plain ASCII, no emojis. Single best title - pick the strongest of the 4 corpus patterns for this product.'),
   body: z
     .preprocess(toAscii, z.string().regex(ASCII_ONLY, { message: 'body must be plain ASCII' }))
     .refine((body) => !PLACEHOLDER_MARKERS.test(body), {
@@ -197,7 +198,7 @@ TITLE FORMAT:
 - Plain ASCII, no emoji, no marketing-speak.
 - Use only ASCII characters. Use - instead of en/em dashes, and use straight quotes.
 - No buzzwords: "revolutionary", "game-changing", "AI-powered", "next-gen", "best-in-class", "cutting-edge".
-- Begin with "Show HN:".
+- Begin with "Show HN:". Max 80 characters total - HN truncates longer titles.
 - Concrete over abstract. Numbers over adjectives. Specifics over categories.
 
 The caller will provide a WINNING-PATTERN CORPUS block with the top Show HN posts of the current year. Study 15+ titles from it silently - do not quote them. Use them as the model for what works.
