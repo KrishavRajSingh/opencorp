@@ -61,19 +61,34 @@ export const showHNDraftInputSchema = z.object({
 const ASCII_ONLY = /^[\x00-\x7F]*$/;
 const PLACEHOLDER_MARKERS = /\[(todo|placeholder|insert|not provided|your)\b[^\]]*\]/i;
 
+// ponytail: model emits curly quotes/em dashes intermittently; normalize common ones, strip the rest
+const toAscii = (s: unknown) =>
+  typeof s !== 'string'
+    ? s
+    : s
+        .replace(/[\u2018\u2019\u201A\u201B]/g, "'")
+        .replace(/[\u201C\u201D\u201E\u201F]/g, '"')
+        .replace(/[\u2013\u2014\u2015]/g, '-')
+        .replace(/\u2026/g, '...')
+        .replace(/\u00A0/g, ' ')
+        .replace(/[^\x00-\x7F]/g, '');
+
 function wordCount(text: string): number {
   return text.trim().split(/\s+/).filter(Boolean).length;
 }
 
 export const showHNDraftOutputSchema = z.object({
   title: z
-    .string()
-    .startsWith('Show HN:', { message: 'title must begin with "Show HN:"' })
-    .regex(ASCII_ONLY, { message: 'title must be plain ASCII' })
+    .preprocess(
+      toAscii,
+      z
+        .string()
+        .startsWith('Show HN:', { message: 'title must begin with "Show HN:"' })
+        .regex(ASCII_ONLY, { message: 'title must be plain ASCII' }),
+    )
     .describe('Show HN: <headline>. Plain ASCII, no emojis. Single best title - pick the strongest of the 4 corpus patterns for this product.'),
   body: z
-    .string()
-    .regex(ASCII_ONLY, { message: 'body must be plain ASCII' })
+    .preprocess(toAscii, z.string().regex(ASCII_ONLY, { message: 'body must be plain ASCII' }))
     .refine((body) => !PLACEHOLDER_MARKERS.test(body), {
       message: 'body must not contain placeholder markers',
     })
