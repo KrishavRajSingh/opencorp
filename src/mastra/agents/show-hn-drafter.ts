@@ -58,10 +58,9 @@ export const showHNDraftInputSchema = z.object({
   },
 );
 
-const ASCII_ONLY = /^[\x00-\x7F]*$/;
-const PLACEHOLDER_MARKERS = /\[(todo|placeholder|insert|not provided|your)\b[^\]]*\]/i;
-
-// ponytail: model emits curly quotes/em dashes intermittently; normalize common ones, strip the rest
+// ponytail: HN form rejects titles >80 chars and non-ASCII. Body is plain text. Everything else
+// (Show HN: prefix, word count, ASCII body, no placeholders) is convention - enforced in the prompt,
+// not the schema, so model output is preserved as-is.
 const toAscii = (s: unknown) =>
   typeof s !== 'string'
     ? s
@@ -73,34 +72,12 @@ const toAscii = (s: unknown) =>
         .replace(/\u00A0/g, ' ')
         .replace(/[^\x00-\x7F]/g, '');
 
-function wordCount(text: string): number {
-  return text.trim().split(/\s+/).filter(Boolean).length;
-}
-
 export const showHNDraftOutputSchema = z.object({
   title: z
-    .preprocess(
-      toAscii,
-      z
-        .string()
-        .startsWith('Show HN:', { message: 'title must begin with "Show HN:"' })
-        .max(80, { message: 'title must be 80 chars or fewer (HN limit)' })
-        .regex(ASCII_ONLY, { message: 'title must be plain ASCII' }),
-    )
-    .describe('Show HN: <headline>. Max 80 chars total (HN limit). Plain ASCII, no emojis. Single best title - pick the strongest of the 4 corpus patterns for this product.'),
-  body: z
-    .preprocess(toAscii, z.string().regex(ASCII_ONLY, { message: 'body must be plain ASCII' }))
-    .refine((body) => !PLACEHOLDER_MARKERS.test(body), {
-      message: 'body must not contain placeholder markers',
-    })
-    .refine(
-      (body) => {
-        const words = wordCount(body);
-        return words >= 100 && words <= 400;
-      },
-      { message: 'body must be 100-400 words' },
-    )
-    .describe('Post body, 100-400 words, first-person, plain ASCII, no marketing fluff, no placeholder markers. Write a complete, postable draft using only what PRODUCT CONTEXT provides.'),
+    .preprocess(toAscii, z.string().max(80, { message: 'title must be 80 chars or fewer' }))
+    .optional()
+    .describe('Show HN: <headline>. Max 80 chars total. Pick the strongest of the 4 corpus patterns.'),
+  body: z.string().optional().describe('Post body. First-person, plain text, no marketing fluff, no placeholder markers.'),
 });
 
 const submitDraftTool = {
@@ -165,7 +142,7 @@ TITLE PATTERNS - pick the single strongest title. Consider these 4 corpus patter
 
 If openSource is true, prefer the open-source or repo-URL framing.
 
-BODY (100-400 words, first-person, plain ASCII, no markdown, no bold, no links except demo URL and optional repo URL). Stop when you have said everything true - shorter beats longer, never pad to reach a word count:
+BODY (100-400 words, first-person, no markdown, no bold, no links except demo URL and optional repo URL). Stop when you have said everything true - shorter beats longer, never pad to reach a word count:
 - Open with the hook. Pick one of:
   * If buildMotivation is provided: "I built <Product> because <buildMotivation>."
   * If buildMotivation is null: write a generic, complete opener using the description (e.g. "I built <Product> - <one-line value prop from description>."). Do NOT use [TODO: ...] or any placeholder markers.
@@ -194,11 +171,11 @@ NO-FABRICATION RULE (HARD CONSTRAINT):
 - If a field is null or marked "[not provided]" in PRODUCT CONTEXT, omit the corresponding paragraph entirely. Do not write a generic stub. Do not write "N/A".
 - Never repeat the same fabricated detail across title and body.
 
-TITLE FORMAT:
-- Plain ASCII, no emoji, no marketing-speak.
-- Use only ASCII characters. Use - instead of en/em dashes, and use straight quotes.
+TITLE FORMAT - HARD CONSTRAINTS (tool call will be rejected otherwise):
+- HARD LIMIT: title MUST be 80 characters or fewer, including the "Show HN:" prefix. Count characters before sending. Aim for 50-78.
+- Must begin with "Show HN:" (literal, capital S/H/N, colon, space).
+- Plain ASCII only. No emoji, no en/em dashes (use -), no curly quotes (use straight ' and ").
 - No buzzwords: "revolutionary", "game-changing", "AI-powered", "next-gen", "best-in-class", "cutting-edge".
-- Begin with "Show HN:". Max 80 characters total - HN truncates longer titles.
 - Concrete over abstract. Numbers over adjectives. Specifics over categories.
 
 The caller will provide a WINNING-PATTERN CORPUS block with the top Show HN posts of the current year. Study 15+ titles from it silently - do not quote them. Use them as the model for what works.

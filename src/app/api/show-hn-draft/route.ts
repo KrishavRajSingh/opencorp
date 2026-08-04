@@ -50,7 +50,6 @@ export async function POST(request: Request) {
 
   try {
     const [corpus] = await Promise.all([fetchCorpus()]);
-
     const userQ = buildShowHNDraftPrompt(input, corpus);
 
     const result = await agent.generate(
@@ -58,39 +57,41 @@ export async function POST(request: Request) {
       { abortSignal: request.signal },
     );
 
-    let parsed: z.infer<typeof showHNDraftOutputSchema> | null = null;
+    let parsed: { title?: string; body?: string } = {};
     for (const tc of result.toolCalls ?? []) {
       if (tc.payload?.toolName === 'submitShowHNDraft') {
-        parsed = (tc.payload.args ?? {}) as z.infer<typeof showHNDraftOutputSchema>;
+        parsed = (tc.payload.args ?? {}) as { title?: string; body?: string };
         break;
       }
     }
-    if (!parsed) {
+    if (!parsed.title || !parsed.body) {
       const text = (result.text ?? '').trim();
       const match = text.match(/\{[\s\S]*\}/);
-      if (!match) throw new Error('showHNDrafter did not call submit tool or return JSON');
-      parsed = JSON.parse(match[0]);
+      if (match) {
+        try { parsed = JSON.parse(match[0]); } catch { /* keep what we have */ }
+      }
     }
 
     // DeepSeek sometimes wraps tool call args in objects instead of strings.
-    // Coerce to strings before Zod validation.
-    if (parsed && typeof parsed.title === 'object') {
-      parsed.title = typeof (parsed.title as Record<string, unknown>).text === 'string'
-        ? (parsed.title as Record<string, unknown>).text as string
-        : JSON.stringify(parsed.title);
-    }
-    if (parsed && typeof parsed.body === 'object') {
-      parsed.body = typeof (parsed.body as Record<string, unknown>).text === 'string'
-        ? (parsed.body as Record<string, unknown>).text as string
-        : JSON.stringify(parsed.body);
-    }
+    const coerce = (v: unknown): string | undefined =>
+      typeof v === 'string' ? v
+        : v && typeof v === 'object' && typeof (v as Record<string, unknown>).text === 'string'
+          ? (v as Record<string, unknown>).text as string
+          : v !== undefined ? JSON.stringify(v) : undefined;
+    const title = coerce(parsed.title);
+    const body = coerce(parsed.body);
 
-    const draft = showHNDraftOutputSchema.parse(parsed);
+    if (!title || !body) {
+      return new Response(
+        JSON.stringify({ error: 'model produced no draft', raw: parsed }),
+        { status: 422, headers: { 'Content-Type': 'application/json' } },
+      );
+    }
 
     return new Response(
       JSON.stringify({
-        title: draft.title,
-        body: draft.body,
+        title,
+        body,
         run_id: `showhn_${Date.now().toString(36)}`,
         generated_at: new Date().toISOString(),
       }),
