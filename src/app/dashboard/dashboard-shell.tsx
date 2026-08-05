@@ -46,7 +46,7 @@ export function DashboardShell({ sessions, activeName, user, children }: Props) 
 
   return (
     <TooltipProvider delayDuration={150}>
-      <div className="flex min-h-svh">
+      <div className="dark flex min-h-svh bg-background">
         <Sidebar
           sessions={sessions}
           activeId={activeId}

@@ -10,6 +10,15 @@
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
   --font-heading: var(--font-geist-pixel-square);
+  --font-display: var(--font-bricolage);
+  --color-paper: #e7e9ec;
+  --color-panel: #f5f6f8;
+  --color-ink: #10131a;
+  --color-ink-soft: #565d68;
+  --color-line: #c6cbd3;
+  --color-signal: #2351e6;
+  --color-reddit: #ff4500;
+  --color-hn: #ff6600;
   --color-brand: oklch(0.72 0.15 75);
   --color-brand-foreground: oklch(0.99 0 0);
   --color-sidebar-ring: var(--sidebar-ring);

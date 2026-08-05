@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Script from "next/script";
 import { Geist, Geist_Mono } from "next/font/google";
+import { Bricolage_Grotesque } from "next/font/google";
 import { GeistPixelSquare } from "geist/font/pixel";
 import { Analytics } from "@vercel/analytics/react";
 import "./globals.css";
@@ -15,6 +16,11 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+const bricolage = Bricolage_Grotesque({
+  variable: "--font-bricolage",
+  subsets: ["latin"],
+});
+
 const geistPixelSquare = GeistPixelSquare;
 
 export const metadata: Metadata = {
@@ -22,11 +28,11 @@ export const metadata: Metadata = {
     process.env.NEXT_PUBLIC_SITE_URL ?? "https://opencorp.live",
   ),
   title: {
-    default: "OpenCorp — Find Where Your Users Already Talk",
+    default: "OpenCorp — Find the thread your users are already on",
     template: "%s · OpenCorp",
   },
   description:
-    "Drop a product link. OpenCorp finds alternatives and the Reddit and Hacker News threads where your future users already talk.",
+    "Paste a product link. OpenCorp maps the Reddit threads and Hacker News discussions where your future users already talk, plus the alternatives they compare.",
   applicationName: "OpenCorp",
   keywords: [
     "user acquisition",
@@ -45,23 +51,23 @@ export const metadata: Metadata = {
     locale: "en_US",
     url: "https://opencorp.live",
     siteName: "OpenCorp",
-    title: "OpenCorp — Find Where Your Users Already Talk",
+    title: "OpenCorp — Find the thread your users are already on",
     description:
-      "Drop a product link. OpenCorp finds alternatives and the Reddit and Hacker News threads where your future users already talk.",
+      "Paste a product link. OpenCorp maps the Reddit threads and Hacker News discussions where your future users already talk, plus the alternatives they compare.",
     images: [
       {
         url: "/og.png",
         width: 1200,
         height: 630,
-        alt: "OpenCorp — Find Where Your Users Already Talk",
+        alt: "OpenCorp — Find the thread your users are already on",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "OpenCorp — Find Where Your Users Already Talk",
+    title: "OpenCorp — Find the thread your users are already on",
     description:
-      "Drop a product link. OpenCorp finds alternatives and the Reddit and Hacker News threads where your future users already talk.",
+      "Paste a product link. OpenCorp maps the Reddit threads and Hacker News discussions where your future users already talk, plus the alternatives they compare.",
     images: ["/og.png"],
     site: "@opencorpai",
     creator: "@opencorpai",
@@ -80,7 +86,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} ${geistPixelSquare.variable} h-full antialiased`}
+      className={`${geistSans.variable} ${geistMono.variable} ${geistPixelSquare.variable} ${bricolage.variable} h-full antialiased`}
     >
       <head>
         {process.env.NEXT_PUBLIC_DATAFAST_WEBSITE_ID && (
@@ -92,7 +98,7 @@ export default function RootLayout({
           />
         )}
       </head>
-      <body className="min-h-full dark flex flex-col">
+      <body className="min-h-full flex flex-col">
         {children}
         <Analytics />
         {process.env.NEXT_PUBLIC_UMAMI_WEBSITE_ID &&
