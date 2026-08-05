@@ -60,7 +60,7 @@ export default async function SharedSessionPage({
   const isAuthed = user.email !== null;
 
   return (
-    <div className="dark flex min-h-svh flex-col bg-background">
+    <div className="flex min-h-svh flex-col">
       <header className="sticky top-0 z-40 flex h-12 items-center justify-between border-b border-border/40 bg-background/80 px-6 backdrop-blur-sm">
         <Link href="/" className="flex items-center gap-1.5">
           <Logo size={16} />

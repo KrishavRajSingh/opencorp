@@ -17,7 +17,7 @@ export default async function AuthLayout({
   }
 
   return (
-    <div className="dark relative flex min-h-svh flex-col bg-background">
+    <div className="relative flex min-h-svh flex-col">
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
         <div className="absolute left-1/2 top-1/2 h-[480px] w-[640px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(ellipse_at_center,oklch(0.72_0.15_75_/_0.08),transparent_65%)] blur-2xl" />
       </div>

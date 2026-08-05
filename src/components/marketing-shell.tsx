@@ -2,11 +2,9 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { AnimatePresence, motion } from "motion/react";
 import { Mail, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { trackEvent } from "@/lib/analytics";
-import { cn } from "@/lib/utils";
 
 function GitHubIcon({ className }: { className?: string }) {
   return (
@@ -106,12 +104,12 @@ function GitHubStarsLink() {
       href={`https://github.com/${GITHUB_REPO}`}
       target="_blank"
       rel="noopener noreferrer"
-      className="inline-flex items-center gap-1.5 text-ink-soft transition-colors hover:text-ink"
+      className="inline-flex items-center gap-1.5 text-muted-foreground transition-colors hover:text-foreground"
       aria-label="GitHub"
     >
       <GitHubIcon className="size-5" />
       {stars !== null && (
-        <span className="inline-flex items-center gap-1 rounded-md border border-line bg-white/70 px-1.5 py-0.5 font-mono text-[10px] tabular-nums text-ink-soft">
+        <span className="inline-flex items-center gap-1 rounded-md border border-border/60 px-1.5 py-0.5 font-mono text-[10px] tabular-nums text-muted-foreground">
           <Star className="size-3 fill-current" />
           {formatStars(stars)}
         </span>
@@ -120,194 +118,70 @@ function GitHubStarsLink() {
   );
 }
 
-const NAV_LINKS = [
-  { href: "#benefits", label: "What you get" },
-  { href: "#how", label: "How it works" },
-  { href: "#faq", label: "FAQ" },
-];
-
-const EASE: [number, number, number, number] = [0.32, 0.72, 0, 1];
-
 function SiteNav() {
-  const [open, setOpen] = useState(false);
-
-  useEffect(() => {
-    if (!open) return;
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setOpen(false);
-    };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [open]);
-
   return (
-    <header className="fixed inset-x-0 top-0 z-50">
-      <nav
-        aria-label="Main"
-        className="relative z-10 mx-auto mt-6 flex w-max max-w-[calc(100%-2rem)] items-center gap-1 rounded-full border border-line bg-white/85 p-2 pl-3 shadow-[0_8px_32px_-16px_rgba(16,19,26,0.25)] backdrop-blur-xl transition-all duration-700 ease-[cubic-bezier(0.32,0.72,0,1)]"
-      >
-        <Link href="/" className="pr-2 font-display text-base font-semibold tracking-tight text-ink">
+    <header className="fixed top-0 z-50 w-full border-b border-border/50 bg-background/80 backdrop-blur-sm">
+      <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-6">
+        <Link href="/" className="font-heading text-lg tracking-tight">
           OpenCorp
         </Link>
-
-        <div className="hidden items-center gap-1 md:flex">
-          {NAV_LINKS.map((l) => (
-            <a
-              key={l.href}
-              href={l.href}
-              className="rounded-full px-3 py-1.5 text-sm text-ink-soft transition-colors hover:bg-ink/5 hover:text-ink"
-            >
-              {l.label}
-            </a>
-          ))}
-        </div>
-
-        <div className="hidden items-center gap-2 md:flex">
+        <div className="flex items-center gap-3">
           <GitHubStarsLink />
           <a
             href="https://discord.gg/ArQF8jtC9"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-ink-soft transition-colors hover:text-ink"
+            className="text-muted-foreground transition-colors hover:text-foreground"
             aria-label="Discord"
           >
             <DiscordIcon className="size-5" />
           </a>
-        </div>
-
-        <Button
-          size="sm"
-          asChild
-          className="hidden md:inline-flex"
-          onClick={() =>
-            trackEvent({ name: "cta_open_dashboard", data: { location: "nav" } })
-          }
-        >
-          <Link href="/dashboard">Try for free</Link>
-        </Button>
-
-        <button
-          type="button"
-          aria-expanded={open}
-          aria-controls="mobile-menu"
-          aria-label={open ? "Close menu" : "Open menu"}
-          onClick={() => setOpen((v) => !v)}
-          className="relative grid size-8 place-items-center rounded-full transition-colors hover:bg-ink/5 md:hidden"
-        >
-          <span
-            className={cn(
-              "absolute h-0.5 w-4 rounded-full bg-ink transition-all duration-500 ease-[cubic-bezier(0.32,0.72,0,1)]",
-              open ? "rotate-45" : "-translate-y-1",
-            )}
-          />
-          <span
-            className={cn(
-              "absolute h-0.5 w-4 rounded-full bg-ink transition-all duration-500 ease-[cubic-bezier(0.32,0.72,0,1)]",
-              open ? "-rotate-45" : "translate-y-1",
-            )}
-          />
-        </button>
-      </nav>
-
-      <AnimatePresence>
-        {open && (
-          <motion.div
-            id="mobile-menu"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.4, ease: EASE }}
-            onClick={() => setOpen(false)}
-            className="fixed inset-0 bg-paper/95 backdrop-blur-3xl"
+          <Button
+            size="sm"
+            asChild
+            onClick={() =>
+              trackEvent({ name: "cta_open_dashboard", data: { location: "nav" } })
+            }
           >
-            <div className="flex h-full flex-col justify-center gap-2 px-8">
-              {NAV_LINKS.map((l, i) => (
-                <motion.a
-                  key={l.href}
-                  href={l.href}
-                  onClick={() => setOpen(false)}
-                  initial={{ opacity: 0, y: 48 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.7, ease: EASE, delay: 0.05 + i * 0.08 }}
-                  className="font-display text-4xl font-semibold tracking-tight text-ink transition-colors hover:text-signal"
-                >
-                  {l.label}
-                </motion.a>
-              ))}
-              <motion.div
-                initial={{ opacity: 0, y: 48 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{
-                  duration: 0.7,
-                  ease: EASE,
-                  delay: 0.05 + NAV_LINKS.length * 0.08,
-                }}
-                className="mt-6 flex flex-col items-start gap-4"
-              >
-                <Button
-                  size="lg"
-                  asChild
-                  onClick={() =>
-                    trackEvent({
-                      name: "cta_open_dashboard",
-                      data: { location: "nav" },
-                    })
-                  }
-                >
-                  <Link href="/dashboard">Try for free</Link>
-                </Button>
-                <div className="flex items-center gap-4">
-                  <GitHubStarsLink />
-                  <a
-                    href="https://discord.gg/ArQF8jtC9"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-muted-foreground transition-colors hover:text-foreground"
-                    aria-label="Discord"
-                  >
-                    <DiscordIcon className="size-5" />
-                  </a>
-                </div>
-              </motion.div>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+            <Link href="/dashboard">Try for free</Link>
+          </Button>
+        </div>
+      </div>
     </header>
   );
 }
 
 function SiteFooter() {
   return (
-    <footer className="border-t border-line">
-      <div className="mx-auto flex max-w-6xl flex-col gap-6 px-6 py-8 text-sm text-ink-soft sm:flex-row sm:items-center sm:justify-between">
+    <footer className="border-t border-border/50">
+      <div className="mx-auto flex max-w-6xl flex-col gap-6 px-6 py-8 text-sm text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-4">
           <Link
             href="/"
-            className="font-display font-semibold text-ink transition-colors hover:text-signal"
+            className="font-heading text-foreground transition-colors hover:text-brand"
           >
             OpenCorp
           </Link>
           <span className="hidden sm:inline">
-            Find the thread your users are already on
+            Find where your users already talk
           </span>
         </div>
         <div className="flex flex-wrap items-center gap-5">
           <Link
             href="/privacy"
-            className="transition-colors hover:text-ink"
+            className="transition-colors hover:text-foreground"
           >
             Privacy
           </Link>
           <Link
             href="/terms"
-            className="transition-colors hover:text-ink"
+            className="transition-colors hover:text-foreground"
           >
             Terms
           </Link>
           <a
             href="mailto:krishavrajsingh@gmail.com"
-            className="inline-flex items-center gap-1.5 transition-colors hover:text-ink"
+            className="inline-flex items-center gap-1.5 transition-colors hover:text-foreground"
           >
             <Mail className="size-4" />
             krishavrajsingh@gmail.com
@@ -316,7 +190,7 @@ function SiteFooter() {
             href="https://www.linkedin.com/company/opencorpai"
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-1.5 transition-colors hover:text-ink"
+            className="inline-flex items-center gap-1.5 transition-colors hover:text-foreground"
             aria-label="LinkedIn"
           >
             <LinkedInIcon className="size-4" />
@@ -326,7 +200,7 @@ function SiteFooter() {
             href="https://x.com/opencorpai"
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-1.5 transition-colors hover:text-ink"
+            className="inline-flex items-center gap-1.5 transition-colors hover:text-foreground"
             aria-label="X (Twitter)"
           >
             <XIcon className="size-3.5" />
@@ -336,7 +210,7 @@ function SiteFooter() {
             href="https://discord.gg/ArQF8jtC9"
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-1.5 transition-colors hover:text-ink"
+            className="inline-flex items-center gap-1.5 transition-colors hover:text-foreground"
             aria-label="Discord"
           >
             <DiscordIcon className="size-4" />
@@ -350,16 +224,10 @@ function SiteFooter() {
 
 export function MarketingShell({ children }: { children: React.ReactNode }) {
   return (
-    <div className="flex min-h-svh flex-col bg-paper text-ink">
-      <a
-        href="#main"
-        className="sr-only z-[60] rounded-lg bg-ink px-3 py-2 text-sm text-paper focus:not-sr-only focus:fixed focus:left-4 focus:top-4"
-      >
-        Skip to content
-      </a>
+    <>
       <SiteNav />
-      <div id="main" className="flex-1">{children}</div>
+      {children}
       <SiteFooter />
-    </div>
+    </>
   );
 }
