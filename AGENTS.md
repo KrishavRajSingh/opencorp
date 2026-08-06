@@ -45,9 +45,3 @@ pnpm is the only package manager in use.
 ## Git
 
 - **Never commit.** The user is the only one who commits. Make file changes, but do not `git add`, `git commit`, or `git push` unless the user explicitly asks for that specific action. This includes commits to spec/plan/notes docs, code, config, and one-off fixes.
-
-<!-- TRIGGER.DEV SKILLS START -->
-## Trigger.dev agent skills
-
-This project has Trigger.dev agent skills installed in `.agents/skills/`. Before writing or changing Trigger.dev code (background tasks, scheduled tasks, realtime, or chat.agent AI agents), load the most relevant skill: `trigger-authoring-chat-agent`.
-<!-- TRIGGER.DEV SKILLS END -->
