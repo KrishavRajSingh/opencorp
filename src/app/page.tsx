@@ -3,8 +3,9 @@
 import { useState } from "react";
 import { motion } from "motion/react";
 import Link from "next/link";
-import { ArrowRight, Search } from "lucide-react";
+import { ArrowRight, Search, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import {
   Accordion,
   AccordionContent,
@@ -16,6 +17,9 @@ import {
   LandingConsole,
   type LandingConsoleData,
 } from "@/components/landing-console";
+import { RedditIcon } from "@/components/dashboard/reddit-icon";
+import { HNIcon } from "@/components/dashboard/hn-icon";
+import { cn } from "@/lib/utils";
 import { trackEvent } from "@/lib/analytics";
 
 const FOUNDER_HANDLE = "opencorpai";
@@ -360,104 +364,253 @@ const RESULTS: LandingConsoleData = {
   ],
 };
 
-const COLUMNS = [
+const CAPABILITIES = [
   {
-    n: "I",
-    kicker: "Inputs",
-    title: "Paste a product link",
-    body: "Drop your landing page URL. The Product Analyst reads the homepage, the pricing, the docs, the about — every signal that says who you are and who you are not.",
-    glyph: "→",
+    title: "Alternatives",
+    description:
+      "See who else is building something similar — each result with sources.",
+    icon: Users,
+    tone: "brand" as const,
   },
   {
-    n: "II",
-    kicker: "Method",
-    title: "Agents scan the map",
-    body: "Discovery picks its own queries and how many searches to run. It crosses alternatives, Reddit threads, and Hacker News discussions, re-ranked against your product, not your product name.",
-    glyph: "◍",
+    title: "Reddit",
+    description:
+      "Find threads where people describe the problem you solve.",
+    icon: RedditIcon,
+    tone: "reddit" as const,
   },
   {
-    n: "III",
-    kicker: "Output",
-    title: "Show up and talk",
-    body: "A ranked report with a reason attached to every item. You pick the conversations; you write the words. OpenCorp never posts, never comments, never pretends to be you.",
-    glyph: "◢",
+    title: "Hacker News",
+    description: "Surface launches and discussions worth joining.",
+    icon: HNIcon,
+    tone: "hn" as const,
   },
 ];
 
-const PLATE_EXCERPTS = {
-  alternatives: {
-    label: "ALTERNATIVES",
-    items: [
-      {
-        rank: "01",
-        name: "FormPilot",
-        meta: "github · chrome store · hacker news",
-        note: "Direct competitor. Privacy-first model and SPA setter bypass are the wedge.",
-      },
-      {
-        rank: "02",
-        name: "Superfill.ai",
-        meta: "github · hacker news",
-        note: "Open-source with a Q&A memory layer. Cite the LLM-agnostic backend.",
-      },
-      {
-        rank: "03",
-        name: "Fillify",
-        meta: "chrome store",
-        note: "Plain-language prompting. Lead with the no-account, local-keys story.",
-      },
-    ],
+function UrlCtaForm({ location }: { location: "hero" | "footer" }) {
+  const [value, setValue] = useState("");
+  return (
+    <form
+      action="/dashboard"
+      method="get"
+      onSubmit={(e) => {
+        // Accept bare domains ("filler.live") — normalize to a full URL
+        // before the native GET submits.
+        const input = e.currentTarget.elements.namedItem(
+          "url",
+        ) as HTMLInputElement;
+        const v = input.value.trim();
+        if (v && !/^https?:\/\//i.test(v)) {
+          input.value = `https://${v}`;
+        }
+        trackEvent({ name: "cta_try_with_link", data: { location } });
+      }}
+      className="mx-auto flex w-full max-w-xl flex-col gap-2 sm:flex-row"
+    >
+      <div className="flex flex-1 items-center gap-2 rounded-lg border border-border/60 bg-card/50 px-3 py-2.5 backdrop-blur-sm transition-colors focus-within:border-brand/50">
+        <Search className="size-4 shrink-0 text-muted-foreground" />
+        <input
+          type="text"
+          inputMode="url"
+          autoComplete="url"
+          spellCheck={false}
+          name="url"
+          required
+          value={value}
+          onChange={(e) => setValue(e.target.value)}
+          placeholder="your-product.com"
+          className="flex-1 bg-transparent text-sm text-foreground outline-none placeholder:text-muted-foreground/50"
+        />
+      </div>
+      <Button type="submit" size="lg" className="w-full sm:w-auto">
+        Find my users
+        <ArrowRight className="size-4" />
+      </Button>
+    </form>
+  );
+}
+
+const STEPS = [
+  {
+    n: "01",
+    title: "Paste a product link",
+    description:
+      "OpenCorp reads your landing page to learn what you do and who it's for.",
   },
-  reddit: {
-    label: "REDDIT",
-    items: [
-      {
-        rank: "01",
-        sub: "r/SaaS",
-        title: "How do you find early users without cold email spam?",
-        meta: "156 pts · 78 cmts · u/indie_hacker",
-        note: "Founders asking the exact question OpenCorp is built to answer.",
-      },
-      {
-        rank: "02",
-        sub: "r/Entrepreneur",
-        title: "Just shipped my first extension. Where do I talk to real users?",
-        meta: "63 pts · 39 cmts · u/shipped_it",
-        note: "Meta-thread. Show the workflow, not the pitch.",
-      },
-      {
-        rank: "03",
-        sub: "r/privacy",
-        title: "Do AI form fillers send my personal data to the cloud?",
-        meta: "97 pts · 54 cmts · u/no_telemetry",
-        note: "Privacy-first buyers actively rejecting cloud autofill.",
-      },
-    ],
+  {
+    n: "02",
+    title: "Agents scan the map",
+    description:
+      "Alternatives, Reddit threads, and Hacker News discussions, cross-referenced against your product.",
   },
-  hn: {
-    label: "HACKER NEWS",
-    items: [
-      {
-        rank: "01",
-        title: "Show HN: Superfill.ai – Open-source AI extension for intelligent form autofill",
-        meta: "4 pts · 0 cmts · superfill_team · 29 Jun",
-        note: "Direct competitor launch. Thread names the retype problem.",
-      },
-      {
-        rank: "02",
-        title: "Show HN: I made a Chrome extension to auto-apply to jobs",
-        meta: "12 pts · 3 cmts · instaapply · 26 Jun",
-        note: "Founder describes the loop. Active job-seeker discussion.",
-      },
-      {
-        rank: "03",
-        title: "Show HN: Drafting AI – Human-in-the-loop AI automation",
-        meta: "29 pts · 2 cmts · drafting_ai · 15 Jun",
-        note: "Thesis-aligned: AI drafts, humans submit.",
-      },
-    ],
+  {
+    n: "03",
+    title: "Show up where buyers are",
+    description:
+      "Ranked results with a reason attached to each. You show up and talk.",
   },
-};
+];
+
+function HowItWorks() {
+  return (
+    <section className="mx-auto max-w-5xl px-6 pb-8">
+      <div className="grid gap-3 sm:grid-cols-3">
+        {STEPS.map((step, i) => (
+          <motion.div
+            key={step.n}
+            initial={{ opacity: 0, y: 10 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-40px" }}
+            transition={{ duration: 0.4, delay: i * 0.06 }}
+            className="rounded-2xl border border-border/50 bg-card/40 p-5 backdrop-blur-sm"
+          >
+            <span className="font-mono text-xs text-brand/80">{step.n}</span>
+            <h3 className="mt-3 font-heading text-lg tracking-tight text-foreground">
+              {step.title}
+            </h3>
+            <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+              {step.description}
+            </p>
+          </motion.div>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function CapabilityCards() {
+  return (
+    <section className="mx-auto max-w-5xl px-6 pb-8 pt-4">
+      <div className="grid gap-3 sm:grid-cols-3">
+        {CAPABILITIES.map((cap, i) => {
+          const Icon = cap.icon;
+          const iconWrap = {
+            brand: "border-brand/30 bg-brand/10 text-brand",
+            reddit: "border-[#FF4500]/25 bg-[#FF4500]/10",
+            hn: "border-orange-400/25 bg-orange-400/10",
+          }[cap.tone];
+
+          return (
+            <motion.div
+              key={cap.title}
+              initial={{ opacity: 0, y: 10 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-40px" }}
+              transition={{ duration: 0.4, delay: i * 0.06 }}
+              className="rounded-2xl border border-border/50 bg-card/40 p-5 backdrop-blur-sm"
+            >
+              <div
+                className={cn(
+                  "mb-4 grid size-10 place-items-center overflow-hidden rounded-xl border",
+                  iconWrap,
+                )}
+              >
+                {cap.tone === "brand" ? (
+                  <Icon className="size-5" />
+                ) : (
+                  <Icon className="size-8" />
+                )}
+              </div>
+              <h3 className="font-heading text-lg tracking-tight text-foreground">
+                {cap.title}
+              </h3>
+              <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+                {cap.description}
+              </p>
+            </motion.div>
+          );
+        })}
+      </div>
+    </section>
+  );
+}
+
+function RealOutput() {
+  return (
+    <section id="report" className="scroll-mt-20 border-y border-border/50 bg-muted/20">
+      <div className="mx-auto max-w-6xl px-6 py-24">
+        <div className="grid items-start gap-12 lg:grid-cols-[1fr_1.05fr]">
+          <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 0.5 }}
+          >
+            <p className="text-sm font-medium text-brand">Example report</p>
+            <h2 className="mt-3 font-heading text-3xl leading-tight tracking-tight sm:text-4xl">
+              What OpenCorp finds for{" "}
+              <span className="text-brand">filler.live</span>
+            </h2>
+            <p className="mt-4 max-w-md text-sm leading-relaxed text-muted-foreground">
+              One product link in. Alternatives to study, Reddit threads where
+              buyers complain, and Hacker News discussions ready to join — all
+              in one report.
+            </p>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 0.5, delay: 0.08 }}
+          >
+            <LandingConsole data={RESULTS} />
+          </motion.div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function FounderSection() {
+  return (
+    <section className="mx-auto max-w-4xl px-6 py-24">
+      <motion.div
+        initial={{ opacity: 0, y: 12 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "-100px" }}
+        transition={{ duration: 0.5 }}
+        className="grid items-start gap-8 sm:grid-cols-[auto_1fr]"
+      >
+        <div className="flex items-center gap-3">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="https://github.com/KrishavRajSingh.png"
+            alt="Krishav Raj Singh"
+            loading="lazy"
+            className="size-14 rounded-full border border-border/60"
+          />
+          <div className="sm:hidden">
+            <div className="font-heading text-base">Founder</div>
+            <div className="text-[11px] text-muted-foreground">
+              {FOUNDER_HANDLE}
+            </div>
+          </div>
+        </div>
+        <div>
+          <div className="hidden sm:block">
+            <div className="font-heading text-base">Founder</div>
+            <div className="text-[11px] text-muted-foreground">
+              builder of filler.live
+            </div>
+          </div>
+          <h2 className="mt-3 font-heading text-2xl leading-snug tracking-tight sm:text-3xl">
+            I shipped filler.live and didn&apos;t know who my alternatives were
+            — or where people who needed it were already talking. So I built
+            OpenCorp: paste a link, get the map.
+          </h2>
+          <div className="mt-5 flex flex-wrap items-center gap-3">
+            <Button variant="outline" size="sm" asChild>
+              <Link href={`https://x.com/${FOUNDER_HANDLE}`} target="_blank">
+                Follow the build on X →
+              </Link>
+            </Button>
+          </div>
+        </div>
+      </motion.div>
+    </section>
+  );
+}
 
 const FAQS = [
   {
@@ -486,462 +639,60 @@ const FAQS = [
   },
 ];
 
-const HALFTONE_STYLE = {
-  backgroundImage:
-    "radial-gradient(circle, oklch(0.72 0.15 75 / 0.16) 1px, transparent 1.5px)",
-  backgroundSize: "6px 6px",
-};
-
-function UrlCtaForm({ location }: { location: "hero" | "footer" }) {
-  const [value, setValue] = useState("");
+function Faq() {
   return (
-    <form
-      action="/dashboard"
-      method="get"
-      onSubmit={(e) => {
-        const input = e.currentTarget.elements.namedItem(
-          "url",
-        ) as HTMLInputElement;
-        const v = input.value.trim();
-        if (v && !/^https?:\/\//i.test(v)) {
-          input.value = `https://${v}`;
-        }
-        trackEvent({ name: "cta_try_with_link", data: { location } });
-      }}
-      className="flex w-full max-w-xl flex-col gap-2 sm:flex-row"
-    >
-      <label className="flex flex-1 items-center gap-2 border border-brand/30 bg-background/60 px-3 py-2.5 transition-colors focus-within:border-brand">
-        <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-brand/80">
-          URL
-        </span>
-        <span className="h-4 w-px bg-brand/30" aria-hidden />
-        <input
-          type="text"
-          inputMode="url"
-          autoComplete="url"
-          spellCheck={false}
-          name="url"
-          required
-          value={value}
-          onChange={(e) => setValue(e.target.value)}
-          placeholder="your-product.com"
-          className="flex-1 bg-transparent font-mono text-sm text-foreground outline-none placeholder:text-muted-foreground/40"
-        />
-        <Search className="size-3.5 shrink-0 text-muted-foreground/50" />
-      </label>
-      <Button
-        type="submit"
-        size="lg"
-        className="w-full gap-2 rounded-none border border-brand bg-brand font-display text-sm font-black uppercase tracking-[0.12em] text-[oklch(0.12_0.02_60)] hover:bg-brand/90 sm:w-auto"
-      >
-        Find My Users
-        <ArrowRight className="size-4" />
-      </Button>
-    </form>
-  );
-}
-
-function MastheadRunning() {
-  return (
-    <div className="relative z-10 mt-14 border-b border-brand/25 bg-background">
-      <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-6 py-1.5 font-mono text-[10px] uppercase tracking-[0.22em] text-muted-foreground/70">
-        <span>Vol. 1 · No. 01</span>
-        <span className="hidden text-brand sm:inline">
-          The Map · August 2026
-        </span>
-        <span>Free · Open Source</span>
-      </div>
-    </div>
-  );
-}
-
-function Cover() {
-  return (
-    <section className="relative overflow-hidden border-b border-brand/25">
+    <section className="mx-auto max-w-3xl px-6 py-24">
       <motion.div
-        aria-hidden
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 1.4, ease: "easeOut" }}
-        className="pointer-events-none absolute inset-0"
-        style={HALFTONE_STYLE}
-      />
-      <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-brand/40 to-transparent" />
-
-      <div className="relative mx-auto grid max-w-6xl gap-10 px-6 pb-14 pt-10 sm:pb-20 sm:pt-14 lg:grid-cols-12 lg:gap-10 lg:pb-24 lg:pt-16">
-        <div className="min-w-0 lg:col-span-7">
-          <div className="flex items-center gap-3 font-mono text-[10px] uppercase tracking-[0.22em] text-brand/90">
-            <span className="inline-block h-px w-8 bg-brand" />
-            <span>Cover Story</span>
-            <span className="text-muted-foreground/50">·</span>
-            <span className="text-muted-foreground/70">The Map</span>
-          </div>
-
-          <h1 className="mt-5 font-display text-[2.8rem] font-black uppercase leading-[0.88] tracking-[-0.01em] text-foreground sm:text-[4rem] md:text-[5rem] lg:text-[5.6rem] xl:text-[6.4rem]">
-            Where
-            <br />
-            Your Users
-            <br />
-            <span className="text-brand">Already Talk.</span>
-          </h1>
-
-          <p className="mt-6 w-full max-w-md break-words font-serif text-base italic leading-relaxed text-foreground/85 sm:text-lg">
-            Paste a product link. OpenCorp reads the page, finds the
-            alternatives, the Reddit threads, the Hacker News discussions — and
-            tells you why each one is worth your time.
-          </p>
-
-          <div className="mt-8">
-            <UrlCtaForm location="hero" />
-            <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1 font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground/60">
-              <span>Free · No Card · No Account</span>
-              <Link
-                href="#plate-i"
-                className="text-brand/80 transition-colors hover:text-brand"
-              >
-                ↓ See Plate I
-              </Link>
-            </div>
-          </div>
-        </div>
-
-        <div id="plate-i" className="min-w-0 lg:col-span-5">
-          <Plate
-            number="Plate I"
-            title="Field Report"
-            byline="filler.live · Synthetic demo · Aug 2026"
-            caption="A synthetic excerpt from the report you receive — same shape as real output. 8 alternatives, 10 threads, 12 discussions, each with a written reason."
-          >
-            <LandingConsole data={RESULTS} />
-          </Plate>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function Plate({
-  number,
-  title,
-  byline,
-  caption,
-  children,
-}: {
-  number: string;
-  title: string;
-  byline: string;
-  caption: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <figure className="relative">
-      <div className="relative border border-brand/30 bg-card/60 p-3 sm:p-4">
-        <div className="absolute -top-3 left-3 inline-flex items-center gap-1.5 bg-background px-2 font-display text-[10px] font-black uppercase tracking-[0.18em] text-brand">
-          {number}
-        </div>
-        <div className="border-b border-brand/20 pb-2">
-          <div className="font-display text-base font-black uppercase leading-tight tracking-tight text-foreground sm:text-lg">
-            {title}
-          </div>
-          <div className="mt-0.5 font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground/60">
-            {byline}
-          </div>
-        </div>
-        <div className="mt-3">{children}</div>
-      </div>
-      <figcaption className="mt-2 font-serif text-[11px] italic leading-snug text-muted-foreground/80">
-        {caption}
-      </figcaption>
-    </figure>
-  );
-}
-
-function Mechanism() {
-  return (
-    <section className="border-b border-brand/25">
-      <div className="mx-auto max-w-6xl px-6 py-16 sm:py-20">
-        <header className="grid grid-cols-12 items-baseline gap-4 border-b border-brand/30 pb-3">
-          <div className="col-span-12 flex items-baseline gap-4 sm:col-span-3">
-            <span className="font-display text-3xl font-black uppercase leading-none text-brand sm:text-4xl">
-              I
-            </span>
-            <span className="font-mono text-[10px] uppercase tracking-[0.22em] text-muted-foreground/70">
-              The Method
-            </span>
-          </div>
-          <h2 className="col-span-12 font-display text-2xl font-black uppercase leading-tight tracking-tight text-foreground sm:col-span-9 sm:text-3xl">
-            How a link becomes a list of conversations.
-          </h2>
-        </header>
-
-        <div className="mt-8 grid gap-8 sm:grid-cols-3 sm:gap-6">
-          {COLUMNS.map((c) => (
-            <article
-              key={c.n}
-              className="relative border-t border-brand/20 pt-4 sm:border-t-0 sm:border-l sm:pt-0 sm:pl-5"
-            >
-              <div className="mb-3 flex items-baseline justify-between">
-                <span className="font-display text-5xl font-black uppercase leading-none tracking-tight text-brand sm:text-6xl">
-                  {c.n}
-                </span>
-                <span className="font-mono text-[10px] uppercase tracking-[0.22em] text-muted-foreground/60">
-                  {c.kicker}
-                </span>
-              </div>
-              <h3 className="font-display text-lg font-black uppercase leading-tight tracking-tight text-foreground">
-                {c.title}
-              </h3>
-              <p className="mt-2 font-serif text-sm leading-relaxed text-foreground/80">
-                {c.body}
-              </p>
-            </article>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function WhatsInTheReport() {
-  return (
-    <section className="border-b border-brand/25 bg-muted/20">
-      <div className="mx-auto max-w-6xl px-6 py-16 sm:py-20">
-        <header className="grid grid-cols-12 items-baseline gap-4 border-b border-brand/30 pb-3">
-          <div className="col-span-12 flex items-baseline gap-4 sm:col-span-3">
-            <span className="font-display text-3xl font-black uppercase leading-none text-brand sm:text-4xl">
-              II
-            </span>
-            <span className="font-mono text-[10px] uppercase tracking-[0.22em] text-muted-foreground/70">
-              Inside the Report
-            </span>
-          </div>
-          <h2 className="col-span-12 font-display text-2xl font-black uppercase leading-tight tracking-tight text-foreground sm:col-span-9 sm:text-3xl">
-            Three columns. Every result with a written reason.
-          </h2>
-        </header>
-
-        <div className="mt-8 grid gap-6 md:grid-cols-3">
-          {(
-            [
-              PLATE_EXCERPTS.alternatives,
-              PLATE_EXCERPTS.reddit,
-              PLATE_EXCERPTS.hn,
-            ] as const
-          ).map((col) => (
-            <article
-              key={col.label}
-              className="flex flex-col border border-brand/20 bg-card/40"
-            >
-              <header className="flex items-center justify-between border-b border-brand/20 px-3 py-2">
-                <span className="font-display text-sm font-black uppercase tracking-[0.12em] text-foreground">
-                  {col.label}
-                </span>
-                <span className="font-mono text-[10px] tabular-nums uppercase tracking-[0.18em] text-muted-foreground/60">
-                  {String(col.items.length).padStart(2, "0")} of many
-                </span>
-              </header>
-              <ul className="divide-y divide-brand/10">
-                {col.items.map((item) => {
-                  const it = item as Record<string, string>;
-                  return (
-                    <li
-                      key={it.rank}
-                      className="grid grid-cols-[auto_1fr] gap-3 px-3 py-3"
-                    >
-                      <span className="font-mono text-[10px] tabular-nums text-brand/80">
-                        {it.rank}
-                      </span>
-                      <div className="min-w-0">
-                        {it.sub ? (
-                          <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground/60">
-                            {it.sub}
-                          </div>
-                        ) : null}
-                        <p className="font-serif text-[13px] leading-snug text-foreground/90">
-                          {it.title ?? it.name}
-                        </p>
-                        <p className="mt-1 font-mono text-[10px] uppercase tracking-[0.12em] text-muted-foreground/55">
-                          {it.meta}
-                        </p>
-                        <p className="mt-1.5 font-serif text-[12px] italic leading-snug text-muted-foreground/80">
-                          {it.note}
-                        </p>
-                      </div>
-                    </li>
-                  );
-                })}
-              </ul>
-            </article>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function FounderLetter() {
-  return (
-    <section className="border-b border-brand/25">
-      <div className="mx-auto max-w-4xl px-6 py-16 sm:py-20">
-        <header className="grid grid-cols-12 items-baseline gap-4 border-b border-brand/30 pb-3">
-          <div className="col-span-12 flex items-baseline gap-4 sm:col-span-3">
-            <span className="font-display text-3xl font-black uppercase leading-none text-brand sm:text-4xl">
-              III
-            </span>
-            <span className="font-mono text-[10px] uppercase tracking-[0.22em] text-muted-foreground/70">
-              Letter
-            </span>
-          </div>
-          <h2 className="col-span-12 font-display text-2xl font-black uppercase leading-tight tracking-tight text-foreground sm:col-span-9 sm:text-3xl">
-            From the editor.
-          </h2>
-        </header>
-
-        <div className="mt-8 grid items-start gap-8 sm:grid-cols-[auto_1fr]">
-          <div>
-            <div className="relative inline-block">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src="https://github.com/KrishavRajSingh.png"
-                alt="Krishav Raj Singh"
-                loading="lazy"
-                className="size-20 border border-brand/30 grayscale sm:size-24"
-              />
-              <span className="absolute -bottom-2 left-1/2 -translate-x-1/2 bg-background px-2 font-mono text-[9px] uppercase tracking-[0.22em] text-brand/80">
-                Editor
-              </span>
-            </div>
-          </div>
-          <div>
-            <div className="font-mono text-[10px] uppercase tracking-[0.22em] text-muted-foreground/60">
-              Krishav Raj Singh · @opencorpai · Builder of filler.live
-            </div>
-            <p className="mt-4 font-serif text-lg italic leading-relaxed text-foreground sm:text-xl">
-              I shipped filler.live and didn&apos;t know who my alternatives
-              were — or where people who needed it were already talking. So I
-              built OpenCorp: paste a link, get the map. No posting, no bots,
-              no pretending to be you. Just the next conversation, with a
-              reason attached.
-            </p>
-            <p className="mt-3 font-serif text-base leading-relaxed text-foreground/75">
-              The platform does the recon. You show up and talk.
-            </p>
-            <div className="mt-5 flex flex-wrap items-center gap-3">
-              <Button
-                variant="outline"
-                size="sm"
-                asChild
-                className="rounded-none border-brand/40 font-display text-[11px] font-black uppercase tracking-[0.16em]"
-              >
-                <Link
-                  href={`https://x.com/${FOUNDER_HANDLE}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  Follow the build on X →
-                </Link>
-              </Button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function ReaderMail() {
-  return (
-    <section className="border-b border-brand/25 bg-muted/20">
-      <div className="mx-auto max-w-3xl px-6 py-16 sm:py-20">
-        <header className="grid grid-cols-12 items-baseline gap-4 border-b border-brand/30 pb-3">
-          <div className="col-span-12 flex items-baseline gap-4 sm:col-span-3">
-            <span className="font-display text-3xl font-black uppercase leading-none text-brand sm:text-4xl">
-              IV
-            </span>
-            <span className="font-mono text-[10px] uppercase tracking-[0.22em] text-muted-foreground/70">
-              Reader Mail
-            </span>
-          </div>
-          <h2 className="col-span-12 font-display text-2xl font-black uppercase leading-tight tracking-tight text-foreground sm:col-span-9 sm:text-3xl">
-            Questions, answered.
-          </h2>
-        </header>
-
-        <Accordion type="single" collapsible className="mt-6">
+        initial={{ opacity: 0, y: 12 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "-100px" }}
+        transition={{ duration: 0.5 }}
+      >
+        <h2 className="text-center font-heading text-3xl tracking-tight sm:text-4xl">
+          Questions, answered
+        </h2>
+        <Accordion type="single" collapsible className="mt-8">
           {FAQS.map((f, i) => (
-            <AccordionItem
-              key={f.q}
-              value={`q-${i}`}
-              className="border-brand/20"
-            >
-              <AccordionTrigger className="font-serif text-base italic text-foreground sm:text-lg [&>svg]:text-brand">
-                <span className="mr-3 font-mono text-[10px] not-italic uppercase tracking-[0.18em] text-brand/80 tabular-nums">
-                  Q.{String(i + 1).padStart(2, "0")}
-                </span>
+            <AccordionItem key={f.q} value={`q-${i}`}>
+              <AccordionTrigger className="text-base">
                 {f.q}
               </AccordionTrigger>
-              <AccordionContent className="font-serif text-[15px] leading-relaxed text-foreground/80">
+              <AccordionContent className="leading-relaxed text-muted-foreground">
                 {f.a}
               </AccordionContent>
             </AccordionItem>
           ))}
         </Accordion>
-      </div>
+      </motion.div>
     </section>
   );
 }
 
-function Subscription() {
+function TryItWidget() {
   return (
-    <section className="relative overflow-hidden border-b border-brand/25">
-      <motion.div
-        aria-hidden
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 1.6, ease: "easeOut", delay: 0.2 }}
-        className="pointer-events-none absolute inset-0"
-        style={HALFTONE_STYLE}
-      />
-      <div className="relative mx-auto max-w-3xl px-6 py-16 text-center sm:py-24">
-        <div className="font-mono text-[10px] uppercase tracking-[0.22em] text-brand/80">
-          Section V · Subscribe
-        </div>
-        <h2 className="mt-3 font-display text-4xl font-black uppercase leading-[0.9] tracking-[0.02em] text-foreground sm:text-6xl">
-          Begin Your <span className="text-brand">Subscription.</span>
-        </h2>
-        <p className="mt-4 font-serif text-base italic text-foreground/80 sm:text-lg">
-          Paste your product link. Receive the next report. Show up where it
-          points.
-        </p>
-        <div className="mx-auto mt-8 max-w-xl">
-          <UrlCtaForm location="footer" />
-        </div>
-        <p className="mt-4 font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground/55">
-          Free &amp; open source · account unlocks full thread lists
-        </p>
-      </div>
-    </section>
-  );
-}
-
-function Colophon() {
-  return (
-    <section className="bg-background">
-      <div className="mx-auto max-w-6xl px-6 py-8">
-        <div className="grid gap-4 border-t border-brand/20 pt-6 font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground/60 sm:grid-cols-3">
-          <div>
-            <span className="text-brand/80">Colophon</span> · Set in Anton,
-            Source Serif 4, and Geist Mono.
+    <section className="border-t border-border/50 bg-muted/20">
+      <div className="mx-auto max-w-3xl px-6 py-24">
+        <motion.div
+          initial={{ opacity: 0, y: 12 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-100px" }}
+          transition={{ duration: 0.5 }}
+          className="text-center"
+        >
+          <h2 className="font-heading text-3xl tracking-tight sm:text-4xl">
+            Find your users
+          </h2>
+          <p className="mt-3 text-sm text-muted-foreground">
+            Paste your product link — see who&apos;s already looking for what
+            you built.
+          </p>
+          <div className="mt-8">
+            <UrlCtaForm location="footer" />
           </div>
-          <div className="sm:text-center">
-            <span className="text-brand/80">Edition</span> · Vol. 1, No. 01 ·
-            The Map
-          </div>
-          <div className="sm:text-right">
-            <span className="text-brand/80">Print</span> · Free · Open Source
-            (MIT-style)
-          </div>
-        </div>
+          <p className="mt-3 text-xs text-muted-foreground/70">
+            Free & open source · account unlocks full thread lists
+          </p>
+        </motion.div>
       </div>
     </section>
   );
@@ -950,15 +701,48 @@ function Colophon() {
 export default function Page() {
   return (
     <MarketingShell>
-      <MastheadRunning />
       <main className="flex-1">
-        <Cover />
-        <Mechanism />
-        <WhatsInTheReport />
-        <FounderLetter />
-        <ReaderMail />
-        <Subscription />
-        <Colophon />
+        <section className="relative flex flex-col items-center overflow-hidden px-6 pb-12 pt-28 sm:pt-32">
+          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top,oklch(0.72_0.15_75_/_0.08),transparent_60%)]" />
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.55 }}
+            className="relative z-10 mx-auto flex max-w-3xl flex-col items-center text-center"
+          >
+            <Badge variant="secondary" className="mb-6">
+              User acquisition for builders
+            </Badge>
+            <h1 className="font-heading text-4xl leading-tight tracking-tight sm:text-5xl md:text-6xl lg:text-7xl">
+              Find where your users
+              <br />
+              already talk
+            </h1>
+            <p className="mt-6 max-w-xl text-balance text-lg text-muted-foreground">
+              OpenCorp finds the people already looking for what you built —
+              and shows you exactly where to reach them.
+            </p>
+            <div className="mt-8 w-full max-w-xl">
+              <UrlCtaForm location="hero" />
+              <div className="mt-3 flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-xs text-muted-foreground/70">
+                <span>Free & open source · No credit card</span>
+                <Link
+                  href="#report"
+                  className="inline-flex items-center gap-1 text-muted-foreground/80 transition-colors hover:text-foreground"
+                >
+                  See example report ↓
+                </Link>
+              </div>
+            </div>
+          </motion.div>
+        </section>
+
+        <HowItWorks />
+        <CapabilityCards />
+        <RealOutput />
+        <FounderSection />
+        <Faq />
+        <TryItWidget />
       </main>
     </MarketingShell>
   );
