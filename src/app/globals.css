@@ -10,6 +10,10 @@
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
   --font-heading: var(--font-geist-pixel-square);
+  --font-display: var(--font-anton);
+  --font-serif: var(--font-patent-serif);
+  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-geist-sans);
   --color-brand: oklch(0.72 0.15 75);
   --color-brand-foreground: oklch(0.99 0 0);
   --color-sidebar-ring: var(--sidebar-ring);
@@ -132,6 +136,7 @@
   }
   body {
     @apply bg-background text-foreground;
+    overflow-x: hidden;
   }
   html {
     @apply font-sans;
