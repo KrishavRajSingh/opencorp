@@ -12,6 +12,20 @@ pnpm lint         # ESLint only (no typecheck script)
 
 pnpm is the only package manager in use.
 
+## Web analytics (Vercel CLI)
+
+When asked for analytics/traffic/stats, query **Vercel Web Analytics** via the `vercel` CLI:
+
+```bash
+npx -y vercel@58.7.1 metrics vercel.analytics_pageview.count --since 3d --granularity 1d --all --group-by project_name
+```
+
+- No `--from`/`--to` flags — specific day range uses `--since <ISO date> --until <ISO date>` (e.g. `--since 2026-08-06 --until 2026-08-07 --granularity 1d`).
+- Default aggregation is `sum` (pageviews). Unique visitors: `-a unique/visitor_id`.
+- Local `vercel` binary is old (50.4.0) and lacks `metrics` — always use `npx -y vercel@58.7.1`.
+- No project is linked in this repo; use `--all` or `--project <name>` (main project: `opencompany`).
+- For deeper views: `--group-by` by `request_path` / `country`, `--aggregation unique/visitor_id` for unique visitors, `--prod` to limit to production. Docs: https://vercel.com/docs/analytics/accessing-metrics-with-vercel-cli
+
 ## Architecture
 
 - **`src/app/`** — Next.js App Router pages and layout. Dark mode is hardcoded in `layout.tsx` (class `dark` on `<body>`). Headings use `GeistPixelSquare` from `geist/font/pixel` (`--font-heading`).
