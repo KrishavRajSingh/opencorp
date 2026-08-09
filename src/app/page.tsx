@@ -3,9 +3,8 @@
 import { useState } from "react";
 import { motion } from "motion/react";
 import Link from "next/link";
-import { ArrowRight, Search, Users } from "lucide-react";
+import { ArrowRight, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import {
   Accordion,
   AccordionContent,
@@ -17,12 +16,28 @@ import {
   LandingConsole,
   type LandingConsoleData,
 } from "@/components/landing-console";
-import { RedditIcon } from "@/components/dashboard/reddit-icon";
-import { HNIcon } from "@/components/dashboard/hn-icon";
-import { cn } from "@/lib/utils";
 import { trackEvent } from "@/lib/analytics";
 
 const FOUNDER_HANDLE = "opencorpai";
+
+const FAQS = [
+  {
+    q: "What do I actually get?",
+    a: "A ranked map of where your next users already are: alternatives to study, Reddit threads where buyers describe the problem you solve, and Hacker News discussions ready to join — each with a reason attached.",
+  },
+  {
+    q: "Is it really free?",
+    a: "Yes. OpenCorp is open source with no pricing tier. A free account unlocks full thread lists and saves your reports.",
+  },
+  {
+    q: "How is this different from searching Reddit myself?",
+    a: "OpenCorp reads your product page first, then searches for the problem you solve — not your product name — and ranks threads with a reason attached to each.",
+  },
+  {
+    q: "Does it post or comment for me?",
+    a: "No auto-posting. OpenCorp finds where to show up and why. The words you write are yours.",
+  },
+];
 
 const RESULTS: LandingConsoleData = {
   domain: "filler.live",
@@ -364,29 +379,6 @@ const RESULTS: LandingConsoleData = {
   ],
 };
 
-const CAPABILITIES = [
-  {
-    title: "Alternatives",
-    description:
-      "See who else is building something similar — each result with sources.",
-    icon: Users,
-    tone: "brand" as const,
-  },
-  {
-    title: "Reddit",
-    description:
-      "Find threads where people describe the problem you solve.",
-    icon: RedditIcon,
-    tone: "reddit" as const,
-  },
-  {
-    title: "Hacker News",
-    description: "Surface launches and discussions worth joining.",
-    icon: HNIcon,
-    tone: "hn" as const,
-  },
-];
-
 function UrlCtaForm({ location }: { location: "hero" | "footer" }) {
   const [value, setValue] = useState("");
   return (
@@ -427,138 +419,6 @@ function UrlCtaForm({ location }: { location: "hero" | "footer" }) {
         <ArrowRight className="size-4" />
       </Button>
     </form>
-  );
-}
-
-const STEPS = [
-  {
-    n: "01",
-    title: "Paste a product link",
-    description:
-      "OpenCorp reads your landing page to learn what you do and who it's for.",
-  },
-  {
-    n: "02",
-    title: "Agents scan the map",
-    description:
-      "Alternatives, Reddit threads, and Hacker News discussions, cross-referenced against your product.",
-  },
-  {
-    n: "03",
-    title: "Show up where buyers are",
-    description:
-      "Ranked results with a reason attached to each. You show up and talk.",
-  },
-];
-
-function HowItWorks() {
-  return (
-    <section className="mx-auto max-w-5xl px-6 pb-8">
-      <div className="grid gap-3 sm:grid-cols-3">
-        {STEPS.map((step, i) => (
-          <motion.div
-            key={step.n}
-            initial={{ opacity: 0, y: 10 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-40px" }}
-            transition={{ duration: 0.4, delay: i * 0.06 }}
-            className="rounded-2xl border border-border/50 bg-card/40 p-5 backdrop-blur-sm"
-          >
-            <span className="font-mono text-xs text-brand/80">{step.n}</span>
-            <h3 className="mt-3 font-heading text-lg tracking-tight text-foreground">
-              {step.title}
-            </h3>
-            <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-              {step.description}
-            </p>
-          </motion.div>
-        ))}
-      </div>
-    </section>
-  );
-}
-
-function CapabilityCards() {
-  return (
-    <section className="mx-auto max-w-5xl px-6 pb-8 pt-4">
-      <div className="grid gap-3 sm:grid-cols-3">
-        {CAPABILITIES.map((cap, i) => {
-          const Icon = cap.icon;
-          const iconWrap = {
-            brand: "border-brand/30 bg-brand/10 text-brand",
-            reddit: "border-[#FF4500]/25 bg-[#FF4500]/10",
-            hn: "border-orange-400/25 bg-orange-400/10",
-          }[cap.tone];
-
-          return (
-            <motion.div
-              key={cap.title}
-              initial={{ opacity: 0, y: 10 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-40px" }}
-              transition={{ duration: 0.4, delay: i * 0.06 }}
-              className="rounded-2xl border border-border/50 bg-card/40 p-5 backdrop-blur-sm"
-            >
-              <div
-                className={cn(
-                  "mb-4 grid size-10 place-items-center overflow-hidden rounded-xl border",
-                  iconWrap,
-                )}
-              >
-                {cap.tone === "brand" ? (
-                  <Icon className="size-5" />
-                ) : (
-                  <Icon className="size-8" />
-                )}
-              </div>
-              <h3 className="font-heading text-lg tracking-tight text-foreground">
-                {cap.title}
-              </h3>
-              <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-                {cap.description}
-              </p>
-            </motion.div>
-          );
-        })}
-      </div>
-    </section>
-  );
-}
-
-function RealOutput() {
-  return (
-    <section id="report" className="scroll-mt-20 border-y border-border/50 bg-muted/20">
-      <div className="mx-auto max-w-6xl px-6 py-24">
-        <div className="grid items-start gap-12 lg:grid-cols-[1fr_1.05fr]">
-          <motion.div
-            initial={{ opacity: 0, y: 12 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-100px" }}
-            transition={{ duration: 0.5 }}
-          >
-            <p className="text-sm font-medium text-brand">Example report</p>
-            <h2 className="mt-3 font-heading text-3xl leading-tight tracking-tight sm:text-4xl">
-              What OpenCorp finds for{" "}
-              <span className="text-brand">filler.live</span>
-            </h2>
-            <p className="mt-4 max-w-md text-sm leading-relaxed text-muted-foreground">
-              One product link in. Alternatives to study, Reddit threads where
-              buyers complain, and Hacker News discussions ready to join — all
-              in one report.
-            </p>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 12 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-100px" }}
-            transition={{ duration: 0.5, delay: 0.08 }}
-          >
-            <LandingConsole data={RESULTS} />
-          </motion.div>
-        </div>
-      </div>
-    </section>
   );
 }
 
@@ -612,33 +472,6 @@ function FounderSection() {
   );
 }
 
-const FAQS = [
-  {
-    q: "What do I actually get?",
-    a: "A ranked map of where your next users already are: alternatives to study, Reddit threads where buyers describe the problem you solve, and Hacker News discussions ready to join — each with a reason attached.",
-  },
-  {
-    q: "Is it really free?",
-    a: "Yes. OpenCorp is open source with no pricing tier. A free account unlocks full thread lists and saves your reports.",
-  },
-  {
-    q: "Where does the data come from?",
-    a: "Public sources only: Reddit threads, Hacker News discussions, and live web results for alternatives. Every item links back to its source.",
-  },
-  {
-    q: "What do I get without an account?",
-    a: "The full alternatives list plus a preview of the top Reddit and Hacker News threads. Sign up free to see everything and keep your history.",
-  },
-  {
-    q: "How is this different from searching Reddit myself?",
-    a: "OpenCorp reads your product page first, then searches for the problem you solve — not your product name — and ranks threads with a reason attached to each.",
-  },
-  {
-    q: "Does it post or comment for me?",
-    a: "No auto-posting. OpenCorp finds where to show up and why. The words you write are yours.",
-  },
-];
-
 function Faq() {
   return (
     <section className="mx-auto max-w-3xl px-6 py-24">
@@ -680,10 +513,10 @@ function TryItWidget() {
           className="text-center"
         >
           <h2 className="font-heading text-3xl tracking-tight sm:text-4xl">
-            Find your users
+            Get the map.
           </h2>
           <p className="mt-3 text-sm text-muted-foreground">
-            Paste your product link — see who&apos;s already looking for what
+            Paste your product link. See who&apos;s already looking for what
             you built.
           </p>
           <div className="mt-8">
@@ -702,44 +535,53 @@ export default function Page() {
   return (
     <MarketingShell>
       <main className="flex-1">
-        <section className="relative flex flex-col items-center overflow-hidden px-6 pb-12 pt-28 sm:pt-32">
-          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top,oklch(0.72_0.15_75_/_0.08),transparent_60%)]" />
-          <motion.div
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.55 }}
-            className="relative z-10 mx-auto flex max-w-3xl flex-col items-center text-center"
-          >
-            <Badge variant="secondary" className="mb-6">
-              User acquisition for builders
-            </Badge>
-            <h1 className="font-heading text-4xl leading-tight tracking-tight sm:text-5xl md:text-6xl lg:text-7xl">
-              Find where your users
-              <br />
-              already talk
-            </h1>
-            <p className="mt-6 max-w-xl text-balance text-lg text-muted-foreground">
-              OpenCorp finds the people already looking for what you built —
-              and shows you exactly where to reach them.
-            </p>
-            <div className="mt-8 w-full max-w-xl">
-              <UrlCtaForm location="hero" />
-              <div className="mt-3 flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-xs text-muted-foreground/70">
-                <span>Free & open source · No credit card</span>
-                <Link
-                  href="#report"
-                  className="inline-flex items-center gap-1 text-muted-foreground/80 transition-colors hover:text-foreground"
-                >
-                  See example report ↓
-                </Link>
+        <section className="relative overflow-hidden px-6 pb-20 pt-24 sm:pt-28">
+          <div className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[520px] bg-[radial-gradient(ellipse_at_top_left,oklch(0.72_0.15_75_/_0.12),transparent_55%)]" />
+          <div className="mx-auto grid max-w-6xl items-center gap-12 lg:grid-cols-[1.05fr_1fr] lg:gap-14">
+            <div className="flex flex-col">
+              <div className="mb-6 inline-flex w-fit items-center gap-2 rounded-full border border-border/50 bg-card/40 px-3 py-1 font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground backdrop-blur-sm">
+                <span className="size-1 rounded-full bg-brand" />
+                Market intel for builders
+              </div>
+              <h1 className="font-heading text-[2.4rem] leading-[1.05] tracking-tight sm:text-5xl md:text-[3.4rem]">
+                Your next users
+                <br />
+                are already talking.
+                <br />
+                <span className="text-muted-foreground/60">We find them.</span>
+              </h1>
+              <p className="mt-6 max-w-md text-base text-muted-foreground sm:text-lg">
+                Paste your product link. OpenCorp maps your alternatives, ranks
+                the Reddit threads where buyers describe the problem you solve,
+                and queues the Hacker News discussions ready to join — each
+                with a reason.
+              </p>
+              <div className="mt-7 w-full max-w-xl">
+                <UrlCtaForm location="hero" />
+                <div className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground/70">
+                  <span>Free & open source</span>
+                  <span className="text-border">·</span>
+                  <span>No credit card</span>
+                  <span className="text-border">·</span>
+                  <span>2-min signup</span>
+                </div>
               </div>
             </div>
-          </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.15 }}
+              className="relative"
+            >
+              <div className="pointer-events-none absolute -inset-4 rounded-3xl bg-gradient-to-br from-brand/20 via-brand/5 to-emerald-400/10 opacity-70 blur-2xl" />
+              <div className="relative">
+                <LandingConsole data={RESULTS} />
+              </div>
+            </motion.div>
+          </div>
         </section>
 
-        <HowItWorks />
-        <CapabilityCards />
-        <RealOutput />
         <FounderSection />
         <Faq />
         <TryItWidget />

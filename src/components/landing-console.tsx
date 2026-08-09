@@ -66,12 +66,16 @@ export function LandingConsole({ data }: { data: LandingConsoleData }) {
   return (
     <div className="flex h-full max-h-[520px] min-h-0 flex-col overflow-hidden rounded-2xl border border-border/40 bg-card/40 backdrop-blur-sm">
       <div className="flex items-center gap-3 border-b border-border/30 px-4 py-3">
-        <span className="inline-block size-1.5 rounded-full bg-emerald-400" />
+        <span className="relative inline-flex size-2 items-center justify-center">
+          <span className="absolute inset-0 animate-ping rounded-full bg-emerald-400/60" />
+          <span className="relative inline-block size-1.5 rounded-full bg-emerald-400" />
+        </span>
         <span className="text-sm text-foreground/90">
           Report · <span className="text-brand">{data.domain}</span>
         </span>
-        <span className="ml-auto text-xs text-muted-foreground/60">
-          Ready to act on
+        <span className="ml-auto inline-flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-wider text-muted-foreground/60">
+          <span>Live scan</span>
+          <span className="text-emerald-400/80">●</span>
         </span>
       </div>
 
