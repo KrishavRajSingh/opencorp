@@ -73,7 +73,7 @@ export function LandingConsole({ data }: { data: LandingConsoleData }) {
         <span className="text-sm text-foreground/90">
           Report · <span className="text-brand">{data.domain}</span>
         </span>
-        <span className="ml-auto inline-flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-wider text-muted-foreground/60">
+        <span className="ml-auto inline-flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-widest text-muted-foreground/60">
           <span>Live scan</span>
           <span className="text-emerald-400/80">●</span>
         </span>
@@ -213,7 +213,7 @@ function RedditPanel({ threads }: { threads: RedditThread[] }) {
               key={t.id}
               initial={{ opacity: 0, y: 4 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.05 }}
+              transition={{ delay: Math.min(i, 5) * 0.04 }}
               className="group/row flex items-start gap-2 rounded-md px-2 py-1.5"
             >
               <span className="mt-0.5 w-5 shrink-0 text-right font-mono text-[10px] tabular-nums text-[#FF4500]/80">
@@ -297,7 +297,7 @@ function HNPanel({ threads }: { threads: HNThread[] }) {
               rel="noopener noreferrer"
               initial={{ opacity: 0, y: 4 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.05 }}
+              transition={{ delay: Math.min(i, 5) * 0.04 }}
               className="group/row flex items-start gap-2 rounded-md px-2 py-1.5 transition-colors hover:bg-card/60"
             >
               <span className="mt-0.5 w-5 shrink-0 text-right font-mono text-[10px] tabular-nums text-orange-400/80">

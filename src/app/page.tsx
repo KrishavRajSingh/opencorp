@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { motion } from "motion/react";
+import { motion, MotionConfig } from "motion/react";
 import Link from "next/link";
 import { ArrowRight, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -460,7 +460,7 @@ function FounderSection() {
             OpenCorp: paste a link, get the map.
           </h2>
           <div className="mt-5 flex flex-wrap items-center gap-3">
-            <Button variant="outline" size="sm" asChild>
+            <Button variant="ghost" size="sm" asChild>
               <Link href={`https://x.com/${FOUNDER_HANDLE}`} target="_blank">
                 Follow the build on X →
               </Link>
@@ -533,59 +533,54 @@ function TryItWidget() {
 
 export default function Page() {
   return (
-    <MarketingShell>
-      <main className="flex-1">
-        <section className="relative overflow-hidden px-6 pb-20 pt-24 sm:pt-28">
-          <div className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[520px] bg-[radial-gradient(ellipse_at_top_left,oklch(0.72_0.15_75_/_0.12),transparent_55%)]" />
-          <div className="mx-auto grid max-w-6xl items-center gap-12 lg:grid-cols-[1.05fr_1fr] lg:gap-14">
-            <div className="flex flex-col">
-              <div className="mb-6 inline-flex w-fit items-center gap-2 rounded-full border border-border/50 bg-card/40 px-3 py-1 font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground backdrop-blur-sm">
-                <span className="size-1 rounded-full bg-brand" />
-                Market intel for builders
-              </div>
-              <h1 className="font-heading text-[2.4rem] leading-[1.05] tracking-tight sm:text-5xl md:text-[3.4rem]">
-                Your next users
-                <br />
-                are already talking.
-                <br />
-                <span className="text-muted-foreground/60">We find them.</span>
-              </h1>
-              <p className="mt-6 max-w-md text-base text-muted-foreground sm:text-lg">
-                Paste your product link. OpenCorp maps your alternatives, ranks
-                the Reddit threads where buyers describe the problem you solve,
-                and queues the Hacker News discussions ready to join — each
-                with a reason.
-              </p>
-              <div className="mt-7 w-full max-w-xl">
-                <UrlCtaForm location="hero" />
-                <div className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground/70">
-                  <span>Free & open source</span>
-                  <span className="text-border">·</span>
-                  <span>No credit card</span>
-                  <span className="text-border">·</span>
-                  <span>2-min signup</span>
+    <MotionConfig reducedMotion="user">
+      <MarketingShell>
+        <main className="flex-1">
+          <section className="relative overflow-hidden px-6 pb-20 pt-24 sm:pt-28">
+            <div className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[520px] bg-[radial-gradient(ellipse_at_top_left,oklch(0.72_0.15_75_/_0.12),transparent_55%)]" />
+            <div className="mx-auto grid max-w-6xl items-center gap-12 lg:grid-cols-[1.05fr_1fr] lg:gap-14">
+              <div className="flex flex-col">
+                <h1 className="font-heading text-4xl leading-[1.05] tracking-tight sm:text-5xl md:text-6xl">
+                  Your next users
+                  <br />
+                  are already talking.
+                  <br />
+                  <span className="text-muted-foreground/60">We find them.</span>
+                </h1>
+                <p className="mt-6 max-w-md text-base text-muted-foreground sm:text-lg">
+                  Paste your product link. OpenCorp maps your alternatives, ranks
+                  the Reddit threads where buyers describe the problem you solve,
+                  and queues the Hacker News discussions ready to join — each
+                  with a reason.
+                </p>
+                <div className="mt-7 w-full max-w-xl">
+                  <UrlCtaForm location="hero" />
+                  <div className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground/70">
+                    <span>Free & open source</span>
+                    <span className="text-border">·</span>
+                    <span>Account unlocks full thread lists</span>
+                  </div>
                 </div>
               </div>
+
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.15 }}
+                className="relative"
+              >
+                <div className="relative">
+                  <LandingConsole data={RESULTS} />
+                </div>
+              </motion.div>
             </div>
+          </section>
 
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.15 }}
-              className="relative"
-            >
-              <div className="pointer-events-none absolute -inset-4 rounded-3xl bg-gradient-to-br from-brand/20 via-brand/5 to-emerald-400/10 opacity-70 blur-2xl" />
-              <div className="relative">
-                <LandingConsole data={RESULTS} />
-              </div>
-            </motion.div>
-          </div>
-        </section>
-
-        <FounderSection />
-        <Faq />
-        <TryItWidget />
-      </main>
-    </MarketingShell>
+          <FounderSection />
+          <Faq />
+          <TryItWidget />
+        </main>
+      </MarketingShell>
+    </MotionConfig>
   );
 }
