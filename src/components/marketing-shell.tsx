@@ -2,49 +2,8 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { Mail, Star } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Star } from "lucide-react";
 import { trackEvent } from "@/lib/analytics";
-
-function GitHubIcon({ className }: { className?: string }) {
-  return (
-    <svg
-      className={className}
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="M9 19c-4.3 1.4-4.3-2.5-6-3m12 5v-3.5c0-1 .1-1.4-.5-2 2.8-.3 5.5-1.4 5.5-6a4.6 4.6 0 0 0-1.3-3.2 4.2 4.2 0 0 0-.1-3.2s-1.1-.3-3.5 1.3a12.3 12.3 0 0 0-6.2 0c-2.4-1.6-3.5-1.3-3.5-1.3a4.2 4.2 0 0 0-.1 3.2A4.6 4.6 0 0 0 4 10c0 4.6 2.7 5.7 5.5 6-.6.6-.6 1.2-.5 2v3.5" />
-    </svg>
-  );
-}
-
-function XIcon({ className }: { className?: string }) {
-  return (
-    <svg className={className} viewBox="0 0 24 24" fill="currentColor">
-      <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
-    </svg>
-  );
-}
-
-function LinkedInIcon({ className }: { className?: string }) {
-  return (
-    <svg className={className} viewBox="0 0 24 24" fill="currentColor">
-      <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.063 2.063 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
-    </svg>
-  );
-}
-
-function DiscordIcon({ className }: { className?: string }) {
-  return (
-    <svg className={className} viewBox="0 0 24 24" fill="currentColor">
-      <path d="M20.317 4.37a19.79 19.79 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.418 2.157-2.418 1.21 0 2.176 1.095 2.157 2.418 0 1.334-.956 2.42-2.157 2.42zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.418 2.157-2.418 1.21 0 2.176 1.095 2.157 2.418 0 1.334-.946 2.42-2.157 2.42z" />
-    </svg>
-  );
-}
 
 const GITHUB_REPO = "KrishavRajSingh/opencorp";
 const STARS_CACHE_KEY = "gh-stars-opencorp";
@@ -54,12 +13,9 @@ function formatStars(n: number) {
 }
 
 function GitHubStarsLink() {
-  // Always start null so the first client render matches SSR; the cached
-  // value is applied from the effect below, after hydration.
   const [stars, setStars] = useState<number | null>(null);
 
   useEffect(() => {
-    // Fresh cache entry wins — no GitHub request.
     try {
       const cached = sessionStorage.getItem(STARS_CACHE_KEY);
       if (cached) {
@@ -76,7 +32,7 @@ function GitHubStarsLink() {
         }
       }
     } catch {
-      // ignore cache errors
+      // ignore
     }
 
     fetch(`https://api.github.com/repos/${GITHUB_REPO}`)
@@ -90,12 +46,12 @@ function GitHubStarsLink() {
               JSON.stringify({ count: d.stargazers_count, ts: Date.now() }),
             );
           } catch {
-            // ignore cache errors
+            // ignore
           }
         }
       })
       .catch(() => {
-        // offline or rate-limited: keep bare icon
+        // offline / rate-limited
       });
   }, []);
 
@@ -104,47 +60,73 @@ function GitHubStarsLink() {
       href={`https://github.com/${GITHUB_REPO}`}
       target="_blank"
       rel="noopener noreferrer"
-      className="inline-flex items-center gap-1.5 text-muted-foreground transition-colors hover:text-foreground"
-      aria-label="GitHub"
+      className="inline-flex items-center gap-1.5 border border-black px-1.5 py-0.5 text-[10px] font-mono tabular-nums text-black hover:bg-black hover:text-white"
+      aria-label="GitHub stars"
     >
-      <GitHubIcon className="size-5" />
-      {stars !== null && (
-        <span className="inline-flex items-center gap-1 rounded-md border border-border/60 px-1.5 py-0.5 font-mono text-[10px] tabular-nums text-muted-foreground">
-          <Star className="size-3 fill-current" />
-          {formatStars(stars)}
-        </span>
-      )}
+      <Star className="size-3 fill-current" />
+      {stars !== null ? formatStars(stars) : "···"}
     </a>
   );
 }
 
 function SiteNav() {
   return (
-    <header className="fixed top-0 z-50 w-full border-b border-border/50 bg-background/80 backdrop-blur-sm">
-      <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-6">
-        <Link href="/" className="font-heading text-lg tracking-tight">
-          OpenCorp
+    <header
+      className="sticky top-0 z-50 w-full select-none"
+      style={{
+        background: "#fff",
+        color: "#000",
+        borderBottom: "1px solid #000",
+      }}
+    >
+      <div className="mx-auto flex h-7 w-full items-center gap-4 px-3 font-mono text-[11px] tracking-tight">
+        <Link href="/" className="inline-flex items-center gap-1.5 font-bold">
+          <span
+            aria-hidden
+            className="inline-block h-3 w-3"
+            style={{ background: "#000" }}
+          />
+          <span>OPENCORP.APP</span>
         </Link>
-        <div className="flex items-center gap-3">
+        <span
+          aria-hidden
+          className="h-3.5 w-px"
+          style={{ background: "#000" }}
+        />
+        <nav className="flex items-center gap-3">
+          <span className="font-bold underline">File</span>
+          <span>Edit</span>
+          <span>View</span>
+          <span>Window</span>
+          <span>Help</span>
+        </nav>
+        <div className="ml-auto flex items-center gap-3">
           <GitHubStarsLink />
+          <a
+            href="https://x.com/opencorpai"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="border border-black px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-widest hover:bg-black hover:text-white"
+          >
+            X
+          </a>
           <a
             href="https://discord.gg/ArQF8jtC9"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-muted-foreground transition-colors hover:text-foreground"
-            aria-label="Discord"
+            className="border border-black px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-widest hover:bg-black hover:text-white"
           >
-            <DiscordIcon className="size-5" />
+            DISCORD
           </a>
-          <Button
-            size="sm"
-            asChild
+          <Link
+            href="/dashboard"
             onClick={() =>
               trackEvent({ name: "cta_open_dashboard", data: { location: "nav" } })
             }
+            className="border border-black bg-black px-2 py-0.5 text-[10px] font-bold uppercase tracking-widest text-white hover:bg-white hover:text-black"
           >
-            <Link href="/dashboard">Try for free</Link>
-          </Button>
+            LAUNCH APP ↗
+          </Link>
         </div>
       </div>
     </header>
@@ -153,69 +135,56 @@ function SiteNav() {
 
 function SiteFooter() {
   return (
-    <footer className="border-t border-border/50">
-      <div className="mx-auto flex max-w-6xl flex-col gap-6 px-6 py-8 text-sm text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex items-center gap-4">
-          <Link
-            href="/"
-            className="font-heading text-foreground transition-colors hover:text-brand"
-          >
-            OpenCorp
-          </Link>
-          <span className="hidden sm:inline">
-            Find where your users already talk
-          </span>
+    <footer
+      className="w-full select-none"
+      style={{
+        background: "#000",
+        color: "#fff",
+        borderTop: "1px solid #000",
+      }}
+    >
+      <div className="mx-auto flex w-full flex-col gap-2 px-3 py-2 font-mono text-[10px] uppercase tracking-widest sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex items-center gap-2">
+          <span className="font-bold">OPENCORP</span>
+          <span aria-hidden className="h-3 w-px bg-white" />
+          <span className="opacity-80">ELASTIC LICENSE 2.0 · NOT OSI-APPROVED</span>
         </div>
-        <div className="flex flex-wrap items-center gap-5">
-          <Link
-            href="/privacy"
-            className="transition-colors hover:text-foreground"
-          >
-            Privacy
+        <div className="flex flex-wrap items-center gap-3">
+          <Link href="/" className="hover:underline">
+            HOME
           </Link>
-          <Link
-            href="/terms"
-            className="transition-colors hover:text-foreground"
-          >
-            Terms
+          <Link href="/privacy" className="hover:underline">
+            PRIVACY
+          </Link>
+          <Link href="/terms" className="hover:underline">
+            TERMS
           </Link>
           <a
-            href="mailto:krishavrajsingh@gmail.com"
-            className="inline-flex items-center gap-1.5 transition-colors hover:text-foreground"
-          >
-            <Mail className="size-4" />
-            krishavrajsingh@gmail.com
-          </a>
-          <a
-            href="https://www.linkedin.com/company/opencorpai"
+            href="https://github.com/KrishavRajSingh/opencorp"
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-1.5 transition-colors hover:text-foreground"
-            aria-label="LinkedIn"
+            className="hover:underline"
           >
-            <LinkedInIcon className="size-4" />
-            LinkedIn
+            GITHUB
           </a>
           <a
             href="https://x.com/opencorpai"
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-1.5 transition-colors hover:text-foreground"
-            aria-label="X (Twitter)"
+            className="hover:underline"
           >
-            <XIcon className="size-3.5" />
             @opencorpai
           </a>
           <a
             href="https://discord.gg/ArQF8jtC9"
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-1.5 transition-colors hover:text-foreground"
-            aria-label="Discord"
+            className="hover:underline"
           >
-            <DiscordIcon className="size-4" />
-            Discord
+            DISCORD
           </a>
+          <span aria-hidden className="h-3 w-px bg-white" />
+          <span>1 BIT · 2026</span>
         </div>
       </div>
     </footer>
@@ -224,10 +193,19 @@ function SiteFooter() {
 
 export function MarketingShell({ children }: { children: React.ReactNode }) {
   return (
-    <>
+    <div
+      className="flex min-h-svh flex-col"
+      style={{
+        background: "#000",
+        color: "#fff",
+        fontFamily:
+          'ui-monospace, "SF Mono", Menlo, "JetBrains Mono", monospace',
+        imageRendering: "pixelated",
+      }}
+    >
       <SiteNav />
       {children}
       <SiteFooter />
-    </>
+    </div>
   );
 }
