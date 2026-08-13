@@ -1,0 +1,39 @@
+# OpenCorp
+
+> Find where your future users already talk. Drop a product URL, get a ranked map of competitors and the Reddit and Hacker News threads where buyers describe the problem you solve.
+
+## Pages
+
+- [Home](https://opencorp.live): product overview, sample report, FAQ
+- [Dashboard](https://opencorp.live/dashboard): run a new research report on any product
+- [Sign up](https://opencorp.live/auth/sign-up): free account, unlocks full thread lists and saved reports
+- [Sign in](https://opencorp.live/auth/sign-in)
+- [Privacy](https://opencorp.live/privacy)
+- [Terms](https://opencorp.live/terms)
+
+## What OpenCorp does
+
+OpenCorp reads a product page, infers the problem it solves, then searches for the conversation around that problem — not the product name. It returns:
+
+1. **Alternatives** — competing products in the same space, with reasons they overlap.
+2. **Reddit threads** — where the target user describes the problem in their own words. Ranked by relevance, each with a reason attached.
+3. **Hacker News discussions** — comment-ready threads where the founder's voice is on-topic.
+
+No auto-posting. The tool finds where to show up and why; the words you write are yours.
+
+## License
+
+Source available under the Elastic License 2.0. Code is readable and self-hostable; you may not offer the tool as a hosted service that competes with opencorp.live.
+
+## Tech
+
+- Next.js 16 App Router, TypeScript
+- Mastra AI agents for research and ranking
+- OpenRouter for inference (DeepSeek V4 Flash)
+- Tailwind v4, shadcn/ui
+
+## Contact
+
+- X: https://x.com/opencorpai
+- Show HN: https://news.ycombinator.com/item?id=49257429
+- HN founder account: posts on topic in growth/distribution threads
