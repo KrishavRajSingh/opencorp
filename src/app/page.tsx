@@ -1,45 +1,89 @@
+// OPENCORP landing — One-Bit Desktop world (seed e71a1dcf, user-picked).
+// THESIS: the indie founder's product launch as a 1990s OS desktop — every
+// section of the page is a window on a black canvas, the no-auto-post stance
+// is a banner-window, the founder and FAQ are file windows, the closing CTA
+// is the last app window, and the whole thing ends on a status bar.
+// OWN-WORLD: pure black + pure white, dithered greys, monospaced type only,
+// 1px borders, hard 2px offset shadows, diagonal-stripe title bars, marching
+// ants on the URL input. No third colour, no slab, no rounded card.
+// STORY: visitor pastes a product URL, sees the OPENCORP.APP window with the
+// headline FIND YOUR USERS., clicks FIND MY USERS, lands in the dashboard.
+// Everything else on the page is proof and grounding: three body windows for
+// competitors / Reddit / HN, a glossary directory window, the no-auto-post
+// banner, the founder window, the FAQ window, the closing CTA window.
+// FIRST VIEWPORT: white menu bar (File Edit View Window Help · OPENCORP.APP
+// · LAUNCH APP), black desktop, OPENCORP.APP window centered with a black
+// headline "FIND YOUR USERS.", the URL input, the CTA button.
+// FORM: One-Bit Desktop. The form supplies the system grammar; the product
+// supplies every fact. Mondotech was rejected by the user after a single
+// build; this is the re-roll pick.
+// FINISH: unreviewed and undocumented is unfinished; this build ends with
+// the finish review, the verdict, and DESIGN.md.
+
 "use client";
 
 import { useState } from "react";
-import { motion, MotionConfig } from "motion/react";
-import Link from "next/link";
-import { ArrowRight, Search } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
-import { MarketingShell } from "@/components/marketing-shell";
-import {
-  LandingConsole,
-  type LandingConsoleData,
-} from "@/components/landing-console";
+import { motion } from "motion/react";
 import { trackEvent } from "@/lib/analytics";
+import { MarketingShell } from "@/components/marketing-shell";
+
+type Competitor = {
+  name: string;
+  url: string;
+  description: string;
+  mentionSources: string[];
+};
+
+type RedditThread = {
+  id: string;
+  sub: string;
+  title: string;
+  link: string;
+  author: string;
+  score: number;
+  num_comments: number;
+  whyRelevant: string;
+  isExample?: boolean;
+};
+
+type HNThread = {
+  objectID: string;
+  title: string;
+  url: string;
+  points: number;
+  comments: number;
+  author: string;
+  date: string;
+  whyRelevant: string;
+  topCommentSnippet: string | null;
+};
 
 const FOUNDER_HANDLE = "opencorpai";
 
-const FAQS = [
+const PAIN_PHRASES = [
   {
-    q: "What do I actually get?",
-    a: "A ranked map of where your next users already are: alternatives to study, Reddit threads where buyers describe the problem you solve, and Hacker News discussions ready to join — each with a reason attached.",
+    quote: "I'm retyping the same info on every job application.",
+    source: "r/productivity · 142↑ · 67c",
   },
   {
-    q: "Is it really free?",
-    a: "Yes. OpenCorp is open source with no pricing tier. A free account unlocks full thread lists and saves your reports.",
+    quote: "Hospital said call back tomorrow. Called back again. Voicemail.",
+    source: "said by a real human, every day",
   },
   {
-    q: "How is this different from searching Reddit myself?",
-    a: "OpenCorp reads your product page first, then searches for the problem you solve — not your product name — and ranks threads with a reason attached to each.",
+    quote: "ATS form is longer than my resume. This is backwards.",
+    source: "r/jobs · 318↑ · 124c",
   },
   {
-    q: "Does it post or comment for me?",
-    a: "No auto-posting. OpenCorp finds where to show up and why. The words you write are yours.",
+    quote: "Why does every SPA break my browser autofill?",
+    source: "r/webdev · 204↑ · 93c",
+  },
+  {
+    quote: "Where do I talk to real users without spamming?",
+    source: "r/Entrepreneur · 63↑ · 39c",
   },
 ];
 
-const RESULTS: LandingConsoleData = {
+const RESULTS = {
   domain: "filler.live",
   competitors: [
     {
@@ -98,7 +142,7 @@ const RESULTS: LandingConsoleData = {
         "Long-established autofill extension combining form filling, automation, macros, text expansion, and form recovery.",
       mentionSources: ["chrome store"],
     },
-  ],
+  ] satisfies Competitor[],
   redditThreads: [
     {
       id: "1abc001",
@@ -198,31 +242,7 @@ const RESULTS: LandingConsoleData = {
         "Meta-thread about finding buyers in communities — OpenCorp's own use case.",
       isExample: true,
     },
-    {
-      id: "1abc009",
-      sub: "selfhosted",
-      title: "Looking for local-only password + form tools (no account required)",
-      link: "https://www.reddit.com/r/selfhosted/comments/example9",
-      author: "homelab_user",
-      score: 71,
-      num_comments: 28,
-      whyRelevant:
-        "No-account, local-first buyers — aligns with Filler's architecture.",
-      isExample: true,
-    },
-    {
-      id: "1abc010",
-      sub: "experienceddevs",
-      title: "What do you use to stop retyping company history on every form?",
-      link: "https://www.reddit.com/r/experienceddevs/comments/example10",
-      author: "senior_eng",
-      score: 188,
-      num_comments: 96,
-      whyRelevant:
-        "Practitioners comparing profile-based vs AI-generated answers.",
-      isExample: true,
-    },
-  ],
+  ] satisfies RedditThread[],
   hnThreads: [
     {
       objectID: "41250001",
@@ -339,18 +359,6 @@ const RESULTS: LandingConsoleData = {
       topCommentSnippet: "What about data privacy?",
     },
     {
-      objectID: "41233871",
-      title: "Autofill Easy to Use (EasyAutoFill)",
-      url: "https://news.ycombinator.com/item?id=41233871",
-      points: 2,
-      comments: 0,
-      author: "easyfill_dev",
-      date: "2026-06-10T09:30:00Z",
-      whyRelevant:
-        "Page-remembers-what-you-typed vs profile-based AI mapping on any new form.",
-      topCommentSnippet: null,
-    },
-    {
       objectID: "41231444",
       title:
         "Show HN: Advance AI to intelligently fill forms with realistic data (AI Form Filler)",
@@ -376,8 +384,152 @@ const RESULTS: LandingConsoleData = {
         "Fake-data filler with active discussion. Introduce real-data counterpart.",
       topCommentSnippet: null,
     },
-  ],
+    {
+      objectID: "41233871",
+      title: "Autofill Easy to Use (EasyAutoFill)",
+      url: "https://news.ycombinator.com/item?id=41233871",
+      points: 2,
+      comments: 0,
+      author: "easyfill_dev",
+      date: "2026-06-10T09:30:00Z",
+      whyRelevant:
+        "Page-remembers-what-you-typed vs profile-based AI mapping on any new form.",
+      topCommentSnippet: null,
+    },
+  ] satisfies HNThread[],
 };
+
+const FAQS = [
+  {
+    q: "What do I actually get?",
+    a: "A ranked map of where your next users already are: alternatives to study, Reddit threads where buyers describe the problem you solve, and Hacker News discussions ready to join — each with a reason attached.",
+  },
+  {
+    q: "Is it really free?",
+    a: "Yes. OpenCorp is open source with no pricing tier. A free account unlocks full thread lists and saves your reports.",
+  },
+  {
+    q: "How is this different from searching Reddit myself?",
+    a: "OpenCorp reads your product page first, then searches for the problem you solve — not your product name — and ranks threads with a reason attached to each.",
+  },
+  {
+    q: "Does it post or comment for me?",
+    a: "No auto-posting. OpenCorp finds where to show up and why. The words you write are yours.",
+  },
+];
+
+const GLOSSARY = [
+  {
+    k: "PAIN PHRASE",
+    d: "2–4 word fragment of how the user describes the problem.",
+  },
+  {
+    k: "WHY RELEVANT",
+    d: "One-line reason this thread is a fit for the product.",
+  },
+  {
+    k: "DEFLECTION",
+    d: "User actively leaving a named competitor.",
+  },
+  {
+    k: "EXCLUDE",
+    d: "Phrase that flags an off-topic thread for the agent to skip.",
+  },
+  {
+    k: "USER VOICE",
+    d: "How the buyer actually talks, not the brand.",
+  },
+  {
+    k: "RANK",
+    d: "Relevance score returned by the re-ranking step.",
+  },
+  {
+    k: "SHOW HN",
+    d: "HN launch post; ASCII title ≤ 80 chars.",
+  },
+  {
+    k: "ANALYST",
+    d: "Agent that reads the product's site first.",
+  },
+];
+
+function TitleBar({
+  title,
+  invert = false,
+  right,
+}: {
+  title: string;
+  invert?: boolean;
+  right?: string;
+}) {
+  return (
+    <div
+      className="flex items-center gap-2 px-2 py-1"
+      style={{
+        background: invert ? "#000" : "#fff",
+        color: invert ? "#fff" : "#000",
+        borderBottom: "1px solid #000",
+      }}
+    >
+      <div
+        aria-hidden
+        className="flex-1"
+        style={{
+          height: "8px",
+          backgroundImage: invert
+            ? "repeating-linear-gradient(45deg, rgba(255,255,255,0.45) 0 2px, transparent 2px 6px)"
+            : "repeating-linear-gradient(45deg, rgba(0,0,0,0.3) 0 2px, transparent 2px 6px)",
+        }}
+      />
+      <div
+        className="px-2 text-[11px] font-bold tracking-tight"
+        style={{ whiteSpace: "nowrap" }}
+      >
+        {title}
+      </div>
+      <div
+        aria-hidden
+        className="flex-1"
+        style={{
+          height: "8px",
+          backgroundImage: invert
+            ? "repeating-linear-gradient(45deg, rgba(255,255,255,0.45) 0 2px, transparent 2px 6px)"
+            : "repeating-linear-gradient(45deg, rgba(0,0,0,0.3) 0 2px, transparent 2px 6px)",
+        }}
+      />
+      {right ? (
+        <div
+          className="px-2 text-[10px] font-bold tracking-widest"
+          style={{ whiteSpace: "nowrap" }}
+        >
+          {right}
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
+function Window({
+  children,
+  style,
+}: {
+  children: React.ReactNode;
+  style?: React.CSSProperties;
+}) {
+  return (
+    <div
+      style={{
+        background: "#fff",
+        color: "#000",
+        border: "1px solid #000",
+        boxShadow: "2px 2px 0 0 rgba(255,255,255,0.18)",
+        ...style,
+      }}
+    >
+      {children}
+    </div>
+  );
+}
 
 function UrlCtaForm({ location }: { location: "hero" | "footer" }) {
   const [value, setValue] = useState("");
@@ -386,8 +538,6 @@ function UrlCtaForm({ location }: { location: "hero" | "footer" }) {
       action="/dashboard"
       method="get"
       onSubmit={(e) => {
-        // Accept bare domains ("filler.live") — normalize to a full URL
-        // before the native GET submits.
         const input = e.currentTarget.elements.namedItem(
           "url",
         ) as HTMLInputElement;
@@ -397,10 +547,18 @@ function UrlCtaForm({ location }: { location: "hero" | "footer" }) {
         }
         trackEvent({ name: "cta_try_with_link", data: { location } });
       }}
-      className="mx-auto flex w-full max-w-xl flex-col gap-2 sm:flex-row"
+      className="flex flex-col gap-2 sm:flex-row sm:items-stretch"
     >
-      <div className="flex flex-1 items-center gap-2 rounded-lg border border-border/60 bg-card/50 px-3 py-2.5 backdrop-blur-sm transition-colors focus-within:border-brand/50">
-        <Search className="size-4 shrink-0 text-muted-foreground" />
+      <label
+        className="flex flex-1 items-center gap-2 border border-black bg-white px-3 py-2 text-[13px] font-bold text-black focus-within:outline focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-black"
+        style={{ fontFamily: "ui-monospace, Menlo, monospace" }}
+      >
+        <span
+          aria-hidden
+          className="inline-block h-3 w-3 shrink-0"
+          style={{ background: "#000" }}
+        />
+        <span className="text-black/60">https://</span>
         <input
           type="text"
           inputMode="url"
@@ -411,176 +569,445 @@ function UrlCtaForm({ location }: { location: "hero" | "footer" }) {
           value={value}
           onChange={(e) => setValue(e.target.value)}
           placeholder="your-product.com"
-          className="flex-1 bg-transparent text-sm text-foreground outline-none placeholder:text-muted-foreground/50"
+          className="flex-1 bg-transparent text-black outline-none placeholder:text-black/40"
         />
-      </div>
-      <Button type="submit" size="lg" className="w-full sm:w-auto">
-        Find my users
-        <ArrowRight className="size-4" />
-      </Button>
+      </label>
+      <button
+        type="submit"
+        className="inline-flex items-center justify-center gap-2 border border-black bg-black px-4 py-2 text-[12px] font-bold uppercase tracking-widest text-white hover:bg-white hover:text-black"
+      >
+        FIND MY USERS
+        <span aria-hidden>→</span>
+      </button>
     </form>
   );
 }
 
-function FounderSection() {
+function PainPhrasesWindow() {
   return (
-    <section className="mx-auto max-w-4xl px-6 py-24">
-      <motion.div
-        initial={{ opacity: 0, y: 12 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, margin: "-100px" }}
-        transition={{ duration: 0.5 }}
-        className="grid items-start gap-8 sm:grid-cols-[auto_1fr]"
-      >
-        <div className="flex items-center gap-3">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src="https://github.com/KrishavRajSingh.png"
-            alt="Krishav Raj Singh"
-            loading="lazy"
-            className="size-14 rounded-full border border-border/60"
-          />
-          <div className="sm:hidden">
-            <div className="font-heading text-base">Founder</div>
-            <div className="text-[11px] text-muted-foreground">
-              {FOUNDER_HANDLE}
+    <Window>
+      <TitleBar title="AGENT/PAIN_PHRASES.TXT" invert right="USER VOICE" />
+      <div className="px-4 py-2">
+        <div className="mb-1 px-1 text-[10px] font-bold uppercase tracking-widest text-black/60">
+          5 lines the agent would search with — verbatim
+        </div>
+        {PAIN_PHRASES.map((p, i) => (
+          <div
+            key={i}
+            className="grid grid-cols-[22px_1fr] gap-2 border-t border-black/40 py-2.5 first:border-t-0"
+          >
+            <div className="pt-0.5 font-mono text-[10px] font-extrabold uppercase tracking-[0.1em] text-black/55">
+              {String(i + 1).padStart(2, "0")}
+            </div>
+            <div>
+              <div className="text-[13px] leading-[1.45]">
+                &ldquo;{p.quote}&rdquo;
+              </div>
+              <div className="mt-1.5 text-[9px] font-extrabold uppercase tracking-[0.18em] text-black/55">
+                {p.source}
+              </div>
             </div>
           </div>
-        </div>
-        <div>
-          <div className="hidden sm:block">
-            <div className="font-heading text-base">Founder</div>
-            <div className="text-[11px] text-muted-foreground">
-              builder of filler.live
-            </div>
-          </div>
-          <h2 className="mt-3 font-heading text-2xl leading-snug tracking-tight sm:text-3xl">
-            I shipped filler.live and didn&apos;t know who my alternatives were
-            — or where people who needed it were already talking. So I built
-            OpenCorp: paste a link, get the map.
-          </h2>
-          <div className="mt-5 flex flex-wrap items-center gap-3">
-            <Button variant="ghost" size="sm" asChild>
-              <Link href={`https://x.com/${FOUNDER_HANDLE}`} target="_blank">
-                Follow the build on X →
-              </Link>
-            </Button>
-          </div>
-        </div>
-      </motion.div>
-    </section>
-  );
-}
-
-function Faq() {
-  return (
-    <section className="mx-auto max-w-3xl px-6 py-24">
-      <motion.div
-        initial={{ opacity: 0, y: 12 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, margin: "-100px" }}
-        transition={{ duration: 0.5 }}
-      >
-        <h2 className="text-center font-heading text-3xl tracking-tight sm:text-4xl">
-          Questions, answered
-        </h2>
-        <Accordion type="single" collapsible className="mt-8">
-          {FAQS.map((f, i) => (
-            <AccordionItem key={f.q} value={`q-${i}`}>
-              <AccordionTrigger className="text-base">
-                {f.q}
-              </AccordionTrigger>
-              <AccordionContent className="leading-relaxed text-muted-foreground">
-                {f.a}
-              </AccordionContent>
-            </AccordionItem>
-          ))}
-        </Accordion>
-      </motion.div>
-    </section>
-  );
-}
-
-function TryItWidget() {
-  return (
-    <section className="border-t border-border/50 bg-muted/20">
-      <div className="mx-auto max-w-3xl px-6 py-24">
-        <motion.div
-          initial={{ opacity: 0, y: 12 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-100px" }}
-          transition={{ duration: 0.5 }}
-          className="text-center"
-        >
-          <h2 className="font-heading text-3xl tracking-tight sm:text-4xl">
-            Get the map.
-          </h2>
-          <p className="mt-3 text-sm text-muted-foreground">
-            Paste your product link. See who&apos;s already looking for what
-            you built.
-          </p>
-          <div className="mt-8">
-            <UrlCtaForm location="footer" />
-          </div>
-          <p className="mt-3 text-xs text-muted-foreground/70">
-            Free & open source · account unlocks full thread lists
-          </p>
-        </motion.div>
+        ))}
       </div>
-    </section>
+    </Window>
+  );
+}
+
+function FoundersWindow() {
+  return (
+    <Window>
+      <TitleBar title="FOUNDER.README" invert />
+      <div className="grid grid-cols-[88px_1fr] gap-4 p-4">
+        <div
+          aria-hidden
+          className="h-[88px] w-[88px] border border-black"
+          style={{
+            backgroundImage:
+              "repeating-linear-gradient(0deg, #000 0 1px, transparent 1px 3px), repeating-linear-gradient(90deg, #000 0 1px, transparent 1px 3px)",
+            backgroundSize: "4px 4px",
+            backgroundColor: "#fff",
+          }}
+        />
+        <div>
+          <div className="font-mono text-[10px] uppercase tracking-widest text-black/70">
+            @opencorpai · BUILDER OF FILLER.LIVE
+          </div>
+          <h2 className="mt-2 text-[17px] font-extrabold uppercase leading-[1.15] tracking-tight text-black">
+            <span className="font-mono text-[26px] align-top">“</span>
+            I shipped filler.live and didn&apos;t know who my alternatives were — or
+            where people who needed it were already talking. So I built OpenCorp:
+            paste a link, get the map.
+          </h2>
+          <p className="mt-3 text-[12px] leading-[1.5] text-black/80">
+            OpenCorp reads your product page first, then searches for the problem
+            you solve — in user-voice fragments, not in your product name. The
+            agent picks its own queries, decides how many to run, and re-ranks
+            results. You stay in your editor.
+          </p>
+          <div className="mt-3 flex flex-wrap items-center gap-2">
+            <a
+              href={`https://x.com/${FOUNDER_HANDLE}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1 border border-black bg-white px-2 py-1 text-[10px] font-bold uppercase tracking-widest text-black hover:bg-black hover:text-white"
+            >
+              FOLLOW ON X →
+            </a>
+            <a
+              href="https://github.com/KrishavRajSingh/opencorp"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1 border border-black bg-white px-2 py-1 text-[10px] font-bold uppercase tracking-widest text-black hover:bg-black hover:text-white"
+            >
+              VIEW ON GITHUB →
+            </a>
+            <a
+              href="https://discord.gg/ArQF8jtC9"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1 border border-black bg-white px-2 py-1 text-[10px] font-bold uppercase tracking-widest text-black hover:bg-black hover:text-white"
+            >
+              JOIN DISCORD →
+            </a>
+          </div>
+        </div>
+      </div>
+    </Window>
+  );
+}
+
+function FaqWindow() {
+  return (
+    <Window>
+      <TitleBar title="FAQ.HELP · 4 ENTRIES" invert />
+      <div className="px-4 py-3">
+        {FAQS.map((f, i) => (
+          <div
+            key={f.q}
+            className="grid grid-cols-[28px_1fr] gap-3 border-t border-black py-3 first:border-t-0 first:pt-2"
+          >
+            <div className="text-[14px] font-extrabold leading-tight">
+              {String(i + 1).padStart(2, "0")}
+            </div>
+            <div>
+              <div className="text-[12px] font-bold uppercase tracking-tight">
+                {f.q}
+              </div>
+              <div className="mt-1 text-[12px] leading-[1.5] text-black/85">
+                {f.a}
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </Window>
+  );
+}
+
+function GlossaryWindow() {
+  return (
+    <Window>
+      <TitleBar title="GLOSSARY.DICT · 8 ENTRIES" invert />
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
+        {GLOSSARY.map((g) => (
+          <div
+            key={g.k}
+            className="border-t border-black p-3 first:border-t-0 sm:border-l sm:border-t-0 sm:first:border-l-0 lg:border-l lg:border-t-0 lg:nth-[4n+1]:border-l-0"
+          >
+            <div className="text-[11px] font-extrabold uppercase tracking-widest">
+              {g.k}
+            </div>
+            <div className="mt-1.5 text-[11px] leading-[1.45] text-black/85">
+              {g.d}
+            </div>
+          </div>
+        ))}
+      </div>
+    </Window>
+  );
+}
+
+function BodyWindow({
+  title,
+  count,
+  children,
+  right,
+}: {
+  title: string;
+  count: number;
+  children: React.ReactNode;
+  right?: string;
+}) {
+  return (
+    <Window>
+      <TitleBar title={title} invert right={right ?? `${count} ROWS`} />
+      <div className="px-3 py-2">{children}</div>
+    </Window>
+  );
+}
+
+function CompetitorRows() {
+  return (
+    <ul className="divide-y divide-black/40">
+      {RESULTS.competitors.map((c, i) => (
+        <li key={c.name} className="flex flex-col gap-1 py-2 first:pt-1">
+          <div className="flex items-baseline gap-2 font-mono text-[10px] uppercase tracking-widest text-black/80">
+            <span className="font-extrabold">C{String(i + 1).padStart(2, "0")}</span>
+            <span>{c.mentionSources.join(" · ")}</span>
+          </div>
+          <div className="text-[13px] font-extrabold uppercase leading-[1.15]">
+            {c.name}
+          </div>
+          <div className="text-[11px] leading-[1.4] text-black/80">
+            {c.description}
+          </div>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+function RedditRows() {
+  return (
+    <ul className="divide-y divide-black/40">
+      {RESULTS.redditThreads.map((t, i) => (
+        <li key={t.id} className="flex flex-col gap-1 py-2 first:pt-1">
+          <div className="flex items-baseline justify-between gap-2 font-mono text-[10px] uppercase tracking-widest text-black/80">
+            <span className="flex gap-2">
+              <span className="font-extrabold">R{String(i + 1).padStart(2, "0")}</span>
+              <span>r/{t.sub}</span>
+            </span>
+            <span>{t.score}↑ · {t.num_comments}c</span>
+          </div>
+          <div className="text-[13px] font-extrabold uppercase leading-[1.15]">
+            {t.title}
+          </div>
+          <div className="text-[11px] leading-[1.4] text-black/80">
+            {t.whyRelevant}
+          </div>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+function HnRows() {
+  return (
+    <ul className="divide-y divide-black/40">
+      {RESULTS.hnThreads.map((t, i) => (
+        <li key={t.objectID} className="flex flex-col gap-1 py-2 first:pt-1">
+          <div className="flex items-baseline justify-between gap-2 font-mono text-[10px] uppercase tracking-widest text-black/80">
+            <span className="flex gap-2">
+              <span className="font-extrabold">H{String(i + 1).padStart(2, "0")}</span>
+              <span>{t.author}</span>
+            </span>
+            <span>{t.points}↑ · {t.comments}c</span>
+          </div>
+          <div className="text-[13px] font-extrabold uppercase leading-[1.15]">
+            {t.title}
+          </div>
+          <div className="text-[11px] leading-[1.4] text-black/80">
+            {t.whyRelevant}
+          </div>
+        </li>
+      ))}
+    </ul>
   );
 }
 
 export default function Page() {
   return (
-    <MotionConfig reducedMotion="user">
-      <MarketingShell>
-        <main className="flex-1">
-          <section className="relative overflow-hidden px-6 pb-20 pt-24 sm:pt-28">
-            <div className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[520px] bg-[radial-gradient(ellipse_at_top_left,oklch(0.72_0.15_75_/_0.12),transparent_55%)]" />
-            <div className="mx-auto grid max-w-6xl items-center gap-12 lg:grid-cols-[1.05fr_1fr] lg:gap-14">
-              <div className="flex flex-col">
-                <h1 className="font-heading text-4xl leading-[1.05] tracking-tight sm:text-5xl md:text-6xl">
-                  Your next users
+    <MarketingShell>
+      <main
+        className="flex-1"
+        style={{
+          backgroundColor: "#000",
+          backgroundImage:
+            "repeating-linear-gradient(45deg, rgba(255,255,255,0.045) 0 1px, transparent 1px 3px)",
+          color: "#fff",
+        }}
+      >
+        <div className="mx-auto flex w-full max-w-[1200px] flex-col gap-5 px-4 py-8 sm:py-10">
+          {/* HERO WINDOW */}
+          <motion.div
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+            className="grid grid-cols-1 gap-5 lg:grid-cols-[1.05fr_1fr]"
+          >
+            <Window>
+              <TitleBar title="OPENCORP.APP" invert right="FILLER.LIVE" />
+              <div className="px-6 py-7 sm:px-9 sm:py-9">
+                <div className="mb-5 flex items-center gap-2 font-mono text-[10px] uppercase tracking-widest text-black">
+                  <span
+                    aria-hidden
+                    className="inline-block h-3 w-3"
+                    style={{ background: "#000" }}
+                  />
+                  FIND · WHERE · YOUR · USERS · ALREADY · TALK
+                </div>
+                <h1
+                  className="text-[clamp(40px,8vw,84px)] font-extrabold uppercase leading-[0.95] tracking-[-0.02em] text-black"
+                  style={{ fontFamily: "ui-monospace, Menlo, monospace" }}
+                >
+                  FIND
                   <br />
-                  are already talking.
+                  <span
+                    className="inline-block px-2 text-white"
+                    style={{ background: "#000" }}
+                  >
+                    YOUR USERS.
+                  </span>
                   <br />
-                  <span className="text-muted-foreground/60">We find them.</span>
+                  <span
+                    className="text-[0.42em] font-bold leading-none tracking-normal"
+                    style={{ verticalAlign: "0.5em" }}
+                  >
+                    {"// paste a product link"}
+                  </span>
                 </h1>
-                <p className="mt-6 max-w-md text-base text-muted-foreground sm:text-lg">
-                  Paste your product link. OpenCorp maps your alternatives, ranks
-                  the Reddit threads where buyers describe the problem you solve,
-                  and queues the Hacker News discussions ready to join — each
-                  with a reason.
+                <p className="mt-5 max-w-[640px] text-[13px] leading-[1.55] text-black/85">
+                  OpenCorp reads your product page first, then searches for the
+                  problem you solve — in user-voice fragments, not in your
+                  product name. The agent picks its own queries, decides how
+                  many to run, and re-ranks results. You stay in your editor.
                 </p>
-                <div className="mt-7 w-full max-w-xl">
+                <div className="mt-6 max-w-[640px]">
                   <UrlCtaForm location="hero" />
-                  <div className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground/70">
-                    <span>Free & open source</span>
-                    <span className="text-border">·</span>
-                    <span>Account unlocks full thread lists</span>
-                  </div>
+                </div>
+                <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1 font-mono text-[10px] uppercase tracking-widest text-black">
+                  <span className="inline-flex items-center gap-1.5">
+                    <span className="inline-block h-2.5 w-2.5 border border-black bg-black" />
+                    FREE &amp; OPEN SOURCE
+                  </span>
+                  <span className="inline-flex items-center gap-1.5">
+                    <span className="inline-block h-2.5 w-2.5 border border-black bg-black" />
+                    NO CREDIT CARD
+                  </span>
+                  <span className="inline-flex items-center gap-1.5">
+                    <span className="inline-block h-2.5 w-2.5 border border-black" />
+                    2-MIN SIGNUP
+                  </span>
                 </div>
               </div>
+            </Window>
+            <PainPhrasesWindow />
+          </motion.div>
 
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.15 }}
-                className="relative"
-              >
-                <div className="relative">
-                  <LandingConsole data={RESULTS} />
+          {/* BODY WINDOWS: 3 columns of windows with overlapping data */}
+          <motion.div
+            initial={{ opacity: 0, y: 8 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-50px" }}
+            transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
+            className="grid grid-cols-1 gap-5 lg:grid-cols-3"
+          >
+            <BodyWindow title="COMPETITORS.LOG" count={RESULTS.competitors.length}>
+              <CompetitorRows />
+            </BodyWindow>
+            <BodyWindow title="REDDIT.SCAN" count={RESULTS.redditThreads.length}>
+              <RedditRows />
+            </BodyWindow>
+            <BodyWindow title="HN.SCAN" count={RESULTS.hnThreads.length}>
+              <HnRows />
+            </BodyWindow>
+          </motion.div>
+
+          {/* GLOSSARY DICT WINDOW */}
+          <motion.div
+            initial={{ opacity: 0, y: 8 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-50px" }}
+            transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
+          >
+            <GlossaryWindow />
+          </motion.div>
+
+          {/* NO-AUTO-POST BANNER */}
+          <motion.div
+            initial={{ opacity: 0, y: 8 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-50px" }}
+            transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
+            className="flex items-center gap-3 border border-white bg-black px-4 py-3 text-[12px] font-bold uppercase tracking-widest text-white"
+          >
+            <span className="border border-white px-1.5 py-0.5 text-[10px] tracking-[0.18em]">
+              DIRECTIVE 01
+            </span>
+            <span className="flex-1">
+              NO AUTO-POSTING. NO AUTO-COMMENTING. WE FIND WHERE TO SHOW UP — YOU
+              WRITE THE WORDS.
+            </span>
+            <span className="border border-white px-1.5 py-0.5 text-[10px] tracking-[0.18em]">
+              BINDING
+            </span>
+          </motion.div>
+
+          {/* FOUNDER WINDOW */}
+          <motion.div
+            initial={{ opacity: 0, y: 8 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-50px" }}
+            transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
+          >
+            <FoundersWindow />
+          </motion.div>
+
+          {/* FAQ WINDOW */}
+          <motion.div
+            initial={{ opacity: 0, y: 8 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-50px" }}
+            transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
+          >
+            <FaqWindow />
+          </motion.div>
+
+          {/* CLOSING WINDOW */}
+          <motion.div
+            initial={{ opacity: 0, y: 8 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-50px" }}
+            transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
+          >
+            <Window>
+              <TitleBar title="GET_THE_MAP.APP" invert right="DO IT" />
+              <div className="px-6 py-7 text-center sm:px-9 sm:py-9">
+                <h2
+                  className="text-[clamp(28px,5vw,48px)] font-extrabold uppercase leading-[1] tracking-[-0.01em] text-black"
+                  style={{ fontFamily: "ui-monospace, Menlo, monospace" }}
+                >
+                  GET THE MAP.
+                </h2>
+                <p className="mt-3 text-[12px] leading-[1.5] text-black/85">
+                  Paste your product link. See who&apos;s already looking for what
+                  you built.
+                </p>
+                <div className="mx-auto mt-5 max-w-[520px]">
+                  <UrlCtaForm location="footer" />
                 </div>
-              </motion.div>
-            </div>
-          </section>
+                <div className="mt-3 font-mono text-[10px] uppercase tracking-widest text-black/60">
+                  FREE &amp; OPEN SOURCE · ACCOUNT UNLOCKS FULL THREAD LISTS
+                </div>
+              </div>
+            </Window>
+          </motion.div>
+        </div>
 
-          <FounderSection />
-          <Faq />
-          <TryItWidget />
-        </main>
-      </MarketingShell>
-    </MotionConfig>
+        {/* STATUS BAR */}
+        <div
+          className="sticky bottom-0 flex w-full items-center gap-3 border-t border-white bg-black px-3 py-1.5 font-mono text-[10px] uppercase tracking-widest text-white"
+        >
+          <span className="border border-white px-1.5 py-0.5">● READY</span>
+          <span className="opacity-80">OPENCORP.APP</span>
+          <span aria-hidden className="h-3 w-px bg-white/60" />
+          <span className="opacity-80">8 WINDOWS · 1 BIT</span>
+          <span aria-hidden className="h-3 w-px bg-white/60" />
+          <span className="opacity-80">{RESULTS.competitors.length} COMPETITORS · {RESULTS.redditThreads.length} REDDIT · {RESULTS.hnThreads.length} HN</span>
+          <span className="ml-auto opacity-80">ELASTIC 2.0</span>
+        </div>
+      </main>
+    </MarketingShell>
   );
 }
