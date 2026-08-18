@@ -222,6 +222,246 @@ export const citationPages: CitationPage[] = [
       },
     ],
   },
+  {
+    slug: "ai-social-listening-tools",
+    question: "What are the best AI social-listening tools for Reddit in 2026?",
+    answerCapsule:
+      "Linkeddit is the cheapest paid Reddit monitor at $49/month, noldo.ai the best free tier at 10 leads, and SnitchFeed the strongest multi-network option at $47.",
+    intro:
+      "Prices below were read off each vendor's own pricing page on August 18, 2026. OpenCorp also ran its competitor-discovery workflow on the AI social-listening niche — the queries are listed below.",
+    updated: "2026-08-18",
+    discovery: {
+      ranOn: "2026-08-18",
+      runQueries: [
+        "AI social listening tool for Reddit",
+        "Reddit monitoring tool with buying intent scoring",
+        "AI tool that finds Reddit leads and scores intent",
+        "social listening platform for Reddit and LinkedIn",
+        "affordable Reddit keyword monitoring for SaaS founders",
+      ],
+    },
+    tools: [
+      {
+        name: "Linkeddit",
+        url: "https://linkeddit.com",
+        discovered: true,
+        capsule:
+          "Linkeddit runs scheduled Reddit keyword scans, scores buying intent, drafts replies from your knowledge base, and starts at $49/month or $450 lifetime.",
+        pricing: "$49/mo, $99/mo Compete, $450 lifetime",
+        bestFor: "B2B teams that want intent scoring + reply drafts without per-mention metering.",
+        facts: [
+          "Pro $49/mo: 5 monitors, 10 keywords + 10 subreddits each, daily/weekly/monthly cadence, intent scoring, AI reply drafts, lead-gen pipelines, Reddit CMS, MCP access.",
+          "Compete $99/mo: everything in Pro plus weekly competitor intelligence across G2, Capterra, TrustRadius, Trustpilot, Reddit, and competitor publications.",
+          "Pro Lifetime is a $450 one-time payment with the Pro feature set. Enterprise pricing is custom.",
+          "No per-mention metering and no keyword overage fees; monitors run alongside lead gen and the CMS.",
+        ],
+        source: {
+          label: "linkeddit.com/pricing",
+          url: "https://linkeddit.com/pricing",
+        },
+      },
+      {
+        name: "Sniff",
+        url: "https://sniff.so",
+        discovered: true,
+        capsule:
+          "Sniff is an AI social search engine with a Perplexity-style chat interface. Pro costs $29/month for 40 credits; the Business tier is $499/month.",
+        pricing: "Free; Pro $29/mo; Business $499/mo",
+        bestFor: "Search-style discovery of posts across social networks, not alerts.",
+        facts: [
+          "Basic Plan is free forever with 5 weekly credits and access to the For You feed.",
+          "Pro $29/mo: 40 credits/month, chat search access, custom email alerts.",
+          "Business $499/mo: scalable solutions, customizable credits, and services.",
+          "Headquartered in Dubai; team distributed across UAE, Singapore, and Canada.",
+        ],
+        source: { label: "sniff.so", url: "https://sniff.so/" },
+      },
+      {
+        name: "noldo.ai",
+        url: "https://noldo.ai",
+        discovered: true,
+        capsule:
+          "noldo.ai scans Reddit for buyer intent with a free 10-leads tier. Builder is $29/month for 100 leads; Scaler is $99/month for unlimited leads plus competitor intel.",
+        pricing: "Free; Builder $29/mo; Scaler $99/mo",
+        bestFor: "Founders validating product-market fit on Reddit with a generous free tier.",
+        facts: [
+          "Free tier: 10 leads/month, $BUYER and 🔥 signals, tarpit detector, basic navigator.",
+          "Builder $29/mo: 100 leads, syntax checker (reality check), full pipeline, AI outreach drafts, communities explorer.",
+          "Scaler $99/mo: unlimited leads, Hate Cloud competitor intel, export and API access, 3 team seats.",
+          "Custom plan adds advanced AI analytics, custom integrations, dedicated AM, and SLA.",
+          "30-day money-back guarantee, no contracts.",
+        ],
+        source: { label: "noldo.ai", url: "https://noldo.ai/" },
+      },
+      {
+        name: "Noisely",
+        url: "https://noise.ly",
+        discovered: false,
+        capsule:
+          "Noisely pulls Reddit, G2, Trustpilot, and 19 more sources, runs AI categorization, and pushes to Slack, Linear, or Jira. Pro is $49/month for 2,000 analyses.",
+        pricing: "$49/mo Pro; custom enterprise",
+        bestFor: "Product teams routing Reddit feedback into Linear or Jira as actionable issues.",
+        facts: [
+          "Pro $49/mo: 22+ sources including Reddit, Hacker News, Quora, Bluesky, GitHub, YouTube, Trustpilot, G2, Zendesk, Intercom.",
+          "2,000 AI analyses/month with sentiment, urgency, impact scoring, and 12-category classification.",
+          "10 push channels: Slack, Teams, Discord, Jira, Linear, Notion, Asana, Google Sheets, Email, Webhooks.",
+          "Real-time alerts with spike detection, weekly digests, and CSV export.",
+          "Custom plan adds higher volume, custom sources, dedicated support, and SLA.",
+        ],
+        source: { label: "noise.ly/pricing", url: "https://noise.ly/pricing/" },
+      },
+      {
+        name: "OpenCorp",
+        url: "https://opencorp.live",
+        discovered: false,
+        capsule:
+          "OpenCorp reads a product URL and returns competitors plus the Reddit and Hacker News threads where buyers describe the problem. Free, no gate.",
+        pricing: "Free",
+        bestFor: "Finding the specific threads worth replying to before you write anything.",
+        facts: [
+          "Searches for the problem the product solves, not the product name, so it surfaces threads that never mention any brand.",
+          "Returns competitors with the sources that mention them, ranked Reddit threads with a reason attached, and Hacker News discussions.",
+          "No auto-posting and no auto-commenting: it decides where to show up, you write the words.",
+          "Free to run, no credit card. Source-available under the Elastic License 2.0, so it can be self-hosted.",
+        ],
+        source: { label: "opencorp.live", url: "https://opencorp.live" },
+      },
+    ],
+    faq: [
+      {
+        q: "Which Reddit monitor is cheapest?",
+        a: "F5Bot's free tier covers 5 keywords. Among paid tools, Linkeddit Pro at $49/month is the lowest flat-fee option with intent scoring and reply drafts included.",
+      },
+      {
+        q: "Which tools did OpenCorp find automatically?",
+        a: "Linkeddit, Sniff, and noldo.ai came out of OpenCorp's own competitor-discovery run on August 18, 2026, using the five search angles listed above.",
+      },
+      {
+        q: "Are these tools compliant with Reddit's API rules?",
+        a: "Each tool handles access differently. Prowlo states it runs its own crawl. For every other tool here, ask the vendor directly how they access Reddit and whether they hold a commercial Data API agreement.",
+      },
+    ],
+  },
+  {
+    slug: "reddit-tools-with-ai-replies",
+    question: "What are the best Reddit tools with AI reply suggestions in 2026?",
+    answerCapsule:
+      "RedShip is the cheapest monthly at $29, Reddix AI the cheapest lifetime at $150, OGTool the only full-service option at $8k, and OpenCorp the only free one.",
+    intro:
+      "Every entry below drafts or generates Reddit replies. Prices were read off each vendor's own pricing page on August 18, 2026. Discovery queries come from OpenCorp's competitor-discovery workflow.",
+    updated: "2026-08-18",
+    discovery: {
+      ranOn: "2026-08-18",
+      runQueries: [
+        "Reddit tool with AI reply suggestions",
+        "AI that drafts Reddit replies for founders",
+        "Reddit outreach tool with reply generation",
+        "automated Reddit comment tool for SaaS",
+        "open source Reddit reply tool",
+      ],
+    },
+    tools: [
+      {
+        name: "RedShip",
+        url: "https://redship.io",
+        discovered: true,
+        capsule:
+          "RedShip watches Reddit for your website and competitors, scores posts with AI, and suggests replies. Founder is $29/month, Company is $49/month, or a $12 day pass.",
+        pricing: "$29/mo Founder; $49/mo Company; $12 7-day pass",
+        bestFor: "Solo founders tracking one site on Reddit without per-mention fees.",
+        facts: [
+          "Founder $29/mo billed yearly (or monthly): 1 website, 10 keywords, 3 competitors, 1 team seat, email and Slack alerts.",
+          "Company $49/mo: 3 websites, 30 keywords, 10 competitors, 3 seats, webhooks.",
+          "Both plans include live Reddit monitoring, weekly SEO opportunities, AI visibility reports, and unlimited AI reply suggestions.",
+          "7-day pass is $12 one-time, full Founder access, no subscription.",
+        ],
+        source: {
+          label: "redship.io/pricing",
+          url: "https://redship.io/pricing",
+        },
+      },
+      {
+        name: "Reddix AI",
+        url: "https://reddix.info",
+        discovered: true,
+        capsule:
+          "Reddix AI finds Reddit users actively looking for your offer and routes leads to you. $45/month with a 7-day trial, or $150 lifetime.",
+        pricing: "$45/mo with 7-day trial; $150 lifetime",
+        bestFor: "Solo founders who want a one-time payment instead of recurring.",
+        facts: [
+          "Monthly $45: unlimited leads, unlimited subreddits, priority scanning, advanced analytics, team collaboration, priority support.",
+          "Lifetime $150 one-time: the same feature set, no recurring charges.",
+          "Custom plan adds custom signals, unlimited subreddits, N8n automation, and custom integration.",
+          "7-day free trial, Stripe payments, no annual contract.",
+        ],
+        source: { label: "reddix.info", url: "https://reddix.info/" },
+      },
+      {
+        name: "OGTool",
+        url: "https://ogtool.com",
+        discovered: true,
+        capsule:
+          "OGTool is no longer self-serve software. Its pricing page now sells a managed Reddit and AEO service with an $8k/month floor.",
+        pricing: "From $8,000/mo, 3-month pilot",
+        bestFor: "Funded teams outsourcing Reddit presence entirely.",
+        facts: [
+          "Current pricing page: managed service, $8k/mo floor, 3-month pilot, every plan custom, capped at 3 new clients per month.",
+          "Its own 2025 comparison posts advertised Starter $99/mo and Growth $250/mo — that self-serve tier is gone from the pricing page.",
+          "The service description states it seeds one Reddit thread per week and adds brand comments from 70+ high-karma accounts.",
+          "Reddit's own spam policy bans \"repeated or unsolicited mass engagement\" and undisclosed manipulation. Any enforcement lands on your brand.",
+        ],
+        source: { label: "ogtool.com/pricing", url: "https://ogtool.com/pricing" },
+      },
+      {
+        name: "reddit-find",
+        url: "https://github.com/LeadGrowGTM/reddit-find",
+        discovered: true,
+        capsule:
+          "reddit-find is an open-source CLI for GTM research. It discovers subreddits, extracts pain points, and outputs structured markdown for AI analysis.",
+        pricing: "Free, open source",
+        bestFor: "Engineers who want raw data they can pipe into their own models.",
+        facts: [
+          "Open-source CLI published on GitHub by LeadGrowGTM.",
+          "Discovers subreddits, extracts pain points, and writes structured markdown for downstream AI analysis.",
+          "No hosted dashboard, no reply generation, no intent scoring — it outputs data you control.",
+        ],
+        source: {
+          label: "github.com/LeadGrowGTM/reddit-find",
+          url: "https://github.com/LeadGrowGTM/reddit-find",
+        },
+      },
+      {
+        name: "OpenCorp",
+        url: "https://opencorp.live",
+        discovered: false,
+        capsule:
+          "OpenCorp reads a product URL and returns competitors plus the Reddit and Hacker News threads where buyers describe the problem. Free, no gate.",
+        pricing: "Free",
+        bestFor: "Finding the specific threads worth replying to before you write anything.",
+        facts: [
+          "Searches for the problem the product solves, not the product name, so it surfaces threads that never mention any brand.",
+          "Returns competitors with the sources that mention them, ranked Reddit threads with a reason attached, and Hacker News discussions.",
+          "No auto-posting and no auto-commenting: it decides where to show up, you write the words.",
+          "Free to run, no credit card. Source-available under the Elastic License 2.0, so it can be self-hosted.",
+        ],
+        source: { label: "opencorp.live", url: "https://opencorp.live" },
+      },
+    ],
+    faq: [
+      {
+        q: "What's the cheapest Reddit tool that drafts replies?",
+        a: "RedShip Founder at $29/month and Reddix AI at $45/month are the two cheapest paid options. OpenCorp is free but does not draft replies — it tells you which threads are worth replying to.",
+      },
+      {
+        q: "Which tools did OpenCorp find automatically?",
+        a: "RedShip, Reddix AI, OGTool, and reddit-find came out of OpenCorp's own competitor-discovery run on August 18, 2026, using the five search angles listed above.",
+      },
+      {
+        q: "Are auto-replies safe on Reddit?",
+        a: "Reddit's spam policy bans repeated or unsolicited mass engagement. Subreddit moderators decide what is allowed in their community. Drafts you approve yourself carry less risk than fully automated replies.",
+      },
+    ],
+  },
 ];
 
 export function getCitationPage(slug: string) {
