@@ -1,4 +1,5 @@
 import type { MetadataRoute } from "next";
+import { citationPages } from "@/lib/citation-pages";
 
 const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL ?? "https://opencorp.live";
@@ -24,6 +25,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "monthly",
       priority: 0.6,
     },
+    ...citationPages.map((page) => ({
+      url: `${SITE_URL}/best/${page.slug}`,
+      lastModified: new Date(page.updated),
+      changeFrequency: "monthly" as const,
+      priority: 0.7,
+    })),
     {
       url: `${SITE_URL}/auth/sign-in`,
       lastModified,

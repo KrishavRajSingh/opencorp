@@ -6,6 +6,7 @@
 
 - [Home](https://opencorp.live): product overview, sample report, FAQ
 - [Dashboard](https://opencorp.live/dashboard): run a new research report on any product
+- [Best Reddit lead generation tools 2026](https://opencorp.live/best/reddit-lead-generation-tools): pricing and limits for F5Bot, Prowlo, Syften, Buska, GummySearch, read from vendor pricing pages 2026-08-18
 - [Sign up](https://opencorp.live/auth/sign-up): free account, unlocks full thread lists and saved reports
 - [Sign in](https://opencorp.live/auth/sign-in)
 - [Privacy](https://opencorp.live/privacy)

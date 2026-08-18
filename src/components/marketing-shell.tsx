@@ -168,6 +168,12 @@ function SiteFooter() {
         </div>
         <div className="flex flex-wrap items-center gap-5">
           <Link
+            href="/best/reddit-lead-generation-tools"
+            className="transition-colors hover:text-foreground"
+          >
+            Reddit tools
+          </Link>
+          <Link
             href="/privacy"
             className="transition-colors hover:text-foreground"
           >
