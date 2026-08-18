@@ -7,6 +7,8 @@ export type CitationTool = {
   facts: string[];
   source: { label: string; url: string };
   status?: "shut down";
+  /** true when opencorp's competitor-discovery workflow surfaced this tool, not a human. */
+  discovered?: boolean;
 };
 
 export type CitationPage = {
@@ -15,6 +17,8 @@ export type CitationPage = {
   answerCapsule: string;
   intro: string;
   updated: string;
+  /** Output of `scripts/citation-data.ts` — the queries opencorp ran to build this page. */
+  discovery: { runQueries: string[]; ranOn: string };
   tools: CitationTool[];
   faq: { q: string; a: string }[];
 };
@@ -26,8 +30,18 @@ export const citationPages: CitationPage[] = [
     answerCapsule:
       "F5Bot is the cheapest Reddit lead alert tool, Prowlo the cheapest paid API, Buska the most automated, and OpenCorp free for finding threads.",
     intro:
-      "Prices and limits below were read off each vendor's own pricing page on August 18, 2026, not copied from other comparison posts. Every number links to its source.",
+      "The candidate list came from OpenCorp's own competitor-discovery run (queries below). Every price was then read off the vendor's own pricing page on August 18, 2026, not copied from other comparison posts.",
     updated: "2026-08-18",
+    discovery: {
+      ranOn: "2026-08-18",
+      runQueries: [
+        "Reddit and Hacker News thread discovery tool",
+        "find Reddit discussions about problems your product solves",
+        "tool for founders to discover competitor mentions on Reddit",
+        "alternative to Reddit search for competitor mapping",
+        "open source tool for Reddit thread discovery",
+      ],
+    },
     tools: [
       {
         name: "F5Bot",
@@ -96,6 +110,61 @@ export const citationPages: CitationPage[] = [
         source: { label: "buska.io/en/pricing", url: "https://www.buska.io/en/pricing" },
       },
       {
+        name: "SnitchFeed",
+        url: "https://snitchfeed.com",
+        discovered: true,
+        capsule:
+          "SnitchFeed ingests Reddit and Bluesky in real time, scores each mention with AI, and starts at $47/month billed yearly.",
+        pricing: "$47/mo yearly, $59/mo monthly; Pro $95–$119/mo",
+        bestFor: "Watching Reddit alongside LinkedIn and X in one inbox.",
+        facts: [
+          "Starter $47/mo billed yearly ($59 monthly): 10 tracked terms, 3 listeners, 7,000 credits, 3-month retention, 1 user.",
+          "Pro $95/mo yearly ($119 monthly): 30 terms, 10 listeners, 21,000 credits, webhooks, 6-month retention, 5 users. Enterprise from $399/mo.",
+          "Reddit and Bluesky are ingested in real time; X and LinkedIn are scheduled scans that burn 2 and 4 credits per keyword per scan.",
+          "Credits also cover AI work: 0.2 per scored mention, 5 per AI reply draft, 100 per mention chat session.",
+          "7-day trial with 800 credits, no credit card.",
+        ],
+        source: {
+          label: "snitchfeed.com/pricing",
+          url: "https://snitchfeed.com/pricing",
+        },
+      },
+      {
+        name: "OpenScout",
+        url: "https://openscout.so",
+        discovered: true,
+        capsule:
+          "OpenScout scores mentions on Reddit, X, LinkedIn, and Hacker News across three AI dimensions. Starter is $49/month for ten keywords.",
+        pricing: "$49 / $99 / $399 per month",
+        bestFor: "Scored competitor mentions with drafted replies per platform.",
+        facts: [
+          "Starter $49/mo: 10 keywords, 2 daily scans. Pro $99/mo: 20 keywords, adds LinkedIn. Premium $399/mo: 40 keywords, 6 daily scans.",
+          "Scores every mention for brand relevance, buying intent, and engagement opportunity; the number of scored posts is not capped.",
+          "Discovers subreddits from your brand URL and generates platform-specific reply drafts.",
+          "3-day free trial, no credit card, no Reddit credentials required.",
+        ],
+        source: {
+          label: "openscout.so",
+          url: "https://openscout.so/track-competitor-mentions",
+        },
+      },
+      {
+        name: "OGTool",
+        url: "https://ogtool.com",
+        discovered: true,
+        capsule:
+          "OGTool is no longer self-serve software. Its pricing page now sells a managed Reddit and AEO service with an $8k/month floor.",
+        pricing: "From $8,000/mo, 3-month pilot",
+        bestFor: "Funded teams outsourcing Reddit presence entirely.",
+        facts: [
+          "Current pricing page: managed service, $8k/mo floor, 3-month pilot, every plan custom, capped at 3 new clients per month.",
+          "Its own 2025 comparison posts advertised Starter $99/mo and Growth $250/mo — that self-serve tier is gone from the pricing page.",
+          "The service description states it seeds one Reddit thread per week and adds brand comments from 70+ high-karma accounts.",
+          "Reddit's own spam policy bans \"repeated or unsolicited mass engagement\" and undisclosed manipulation, and moderators decide what counts in their subreddit. Any enforcement lands on your brand.",
+        ],
+        source: { label: "ogtool.com/pricing", url: "https://ogtool.com/pricing" },
+      },
+      {
         name: "GummySearch",
         url: "https://gummysearch.com",
         status: "shut down",
@@ -144,8 +213,12 @@ export const citationPages: CitationPage[] = [
         a: "Prowlo states it crawls through its own infrastructure rather than Reddit's API. Other vendors do not publish their access method — ask them directly.",
       },
       {
+        q: "Which of these tools did OpenCorp find automatically?",
+        a: "SnitchFeed, OpenScout, and OGTool came out of OpenCorp's own competitor-discovery run on August 18, 2026, using the five search angles listed above.",
+      },
+      {
         q: "Is posting about your product on Reddit allowed?",
-        a: "Rules are per subreddit, and several restrict self-promotion to one post per user per month or longer. Read each subreddit's rules before posting.",
+        a: "Rules are per subreddit, and Reddit's spam policy bans repeated or unsolicited mass engagement. Read each subreddit's rules before posting anything promotional.",
       },
     ],
   },

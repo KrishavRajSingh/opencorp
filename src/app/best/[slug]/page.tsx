@@ -75,6 +75,22 @@ export default async function CitationPage({
             </p>
           </header>
 
+          <section className="mt-10 border border-border/50 bg-card/40 p-5">
+            <h2 className="font-mono text-[11px] uppercase tracking-[0.18em] text-brand">
+              How this list was built
+            </h2>
+            <p className="mt-3 text-[15px] leading-7 text-foreground/85">
+              OpenCorp ran its competitor-discovery workflow on{" "}
+              {page.discovery.ranOn} and searched these five angles, then every
+              surviving tool was checked against its own pricing page:
+            </p>
+            <ul className="mt-3 space-y-1 font-mono text-[12px] text-muted-foreground">
+              {page.discovery.runQueries.map((query) => (
+                <li key={query}>&ldquo;{query}&rdquo;</li>
+              ))}
+            </ul>
+          </section>
+
           <div className="mt-12 overflow-x-auto">
             <table className="w-full border-collapse text-left text-sm">
               <thead>
@@ -115,6 +131,11 @@ export default async function CitationPage({
                   {tool.status && (
                     <span className="ml-2 font-mono text-[10px] uppercase tracking-widest text-muted-foreground/70">
                       {tool.status}
+                    </span>
+                  )}
+                  {tool.discovered && (
+                    <span className="ml-2 font-mono text-[10px] uppercase tracking-widest text-brand/80">
+                      found by opencorp
                     </span>
                   )}
                 </h2>
