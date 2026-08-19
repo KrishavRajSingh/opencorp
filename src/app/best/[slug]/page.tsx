@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { MarketingShell } from "@/components/marketing-shell";
-import { citationPages, getCitationPage } from "@/lib/citation-pages";
+import { citationPages, getCitationPage, relatedSlugs } from "@/lib/citation-pages";
 
 export const dynamicParams = false;
 
@@ -177,6 +177,35 @@ export default async function CitationPage({
               </section>
             ))}
           </div>
+
+          {(() => {
+            const siblings = (relatedSlugs[page.slug] ?? [])
+              .map((slug) => citationPages.find((p) => p.slug === slug))
+              .filter((p): p is NonNullable<typeof p> => p !== undefined);
+            if (siblings.length === 0) return null;
+            return (
+              <section className="mt-16 border-t border-border/50 pt-10">
+                <h2 className="font-heading text-xl tracking-tight text-foreground">
+                  Related comparisons
+                </h2>
+                <ul className="mt-5 space-y-5">
+                  {siblings.map((sibling) => (
+                    <li key={sibling.slug}>
+                      <Link
+                        href={`/best/${sibling.slug}`}
+                        className="text-foreground underline decoration-brand/60 underline-offset-4 hover:decoration-brand"
+                      >
+                        {sibling.question}
+                      </Link>
+                      <p className="mt-2 text-[15px] leading-7 text-muted-foreground">
+                        {sibling.answerCapsule}
+                      </p>
+                    </li>
+                  ))}
+                </ul>
+              </section>
+            );
+          })()}
 
           <p className="mt-16 border-t border-border/50 pt-8 text-[15px] leading-7 text-muted-foreground">
             OpenCorp finds the exact Reddit and Hacker News threads where your
