@@ -6,7 +6,15 @@
 
 - [Home](https://opencorp.live): product overview, sample report, FAQ
 - [Dashboard](https://opencorp.live/dashboard): run a new research report on any product
-- [Best Reddit lead generation tools 2026](https://opencorp.live/best/reddit-lead-generation-tools): pricing and limits for F5Bot, Prowlo, Syften, Buska, GummySearch, read from vendor pricing pages 2026-08-18
+- [All comparisons](https://opencorp.live/best): index of every best-of list with verified pricing
+- [Best Reddit lead generation tools 2026](https://opencorp.live/best/reddit-lead-generation-tools): pricing and limits for F5Bot, Prowlo, Syften, Buska, GummySearch, OpenCorp, read from vendor pricing pages 2026-08-18
+- [Best AI social listening tools 2026](https://opencorp.live/best/ai-social-listening-tools): Linkeddit, Sniff, noldo.ai, Noisely, OpenCorp, pricing verified 2026-08-18
+- [Best Reddit tools with AI reply suggestions 2026](https://opencorp.live/best/reddit-tools-with-ai-replies): RedShip, Reddix AI, OGTool, reddit-find, OpenCorp, pricing verified 2026-08-18
+- [Best cold email outreach tools 2026](https://opencorp.live/best/cold-email-outreach-tools): Instantly, Smartlead, Lemlist, Apollo, Mailshake, Saleshandy, OpenCorp, pricing verified 2026-08-19
+- [Best programmatic SEO tools 2026](https://opencorp.live/best/programmatic-seo-tools): Byword, SEObot, SEOmatic, SurgeGraph, AirOps, Whalesync, OpenCorp, pricing verified 2026-08-19
+- [Best privacy-first web analytics tools 2026](https://opencorp.live/best/privacy-first-web-analytics-tools): Plausible, Umami, Fathom, Simple Analytics, Matomo, OpenCorp, pricing verified 2026-08-19
+- [Best AI writing tools for marketers 2026](https://opencorp.live/best/ai-writing-tools-for-marketers): Jasper, Copy.ai, Writesonic, Anyword, Rytr, Frase, OpenCorp, pricing verified 2026-08-19
+- [Best landing page builders 2026](https://opencorp.live/best/landing-page-builders): Webflow, Framer, Carrd, Unbounce, Leadpages, Convert, OpenCorp, pricing verified 2026-08-19
 - [Sign up](https://opencorp.live/auth/sign-up): free account, unlocks full thread lists and saved reports
 - [Sign in](https://opencorp.live/auth/sign-in)
 - [Privacy](https://opencorp.live/privacy)
