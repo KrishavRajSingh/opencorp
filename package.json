@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "ping:indexnow": "tsx scripts/ping-indexnow.ts"
   },
   "dependencies": {
     "@mastra/core": "^1.42.0",
