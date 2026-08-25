@@ -35,11 +35,18 @@ const body = JSON.stringify({
   urlList: urls,
 });
 
-const res = await fetch("https://api.indexnow.org/indexnow", {
-  method: "POST",
-  headers: { "Content-Type": "application/json; charset=utf-8" },
-  body,
-});
+async function main() {
+  const res = await fetch("https://api.indexnow.org/indexnow", {
+    method: "POST",
+    headers: { "Content-Type": "application/json; charset=utf-8" },
+    body,
+  });
 
-const text = await res.text();
-console.log(`[indexnow] ${urls.length} URLs → ${res.status} ${text}`);
+  const text = await res.text();
+  console.log(`[indexnow] ${urls.length} URLs → ${res.status} ${text}`);
+}
+
+main().catch((err) => {
+  console.error("[indexnow] failed:", err);
+  process.exit(1);
+});
