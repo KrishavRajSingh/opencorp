@@ -36,24 +36,81 @@ export default async function CitationPage({
   const page = getCitationPage(slug);
   if (!page) notFound();
 
-  const faqJsonLd = {
+  const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://opencorp.live";
+  const pageUrl = `${SITE_URL}/best/${page.slug}`;
+
+  const jsonLd = {
     "@context": "https://schema.org",
-    "@type": "FAQPage",
-    mainEntity: [
-      { q: page.question, a: page.answerCapsule },
-      ...page.faq,
-    ].map(({ q, a }) => ({
-      "@type": "Question",
-      name: q,
-      acceptedAnswer: { "@type": "Answer", text: a },
-    })),
+    "@graph": [
+      {
+        "@type": "Article",
+        "@id": pageUrl,
+        headline: page.question,
+        description: page.answerCapsule,
+        datePublished: page.updated,
+        dateModified: page.updated,
+        inLanguage: "en",
+        publisher: {
+          "@type": "Organization",
+          name: "OpenCorp",
+          url: SITE_URL,
+          logo: { "@type": "ImageObject", url: `${SITE_URL}/icon.svg` },
+        },
+        mainEntityOfPage: { "@type": "WebPage", "@id": pageUrl },
+      },
+      {
+        "@type": "FAQPage",
+        mainEntity: [
+          { q: page.question, a: page.answerCapsule },
+          ...page.faq,
+        ].map(({ q, a }) => ({
+          "@type": "Question",
+          name: q,
+          acceptedAnswer: { "@type": "Answer", text: a },
+        })),
+      },
+      {
+        "@type": "BreadcrumbList",
+        itemListElement: [
+          { "@type": "ListItem", position: 1, name: "Home", item: SITE_URL },
+          {
+            "@type": "ListItem",
+            position: 2,
+            name: "Comparisons",
+            item: `${SITE_URL}/best`,
+          },
+          {
+            "@type": "ListItem",
+            position: 3,
+            name: page.question,
+            item: pageUrl,
+          },
+        ],
+      },
+      {
+        "@type": "ItemList",
+        name: page.question,
+        numberOfItems: page.tools.length,
+        itemListOrder: "https://schema.org/ItemListOrderAscending",
+        itemListElement: page.tools.map((tool, i) => ({
+          "@type": "ListItem",
+          position: i + 1,
+          item: {
+            "@type": "SoftwareApplication",
+            name: tool.name,
+            url: tool.url,
+            description: tool.capsule,
+          },
+        })),
+      },
+    ],
   };
 
   return (
     <MarketingShell>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
       <main className="flex-1 pt-20">
         <article className="mx-auto max-w-3xl px-6 pb-24 pt-12 sm:pt-20">
