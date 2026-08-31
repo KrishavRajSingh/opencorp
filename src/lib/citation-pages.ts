@@ -4,6 +4,8 @@ export type CitationTool = {
   capsule: string;
   pricing: string;
   bestFor: string;
+  /** Platforms/sources the tool covers, shown in the comparison table. */
+  networks?: string;
   facts: string[];
   source: { label: string; url: string };
   status?: "shut down";
@@ -224,12 +226,12 @@ export const citationPages: CitationPage[] = [
   },
   {
     slug: "ai-social-listening-tools",
-    question: "What are the best AI social-listening tools for Reddit in 2026?",
+    question: "What are the best social listening tools in 2026?",
     answerCapsule:
-      "Linkeddit is the cheapest paid Reddit monitor at $49/month, noldo.ai the best free tier at 10 leads, and SnitchFeed the strongest multi-network option at $47.",
+      "Noisely is the cheapest full listening platform at $49/mo, noldo.ai the best free Reddit tier at 10 leads, and OpenCorp free for finding the threads worth replying to.",
     intro:
-      "Prices below were read off each vendor's own pricing page on August 18, 2026. OpenCorp also ran its competitor-discovery workflow on the AI social-listening niche — the queries are listed below.",
-    updated: "2026-08-18",
+      "The established platforms (Hootsuite, Sprout Social, Brand24, Talkwalker) were verified manually against their own pricing pages on August 31, 2026. The Reddit-focused tools come from OpenCorp's competitor-discovery run on August 18, 2026 — the queries are listed below.",
+    updated: "2026-08-31",
     discovery: {
       ranOn: "2026-08-18",
       runQueries: [
@@ -242,6 +244,77 @@ export const citationPages: CitationPage[] = [
     },
     tools: [
       {
+        name: "Hootsuite",
+        url: "https://www.hootsuite.com",
+        capsule:
+          "Hootsuite is the most established social suite: scheduling, inbox, and brand monitoring from $99/user/mo — but true listening (\"advanced listening\") only appears on the Enterprise tier.",
+        pricing: "Standard $99/user/mo, Professional $199, Advanced $399; Enterprise custom",
+        bestFor:
+          "Marketing teams that want publishing + monitoring in one suite; real listening is Enterprise-only.",
+        networks: "10 accounts (Standard) / unlimited (Pro+)",
+        facts: [
+          "Standard $99/user/mo billed annually: 10 social accounts, unlimited scheduling, AI post generation, unified inbox, brand and competitor monitoring.",
+          "Professional $199/user/mo: unlimited accounts, automated replies and workflows, 90-day trend forecasting, custom performance reports.",
+          "Advanced $399/user/mo: approvals, message routing, team performance reporting.",
+          "\"Advanced listening\" is listed only on Enterprise (custom quote) — the suite tiers stop at monitoring.",
+          "14-day free trial, no credit card required.",
+        ],
+        source: { label: "hootsuite.com/plans", url: "https://www.hootsuite.com/plans" },
+      },
+      {
+        name: "Sprout Social",
+        url: "https://www.sproutsocial.com",
+        capsule:
+          "Sprout Social bundles publishing, inbox, and customer care from $79/seat/mo, with keyword and location monitoring on Standard and up — listening is a separate add-on.",
+        pricing: "Essentials $79/seat/mo, Standard $199, Professional $299, Advanced $399; Enterprise custom",
+        bestFor:
+          "Social teams needing publishing and customer care; listening sold as an add-on.",
+        networks: "5 profiles (Essentials/Standard), unlimited (Pro+)",
+        facts: [
+          "Essentials $79/seat/mo billed annually ($99 monthly): 5 profiles, publishing, optimal send times, post-level reporting.",
+          "Standard $199/seat/mo: 5 profiles, consolidated inbox, keyword and location monitoring, review management, Trellis AI agent.",
+          "Professional $299/seat/mo: unlimited profiles, message tagging, competitor and paid insights. Advanced $399/seat/mo adds sentiment, the API, and message spike alerts.",
+          "Listening is an add-on (sold with Premium Analytics) to Standard and up — not included in any base plan.",
+          "30-day free trial; annual billing.",
+        ],
+        source: { label: "sproutsocial.com/pricing", url: "https://www.sproutsocial.com/pricing/" },
+      },
+      {
+        name: "Brand24",
+        url: "https://brand24.com",
+        capsule:
+          "Brand24 is the cheapest dedicated listening platform among the big names at $199/mo, covering 15 source types with AI sentiment from the entry plan.",
+        pricing: "Individual $199/mo, Team $299, Pro $399, Business $599; Enterprise from $1,499 (annual billing)",
+        bestFor:
+          "Growing brands that want listening-native monitoring across 15 source types.",
+        networks: "15 source types (Facebook, Instagram, X, Reddit, LinkedIn, YouTube, TikTok, news, blogs…)",
+        facts: [
+          "Individual $199/mo billed annually ($249 monthly): 3 keywords, 2,000 mentions/mo, 1 user, updates every 12 hours.",
+          "Team $299/mo annual ($349): 7 keywords, 10K mentions/mo, unlimited users, hourly updates.",
+          "Pro $399/mo annual ($499): 12 keywords, 40K mentions/mo, realtime updates, AI sentiment, AI Insights. Business $599/mo annual ($699): 25 keywords, 100K mentions/mo.",
+          "Sources include Facebook, Instagram, X, Reddit, LinkedIn, YouTube, TikTok, news, blogs, reviews, newsletters, podcasts, and more.",
+          "14-day free trial; 30-day money-back guarantee.",
+        ],
+        source: { label: "brand24.com/prices", url: "https://brand24.com/prices/" },
+      },
+      {
+        name: "Talkwalker (Lumen)",
+        url: "https://www.talkwalker.com",
+        capsule:
+          "Lumen by Talkwalker covers 150M sources across 30+ platforms with AI question-answering, but has no public prices — every plan is a custom quote.",
+        pricing: "Custom quote (Core / Analyze / Business)",
+        bestFor:
+          "Enterprises needing brand intelligence at scale; no self-serve pricing.",
+        networks: "30+ platforms, 150M sources",
+        facts: [
+          "No public prices: Core, Analyze, and Business plans are all custom quotes via demo.",
+          "Lumen covers 150M data sources, 30+ social platforms, 187 languages, and 196 countries.",
+          "Unlimited users, professional onboarding, and training included on every plan.",
+          "AI Agent answers natural-language questions over your data; LLM Insights tracks how AI assistants describe your brand.",
+        ],
+        source: { label: "talkwalker.com/pricing", url: "https://www.talkwalker.com/pricing" },
+      },
+      {
         name: "Linkeddit",
         url: "https://linkeddit.com",
         discovered: true,
@@ -249,6 +322,7 @@ export const citationPages: CitationPage[] = [
           "Linkeddit runs scheduled Reddit keyword scans, scores buying intent, drafts replies from your knowledge base, and starts at $49/month or $450 lifetime.",
         pricing: "$49/mo, $99/mo Compete, $450 lifetime",
         bestFor: "B2B teams that want intent scoring + reply drafts without per-mention metering.",
+        networks: "Reddit",
         facts: [
           "Pro $49/mo: 5 monitors, 10 keywords + 10 subreddits each, daily/weekly/monthly cadence, intent scoring, AI reply drafts, lead-gen pipelines, Reddit CMS, MCP access.",
           "Compete $99/mo: everything in Pro plus weekly competitor intelligence across G2, Capterra, TrustRadius, Trustpilot, Reddit, and competitor publications.",
@@ -268,6 +342,7 @@ export const citationPages: CitationPage[] = [
           "Sniff is an AI social search engine with a Perplexity-style chat interface. Pro costs $29/month for 40 credits; the Business tier is $499/month.",
         pricing: "Free; Pro $29/mo; Business $499/mo",
         bestFor: "Search-style discovery of posts across social networks, not alerts.",
+        networks: "Multiple social networks (search-style)",
         facts: [
           "Basic Plan is free forever with 5 weekly credits and access to the For You feed.",
           "Pro $29/mo: 40 credits/month, chat search access, custom email alerts.",
@@ -284,6 +359,7 @@ export const citationPages: CitationPage[] = [
           "noldo.ai scans Reddit for buyer intent with a free 10-leads tier. Builder is $29/month for 100 leads; Scaler is $99/month for unlimited leads plus competitor intel.",
         pricing: "Free; Builder $29/mo; Scaler $99/mo",
         bestFor: "Founders validating product-market fit on Reddit with a generous free tier.",
+        networks: "Reddit",
         facts: [
           "Free tier: 10 leads/month, $BUYER and 🔥 signals, tarpit detector, basic navigator.",
           "Builder $29/mo: 100 leads, syntax checker (reality check), full pipeline, AI outreach drafts, communities explorer.",
@@ -300,7 +376,8 @@ export const citationPages: CitationPage[] = [
         capsule:
           "Noisely pulls Reddit, G2, Trustpilot, and 19 more sources, runs AI categorization, and pushes to Slack, Linear, or Jira. Pro is $49/month for 2,000 analyses.",
         pricing: "$49/mo Pro; custom enterprise",
-        bestFor: "Product teams routing Reddit feedback into Linear or Jira as actionable issues.",
+        bestFor: "Product teams routing feedback across 22+ sources into Linear or Jira.",
+        networks: "22+ sources (Reddit, HN, Quora, Bluesky, GitHub, YouTube, Trustpilot, G2…)",
         facts: [
           "Pro $49/mo: 22+ sources including Reddit, Hacker News, Quora, Bluesky, GitHub, YouTube, Trustpilot, G2, Zendesk, Intercom.",
           "2,000 AI analyses/month with sentiment, urgency, impact scoring, and 12-category classification.",
@@ -318,6 +395,7 @@ export const citationPages: CitationPage[] = [
           "OpenCorp reads a product URL and returns competitors plus the Reddit and Hacker News threads where buyers describe the problem. Free, no gate.",
         pricing: "Free",
         bestFor: "Finding the specific threads worth replying to before you write anything.",
+        networks: "Reddit + Hacker News",
         facts: [
           "Searches for the problem the product solves, not the product name, so it surfaces threads that never mention any brand.",
           "Returns competitors with the sources that mention them, ranked Reddit threads with a reason attached, and Hacker News discussions.",
@@ -329,12 +407,20 @@ export const citationPages: CitationPage[] = [
     ],
     faq: [
       {
+        q: "What's the difference between social listening and social monitoring?",
+        a: "Monitoring tracks mentions of your brand or keywords and alerts you when something appears. Listening goes further: it analyzes the volume, themes, sentiment, and intent behind those conversations at scale. Brand24 and Noisely do both in their base plans; Hootsuite and Sprout Social mostly do monitoring in theirs and sell listening separately.",
+      },
+      {
+        q: "Which social listening tool is cheapest for a solo founder?",
+        a: "Noisely at $49/mo is the cheapest paid option with full multi-source listening. noldo.ai has the most generous free tier for Reddit leads (10 per month), and OpenCorp is free for finding the threads worth replying to.",
+      },
+      {
         q: "Which Reddit monitor is cheapest?",
         a: "F5Bot's free tier covers 5 keywords. Among paid tools, Linkeddit Pro at $49/month is the lowest flat-fee option with intent scoring and reply drafts included.",
       },
       {
         q: "Which tools did OpenCorp find automatically?",
-        a: "Linkeddit, Sniff, and noldo.ai came out of OpenCorp's own competitor-discovery run on August 18, 2026, using the five search angles listed above.",
+        a: "Linkeddit, Sniff, and noldo.ai came out of OpenCorp's own competitor-discovery run on August 18, 2026, using the five search angles listed above. Hootsuite, Sprout Social, Brand24, and Talkwalker were added because they dominate the search results for \"social listening tools\"; their prices were verified manually against each vendor's pricing page.",
       },
       {
         q: "Are these tools compliant with Reddit's API rules?",

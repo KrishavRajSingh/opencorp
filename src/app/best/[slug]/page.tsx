@@ -161,7 +161,8 @@ export default async function CitationPage({
                 <tr className="border-b border-border/60 font-mono text-[11px] uppercase tracking-widest text-muted-foreground">
                   <th className="py-2 pr-4 font-normal">Tool</th>
                   <th className="py-2 pr-4 font-normal">Price</th>
-                  <th className="py-2 font-normal">Best for</th>
+                  <th className="py-2 pr-4 font-normal">Best for</th>
+                  <th className="py-2 font-normal">Networks</th>
                 </tr>
               </thead>
               <tbody>
@@ -180,6 +181,9 @@ export default async function CitationPage({
                     </td>
                     <td className="py-3 align-top text-foreground/80">
                       {tool.bestFor}
+                    </td>
+                    <td className="py-3 align-top text-foreground/80">
+                      {tool.networks ?? "—"}
                     </td>
                   </tr>
                 ))}
