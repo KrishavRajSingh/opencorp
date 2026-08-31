@@ -13,18 +13,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "weekly",
       priority: 1,
     },
-    {
-      url: `${SITE_URL}/dashboard`,
-      lastModified,
-      changeFrequency: "weekly",
-      priority: 0.8,
-    },
-    {
-      url: `${SITE_URL}/auth/sign-up`,
-      lastModified,
-      changeFrequency: "monthly",
-      priority: 0.6,
-    },
     ...citationPages.map((page) => ({
       url: `${SITE_URL}/best/${page.slug}`,
       lastModified: new Date(page.updated),
@@ -36,12 +24,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
       lastModified,
       changeFrequency: "weekly",
       priority: 0.8,
-    },
-    {
-      url: `${SITE_URL}/auth/sign-in`,
-      lastModified,
-      changeFrequency: "monthly",
-      priority: 0.4,
     },
     {
       url: `${SITE_URL}/privacy`,

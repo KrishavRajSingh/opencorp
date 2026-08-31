@@ -18,11 +18,18 @@ export async function generateMetadata({
   const { slug } = await params;
   const page = getCitationPage(slug);
   if (!page) return {};
+  const title = page.question
+    .replace(/^What are the /, "")
+    .replace(" in 2026?", " 2026");
+  const description =
+    page.answerCapsule.length <= 158
+      ? page.answerCapsule
+      : `${page.answerCapsule.slice(0, 158).replace(/ [^ ]*$/, "")}…`;
   return {
-    title: page.question,
-    description: page.answerCapsule,
-    openGraph: { title: page.question, description: page.answerCapsule },
-    twitter: { title: page.question, description: page.answerCapsule },
+    title,
+    description,
+    openGraph: { title, description },
+    twitter: { title, description },
     alternates: { canonical: `/best/${page.slug}` },
   };
 }
