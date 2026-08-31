@@ -4,6 +4,20 @@ import { notFound } from "next/navigation";
 import { MarketingShell } from "@/components/marketing-shell";
 import { citationPages, getCitationPage, relatedSlugs } from "@/lib/citation-pages";
 
+const AUTHOR = {
+  name: "Krishav Raj Singh",
+  role: "Founder, OpenCorp",
+  url: "https://opencorp.live",
+};
+
+const PICKING_CRITERIA = [
+  "Pricing transparency — public prices on the vendor's own page, no opaque sales calls for the entry tier.",
+  "Source coverage — the platforms your audience actually uses, not a checkmark on a marketing feature list.",
+  "Verified pricing — every number on this page was read off the vendor's pricing page on the date in the intro.",
+  "No auto-posting — we don't recommend tools that post or comment on your behalf without explicit per-action approval.",
+  "Reasoning, not just a list — every tool entry has a real best-for, not generic copy lifted from another comparison.",
+];
+
 export const dynamicParams = false;
 
 export function generateStaticParams() {
@@ -57,6 +71,12 @@ export default async function CitationPage({
         datePublished: page.updated,
         dateModified: page.updated,
         inLanguage: "en",
+        author: {
+          "@type": "Person",
+          name: AUTHOR.name,
+          url: AUTHOR.url,
+          jobTitle: AUTHOR.role,
+        },
         publisher: {
           "@type": "Organization",
           name: "OpenCorp",
@@ -137,9 +157,34 @@ export default async function CitationPage({
             <p className="mt-3 font-mono text-[11px] uppercase tracking-widest text-muted-foreground/60">
               Verified {page.updated}
             </p>
+            <p className="mt-2 font-mono text-[11px] text-muted-foreground">
+              By{" "}
+              <a
+                href={AUTHOR.url}
+                className="underline decoration-brand/60 underline-offset-4 hover:text-foreground"
+              >
+                {AUTHOR.name}
+              </a>
+              , {AUTHOR.role}
+            </p>
           </header>
 
           <section className="mt-10 border border-border/50 bg-card/40 p-5">
+            <h2 className="font-mono text-[11px] uppercase tracking-[0.18em] text-brand">
+              How we picked these
+            </h2>
+            <p className="mt-3 text-[15px] leading-7 text-foreground/85">
+              Every tool on this list was checked against five criteria we apply
+              uniformly across all OpenCorp comparisons:
+            </p>
+            <ol className="mt-3 space-y-1.5 list-decimal pl-5 text-[13px] leading-6 text-muted-foreground">
+              {PICKING_CRITERIA.map((criterion) => (
+                <li key={criterion}>{criterion}</li>
+              ))}
+            </ol>
+          </section>
+
+          <section className="mt-6 border border-border/50 bg-card/40 p-5">
             <h2 className="font-mono text-[11px] uppercase tracking-[0.18em] text-brand">
               How this list was built
             </h2>
@@ -215,6 +260,35 @@ export default async function CitationPage({
                     <li key={fact}>{fact}</li>
                   ))}
                 </ul>
+
+                {(tool.pros?.length || tool.cons?.length) ? (
+                  <div className="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-2">
+                    {tool.pros?.length ? (
+                      <div className="border border-emerald-500/20 bg-emerald-500/5 p-4">
+                        <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-emerald-700 dark:text-emerald-400">
+                          Pros
+                        </p>
+                        <ul className="mt-2 list-disc space-y-1.5 pl-5 text-[14px] leading-6 text-foreground/85">
+                          {tool.pros.map((pro) => (
+                            <li key={pro}>{pro}</li>
+                          ))}
+                        </ul>
+                      </div>
+                    ) : null}
+                    {tool.cons?.length ? (
+                      <div className="border border-rose-500/20 bg-rose-500/5 p-4">
+                        <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-rose-700 dark:text-rose-400">
+                          Cons
+                        </p>
+                        <ul className="mt-2 list-disc space-y-1.5 pl-5 text-[14px] leading-6 text-foreground/85">
+                          {tool.cons.map((con) => (
+                            <li key={con}>{con}</li>
+                          ))}
+                        </ul>
+                      </div>
+                    ) : null}
+                  </div>
+                ) : null}
                 <p className="mt-4 font-mono text-[11px] text-muted-foreground">
                   Source:{" "}
                   <a

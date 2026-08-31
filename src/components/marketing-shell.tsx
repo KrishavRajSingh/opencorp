@@ -165,6 +165,20 @@ function SiteFooter() {
           <span className="hidden sm:inline">
             Find where your users already talk
           </span>
+          <a
+            href="https://tools.launchllama.co?utm_source=badge&utm_medium=referral"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hidden sm:inline"
+          >
+            <img
+              src="https://tools.launchllama.co/featured-badge-white.png?v=2"
+              alt="As seen on Launch Llama Newsletter"
+              width={200}
+              height={50}
+              className="h-5 w-auto"
+            />
+          </a>
         </div>
         <div className="flex flex-wrap items-center gap-5">
           <Link
@@ -172,6 +186,12 @@ function SiteFooter() {
             className="transition-colors hover:text-foreground"
           >
             Comparisons
+          </Link>
+          <Link
+            href="/blog"
+            className="transition-colors hover:text-foreground"
+          >
+            Field notes
           </Link>
           <Link
             href="/privacy"

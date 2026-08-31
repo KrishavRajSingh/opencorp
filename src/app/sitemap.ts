@@ -1,5 +1,6 @@
 import type { MetadataRoute } from "next";
 import { citationPages } from "@/lib/citation-pages";
+import { blogPosts } from "@/lib/blog/posts";
 
 const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL ?? "https://opencorp.live";
@@ -24,6 +25,18 @@ export default function sitemap(): MetadataRoute.Sitemap {
       lastModified,
       changeFrequency: "weekly",
       priority: 0.8,
+    },
+    ...blogPosts.map((post) => ({
+      url: `${SITE_URL}/blog/${post.slug}`,
+      lastModified: new Date(post.updatedAt ?? post.publishedAt),
+      changeFrequency: "yearly" as const,
+      priority: 0.6,
+    })),
+    {
+      url: `${SITE_URL}/blog`,
+      lastModified,
+      changeFrequency: "weekly",
+      priority: 0.6,
     },
     {
       url: `${SITE_URL}/privacy`,
