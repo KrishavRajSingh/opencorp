@@ -5,6 +5,20 @@ import { MarketingShell } from "@/components/marketing-shell";
 import { blogPosts, getBlogPost } from "@/lib/blog/posts";
 import { citationPages } from "@/lib/citation-pages";
 
+function renderInline(text: string, keyPrefix: string) {
+  const parts = text.split(/(\*\*[^*]+\*\*)/g);
+  return parts.map((part, i) => {
+    if (part.startsWith("**") && part.endsWith("**")) {
+      return (
+        <strong key={`${keyPrefix}-${i}`}>
+          {part.slice(2, -2)}
+        </strong>
+      );
+    }
+    return part;
+  });
+}
+
 export const dynamicParams = false;
 
 export function generateStaticParams() {
@@ -123,14 +137,11 @@ export default async function BlogPostPage({
                   </h2>
                 );
               }
-              if (paragraph.startsWith("**") && paragraph.endsWith("**")) {
-                return (
-                  <p key={i} className="font-medium text-foreground">
-                    {paragraph.replace(/\*\*/g, "")}
-                  </p>
-                );
-              }
-              return <p key={i}>{paragraph}</p>;
+              return (
+                <p key={i}>
+                  {renderInline(paragraph, `p-${i}`)}
+                </p>
+              );
             })}
           </div>
 
