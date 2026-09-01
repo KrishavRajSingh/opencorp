@@ -2,6 +2,7 @@ import { randomBytes } from "node:crypto";
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { citationPages } from "../src/lib/citation-pages";
+import { blogPosts } from "../src/lib/blog/posts";
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://opencorp.live";
 const HOST = new URL(SITE_URL).hostname;
@@ -25,7 +26,9 @@ if (envKey) {
 const urls = [
   `${SITE_URL}/`,
   `${SITE_URL}/best`,
+  `${SITE_URL}/blog`,
   ...citationPages.map((p) => `${SITE_URL}/best/${p.slug}`),
+  ...blogPosts.map((p) => `${SITE_URL}/blog/${p.slug}`),
 ];
 
 const body = JSON.stringify({
