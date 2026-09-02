@@ -13,6 +13,7 @@ import type {
   HNResult,
   ShowHNDraft,
 } from "@/lib/types/session";
+import type { GtmBrief } from "@/components/ai-elements/gtm-brief";
 
 export async function generateMetadata({
   params,
@@ -55,6 +56,17 @@ export default async function SharedSessionPage({
   const competitors = session.competitor_result as CompetitorResult | null;
   const hnThreads = session.hn_threads_result as HNResult | null;
   const showHNDraft = session.show_hn_draft_result as ShowHNDraft | null;
+  // Stored JSON may omit fields; normalize to shared GtmBrief (required top_threads).
+  const rawRedditScan = session.reddit_scan_result as
+    | (Partial<GtmBrief> & { dropped?: unknown })
+    | null;
+  const redditScan: GtmBrief | null = rawRedditScan
+    ? {
+        run_id: rawRedditScan.run_id,
+        generated_at: rawRedditScan.generated_at,
+        top_threads: rawRedditScan.top_threads ?? [],
+      }
+    : null;
 
   const { user } = await getAuthedUser();
   const isAuthed = user.email !== null;
@@ -85,6 +97,7 @@ export default async function SharedSessionPage({
               product={product}
               competitors={competitors}
               hnResult={hnThreads}
+              redditScan={redditScan}
               initialShowHNDraft={showHNDraft}
               readOnly
               isAuthed={isAuthed}
