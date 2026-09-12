@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "ping:indexnow": "tsx scripts/ping-indexnow.ts"
+    "ping:indexnow": "tsx scripts/ping-indexnow.ts",
+    "check:traffic": "tsx scripts/check-traffic.ts"
   },
   "dependencies": {
     "@mastra/core": "^1.42.0",

@@ -1,0 +1,88 @@
+{
+  "date": "2026-09-12",
+  "capturedAt": "2026-09-12T19:26:44.703Z",
+  "project": "opencompany",
+  "windowDays": 7,
+  "totals": {
+    "pageviews": 80,
+    "uniques": 60
+  },
+  "dailySeries": [],
+  "byPath": [
+    {
+      "request_path": "/",
+      "total": 48,
+      "avg": 6,
+      "min": 3,
+      "max": 11
+    },
+    {
+      "request_path": "/dashboard",
+      "total": 10,
+      "avg": 1.3,
+      "min": 0,
+      "max": 3
+    },
+    {
+      "request_path": "/best/ai-writing-tools-for-marketers",
+      "total": 3,
+      "avg": 0.38,
+      "min": 0,
+      "max": 1
+    },
+    {
+      "request_path": "/dashboard/3186cab9-db25-4d7a-ba83-b05bb9b0a7ff",
+      "total": 2,
+      "avg": 0.25,
+      "min": 0,
+      "max": 1
+    },
+    {
+      "request_path": "/dashboard/c4766a9e-8985-47a8-a918-7f195e41b2e0",
+      "total": 2,
+      "avg": 0.25,
+      "min": 0,
+      "max": 1
+    },
+    {
+      "request_path": "/privacy",
+      "total": 2,
+      "avg": 0.25,
+      "min": 0,
+      "max": 1
+    },
+    {
+      "request_path": "/blog/how-to-find-leads-on-reddit",
+      "total": 1,
+      "avg": 0.13,
+      "min": 0,
+      "max": 1
+    },
+    {
+      "request_path": "/blog/what-is-programmatic-seo",
+      "total": 1,
+      "avg": 0.13,
+      "min": 0,
+      "max": 1
+    },
+    {
+      "request_path": "/dashboard/d38709e4-ae9a-416e-a159-9bded257bc3c",
+      "total": 1,
+      "avg": 0.13,
+      "min": 0,
+      "max": 1
+    },
+    {
+      "request_path": "/share/d38709e4-ae9a-416e-a159-9bded257bc3c",
+      "total": 1,
+      "avg": 0.13,
+      "min": 0,
+      "max": 1
+    }
+  ],
+  "toolsBreakdown": {
+    "pageviews": 0,
+    "uniques": 0,
+    "paths": []
+  }
+}

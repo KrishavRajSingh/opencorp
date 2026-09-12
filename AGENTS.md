@@ -19,9 +19,11 @@ Next.js 16 (App Router) + Mastra AI — an autonomous user-acquisition platform.
 - `tool_to_dashboard` `{ tool }`
 
 **Validation plan (free, no DMs, no paid channels):**
-- Wait 7 days. Check Vercel for `/tools/*` traffic.
+- Daily `pnpm check:traffic` writes `data/metrics/traffic-YYYY-MM-DD.json` (pageviews, uniques, byPath, /tools/* breakdown).
+- Day-0 baseline: 80 PV / 60 uniques (7d window before tools shipped). /tools/* = 0.
 - 5+ visits/day on any tool page → funnel works, layer pSEO + IndexNow.
 - 0-2 visits/day → fix SEO angle or change the tools. No DMs yet.
+- Open `data/metrics/traffic-<today>.json` in a new tab to see the current state.
 
 **Deliberately NOT done (do not do without asking):**
 - No DMs sent anywhere. No `dm` mode in `x-composer.ts`. No `daily-engagement-followup.ts` task.
