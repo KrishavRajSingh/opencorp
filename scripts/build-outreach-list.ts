@@ -1,6 +1,7 @@
-// ponytail: generate 100+ public-reply drafts from X search JSONs.
-// Each draft: 2-3 sentences, lowercase, ≤280 chars, mirrors recipient's tweet/bio.
-// Outputs to data/outreach/day-1-list.csv with handle, hook, draft, status.
+// ponytail: generate 100+ public-reply targets from X search JSONs.
+// CSV stores: handle, name, tweet_id, hook (cleaned tweet text), status.
+// Drafts are rendered at send time from a 6-opener pool to vary structure
+// (X classifier flags templated replies, per 2026 docs).
 
 import { readdirSync, readFileSync, writeFileSync, mkdirSync } from "node:fs";
 import { join } from "node:path";
@@ -55,15 +56,29 @@ function cleanText(text: string, max: number): string {
   return stripped.length > max ? stripped.slice(0, max).trim() + "..." : stripped;
 }
 
-function buildDraft(hook: string): string {
-  // Use the full cleaned tweet as the hook. The opener + closer are fixed.
-  // If the resulting draft exceeds 280 chars, truncate the hook to fit.
-  const opener = `hey, saw "`;
-  const closer = `". opencorp finds the reddit + HN threads where your users actually compare tools. free, no signup. want a report?`;
+// Build draft from hook using one of 6 opener variants.
+// ponytail: opener pool varies structure (X flags templated replies in 2026).
+// Em dashes + parallel structure + same closer are all AI tells. Mixed here.
+export const OPENERS: Array<(snippet: string) => string> = [
+  (s) => `hey, saw "${s}". opencorp finds the reddit + HN threads where your users compare tools. free, no signup. want a report?`,
+  (s) => `noticed your post on "${s}". opencorp surfaces threads where your ICP already complains about tools like yours. free, no signup. want a look?`,
+  (s) => `caught your post on "${s}". opencorp pulls the threads where reddit + HN users compare your category. free, no signup. interesting?`,
+  (s) => `quick one: saw "${s}". opencorp surfaces the reddit + HN threads your users already use to compare tools. free, no signup. want it?`,
+  (s) => `reading "${s}". opencorp finds the reddit + HN threads where your users compare your category head-to-head. free, no signup. worth a try?`,
+  (s) => `"${s}" is the exact gap opencorp fills. pulls the reddit + HN threads your ICP is already arguing in. free, no signup. want a sample?`,
+];
+
+export function buildDraft(hook: string, openerIdx: number): string {
   const cleaned = cleanText(hook, 200);
-  const maxHook = 280 - opener.length - closer.length;
-  const snippet = cleaned.length > maxHook ? cleaned.slice(0, maxHook - 3).trim() + "..." : cleaned;
-  return opener + snippet + closer;
+  const opener = OPENERS[openerIdx % OPENERS.length]!;
+  // Compute max hook length per opener (each opener has different length)
+  // Render with full hook first, then trim if >280
+  const out = opener(cleaned);
+  if (out.length <= 280) return out;
+  // Trim the snippet portion
+  const maxSnippet = 280 - (out.length - cleaned.length) - 3;
+  const trimmed = cleaned.slice(0, Math.max(0, maxSnippet)).trim() + "...";
+  return opener(trimmed);
 }
 
 async function main() {
@@ -99,13 +114,13 @@ async function main() {
 
   // Write CSV
   mkdirSync(join(process.cwd(), "data", "outreach"), { recursive: true });
-  const lines = ["#,handle,name,hook,draft,status"];
+  const lines = ["#,handle,name,tweet_id,hook,sent_at,reply_id,status"];
   for (let i = 0; i < targets.length; i++) {
     const t = targets[i]!;
     const h = t.author.screenName;
     const name = t.author.name ?? "";
-    const hook = cleanText(t.text, 60);
-    const draft = buildDraft(t.text);
+    const tweetId = t.id ?? "";
+    const hook = cleanText(t.text, 200);
     // CSV-escape: wrap fields with commas/quotes/newlines in double quotes
     const esc = (s: string) => `"${s.replace(/"/g, '""').replace(/\n/g, " ")}"`;
     lines.push(
@@ -113,18 +128,21 @@ async function main() {
         i + 1,
         h,
         esc(name),
+        tweetId,
         esc(hook),
-        esc(draft),
+        "",
+        "",
         "pending",
       ].join(","),
     );
   }
 
   writeFileSync(OUTPUT_CSV, lines.join("\n"));
-  console.log(`[outreach] wrote ${targets.length} drafts to ${OUTPUT_CSV}`);
+  console.log(`[outreach] wrote ${targets.length} targets to ${OUTPUT_CSV}`);
   // Show first 5 for sanity
   for (let i = 0; i < Math.min(5, targets.length); i++) {
-    console.log(`[${i + 1}] @${targets[i]!.author.screenName} (${targets[i]!.author.name}): ${buildDraft(targets[i]!.text).slice(0, 100)}...`);
+    const t = targets[i]!;
+    console.log(`[${i + 1}] @${t.author.screenName} (${t.author.name}) tweet=${t.id}`);
   }
 }
 
