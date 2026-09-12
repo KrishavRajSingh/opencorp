@@ -1,21 +1,21 @@
 #,handle,name,channel,url,hook,status,drafted_at,replied_at,notes
-1,T_Zahil,Thomas Sanlis,x_dm_or_email,http://thomas-sanlis.com,"Revenue journey $200K/yr",pending,2026-09-12,,Launch platform + makers community. Bio = $200K/y
-2,TimoBuilds_,Timo,x_dm_or_email,http://BrandMyMarathon.com,"FocusMap + Outduel side bets",pending,2026-09-12,,9-5 + side bets, ICP match. Bio lists revenue per product
-3,jonathan_wilke,Jonathan,x_dm,https://supastarter.dev,supastarter.dev SaaS starter,pending,2026-09-12,,29yo German builder. 28K followers
-4,jia_seed,jia,x_dm,https://jiachenisarealperson.com,"Jam co-founder, prev big tech drone research",pending,2026-09-12,,22yo CEO, 20K followers
-5,haukejung,Hauke,x_dm,http://haukejung.de,"Quit the safe route, 7 products",pending,2026-09-12,,1.6K followers, low-noise
-6,VadimStrizheus,Vadim,x_dm,https://calendly.com/vadimstrizheus,"19yo B2C app, 40k users",pending,2026-09-12,,37K followers. Calendly in bio
-7,GoffartMth,Mathieu,x_dm,,"AI visibility for ecom shop",pending,2026-09-12,,257 followers, exact ICP
-8,kapzathefounder,Luka,x_dm,,"Laid off, new dad, building in public",pending,2026-09-12,,284 followers, founder empathy
-9,dannypostma,Danny Postma,x_dm,https://www.headshotpro.com/,"HeadshotPro founder, AI photography",pending,2026-09-12,,183K followers, low expected reply
-10,averycode,Avery,x_dm,http://heymuso.com,"Psych grad, ex Apple/HubSpot",pending,2026-09-12,,18K followers, builder path
-11,heypetar,Petar,x_dm,,"Hundreds of millions of users, starting from 0",pending,2026-09-12,,1.2K followers, 2 projects
-12,victor_bigfield,Victor,x_dm,http://serialbuilder.substack.com,"Dad of 3 + trail runner + memes + startups",pending,2026-09-12,,54K followers, multi-product
-13,vedantdotrpm,Vedant,x_dm,https://vedantworks.com,"21 + 4x hackathons",pending,2026-09-12,,3.8K followers, dev founder
-14,arvidkahl,Arvid Kahl,x_dm,https://linktr.ee/arvidkahl,"209K, 'raising all the boats with kindness'",pending,2026-09-12,,209K followers, low expected reply
-15,imgyf,Yifan Goh,x_dm,https://getavo.co,"Technical founder, AI agents + mobile",pending,2026-09-12,,10K followers
-16,kalashvasaniya,Kalash,x_dm,https://www.scrolllaunch.com/,"'i build stuff' honest bio",pending,2026-09-12,,11K followers, builds stuff
-17,robj3d3,Rob Hallam,x_dm,https://getmyfirstdollar.com,"$22K/mo + $13K/mo + $38K portfolio",pending,2026-09-12,,60K followers, multi-product
-18,lukenguyen_me,Luke Nguyen,x_dm,https://lukenguyen.me,"iPad Hanzi, mission to first $100",pending,2026-09-12,,261 followers, HIGHEST expected reply (exact ICP)
-19,r/SaaS Saturn AI founder,?,reddit_reply,https://saturn.luveo.net,"WhatsApp-style AI team post",pending,2026-09-12,,"DO NOT post from pop6996pop personal. Read with rdt-cli, post with brand account when set up."
-20,r/SaaS next poster,?,reddit_reply,,"Posted last 7 days",pending,2026-09-12,,"Same as #19: brand account only"
+1,T_Zahil,Thomas Sanlis,email_or_x_reply,http://thomas-sanlis.com,"Revenue journey $200K/yr",pending,2026-09-12,,"Email preferred if footer has one; else public reply on latest tweet"
+2,TimoBuilds_,Timo,email_or_x_reply,http://BrandMyMarathon.com,"FocusMap + Outduel side bets",pending,2026-09-12,,"Same: check footer for email first"
+3,jonathan_wilke,Jonathan,x_reply,https://supastarter.dev,supastarter.dev SaaS starter,pending,2026-09-12,,28K followers
+4,jia_seed,jia,x_reply,https://jiachenisarealperson.com,"Jam co-founder, prev big tech drone research",pending,2026-09-12,,20K followers
+5,haukejung,Hauke,x_reply,http://haukejung.de,"Quit the safe route, 7 products",pending,2026-09-12,,1.6K followers, low-noise
+6,VadimStrizheus,Vadim,x_reply,https://calendly.com/vadimstrizheus,"19yo B2C app, 40k users",pending,2026-09-12,,37K followers. Calendly in bio
+7,GoffartMth,Mathieu,x_reply,,"AI visibility for ecom shop",pending,2026-09-12,,257 followers, exact ICP
+8,kapzathefounder,Luka,x_reply,,"Laid off, new dad, building in public",pending,2026-09-12,,284 followers, founder empathy
+9,dannypostma,Danny Postma,x_reply,https://www.headshotpro.com/,"HeadshotPro founder, AI photography",pending,2026-09-12,,183K followers, low expected reply
+10,averycode,Avery,x_reply,http://heymuso.com,"Psych grad, ex Apple/HubSpot",pending,2026-09-12,,18K followers, builder path
+11,heypetar,Petar,x_reply,,"Hundreds of millions of users, starting from 0",pending,2026-09-12,,1.2K followers, 2 projects
+12,victor_bigfield,Victor,x_reply,http://serialbuilder.substack.com,"Dad of 3 + trail runner + memes + startups",pending,2026-09-12,,54K followers, multi-product
+13,vedantdotrpm,Vedant,x_reply,https://vedantworks.com,"21 + 4x hackathons",pending,2026-09-12,,3.8K followers, dev founder
+14,arvidkahl,Arvid Kahl,x_reply,https://linktr.ee/arvidkahl,"209K, 'raising all the boats with kindness'",pending,2026-09-12,,209K followers, low expected reply
+15,imgyf,Yifan Goh,x_reply,https://getavo.co,"Technical founder, AI agents + mobile",pending,2026-09-12,,10K followers
+16,kalashvasaniya,Kalash,x_reply,https://www.scrolllaunch.com/,"'i build stuff' honest bio",pending,2026-09-12,,11K followers, builds stuff
+17,robj3d3,Rob Hallam,x_reply,https://getmyfirstdollar.com,"$22K/mo + $13K/mo + $38K portfolio",pending,2026-09-12,,60K followers, multi-product
+18,lukenguyen_me,Luke Nguyen,x_reply,https://lukenguyen.me,"iPad Hanzi, mission to first $100",pending,2026-09-12,,261 followers, HIGHEST expected reply (exact ICP)
+19,r/SaaS Saturn AI founder,?,reddit_reply,https://saturn.luveo.net,"WhatsApp-style AI team post",pending,2026-09-12,,"BLOCKED: needs opencorp brand Reddit account + 14 days karma"
+20,r/SaaS next poster,?,reddit_reply,,"Posted last 7 days",pending,2026-09-12,,"Same as #19"
