@@ -25,6 +25,10 @@ export type CitationPage = {
   discovery: { runQueries: string[]; ranOn: string };
   tools: CitationTool[];
   faq: { q: string; a: string }[];
+  /** Dated bullets surfaced to catch "X news" striking-distance queries. */
+  news?: { date: string; headline: string; detail: string }[];
+  /** Pages marked noindex are kept as content but excluded from search and sitemap. */
+  noindex?: boolean;
 };
 
 export const citationPages: CitationPage[] = [
@@ -36,6 +40,7 @@ export const citationPages: CitationPage[] = [
     intro:
       "The candidate list came from OpenCorp's own competitor-discovery run (queries below). Every price was verified against the vendor's own pricing page through September 1, 2026. GummySearch is included as a 'shut down' entry because most comparison posts still recommend it — it closed new signups November 30, 2025 after failing to agree a commercial Reddit Data API license.",
     updated: "2026-09-01",
+    noindex: true,
     discovery: {
       ranOn: "2026-08-18",
       runQueries: [
@@ -336,6 +341,7 @@ export const citationPages: CitationPage[] = [
     intro:
       "Twelve tools reviewed. The established platforms (Hootsuite, Sprout Social, Brand24, Talkwalker, Brandwatch, Meltwater, Sprinklr) were verified manually against each pricing page through September 1, 2026. The Reddit-focused tools (Linkeddit, Sniff, noldo.ai, Noisely) came out of OpenCorp's competitor-discovery run on August 18, 2026 — the queries are listed below.",
     updated: "2026-09-01",
+    noindex: true,
     discovery: {
       ranOn: "2026-08-18",
       runQueries: [
@@ -728,6 +734,7 @@ export const citationPages: CitationPage[] = [
     intro:
       "Seven tools reviewed. The reply drafters (RedShip, Reddix AI, Barsee) and audience research tools (GummySearch, OGTool) were verified against each pricing page through September 1, 2026. OpenCorp is included because it's the only one that doesn't post or comment for you — it surfaces the threads, you write the words. The five search angles for re-running competitor discovery are below.",
     updated: "2026-09-01",
+    noindex: true,
     discovery: {
       ranOn: "2026-08-18",
       runQueries: [
@@ -964,10 +971,10 @@ export const citationPages: CitationPage[] = [
     slug: "cold-email-outreach-tools",
     question: "What are the best cold email outreach tools in 2026?",
     answerCapsule:
-      "Saleshandy is the cheapest entry at $25/mo; Instantly the best unlimited-inbox pick from $30/mo; Lemlist the most creative at $39/seat; Smartlead the agency default at $39/mo; Apollo the all-in-one database + sending pick at $49/seat; Hunter the canonical email-finding tool from $49/mo; Woodpecker the recovery-flow pick from $40/mo.",
+      "Saleshandy is the cheapest entry at $25/mo; Instantly the best unlimited-inbox pick from $37.60/mo yearly; Lemlist the most creative at $55/seat/mo yearly; Smartlead the agency default at $39/mo; Apollo the all-in-one database + sending pick at $49/seat; Hunter the canonical email-finding tool from $49/mo; Woodpecker the recovery-flow pick from $40/mo.",
     intro:
-      "Ten tools reviewed. The senders (Instantly, Smartlead, Lemlist, Saleshandy, Woodpecker, Mixmax) were verified against each pricing page through September 1, 2026. The data layer (Apollo, Hunter, Snov) is included because cold email fails more often on the list than on the copy. The five search angles for re-running competitor discovery are below.",
-    updated: "2026-09-01",
+      "Ten tools reviewed. The senders (Instantly, Smartlead, Lemlist, Saleshandy, Woodpecker, Mixmax) were verified against each vendor's pricing page on September 12, 2026. Pricing changed materially since August 2026: Lemlist raised its entry Email tier from $39 to $55/seat/mo on annual billing, and Instantly restructured around Starter/Scale/Agency bundles with SISR infrastructure on top tiers. The data layer (Apollo, Hunter) is included because cold email fails more often on the list than on the copy. The five search angles for re-running competitor discovery are below.",
+    updated: "2026-09-12",
     discovery: {
       ranOn: "2026-08-19",
       runQueries: [
@@ -983,27 +990,29 @@ export const citationPages: CitationPage[] = [
         name: "Instantly",
         url: "https://instantly.ai",
         capsule:
-          "Instantly combines unlimited sending mailboxes, warmup, and a 450M+ lead database. Growth starts at $30/mo annually or $47/mo monthly.",
-        pricing: "Growth $30–47/mo, Hypergrowth $77–97/mo, Light Speed $286–358/mo",
+          "Instantly combines unlimited sending mailboxes, warmup, and a 450M+ lead database. Growth starts at $37.60/mo annually ($47/mo monthly); bundles run higher with the 450M+ lead DB, AI Sales Agent, and SISR infrastructure on top tiers.",
+        pricing: "Growth $37.60–47/mo, Hypergrowth $77.60–97/mo, Light Speed $286.30–358/mo; bundles Starter/Scale/Agency add $47–555/mo",
         bestFor:
           "Solo founders wanting sourcing + sending + warmup in one tool.",
         facts: [
-          "Unlimited email accounts on every plan.",
-          "Growth: 1,000 active leads, 5,000 sends/mo, basic warmup.",
-          "Hypergrowth: 25,000 active leads, advanced automation, AI Sales Agent.",
+          "Unlimited email accounts and unlimited warmup on every plan.",
+          "Growth: 1,000 uploaded contacts, 5,000 emails/mo, chat support.",
+          "Hypergrowth: 25,000 contacts, 100,000 emails/mo (annual) or 125,000 (monthly), priority support.",
+          "Light Speed adds SISR (Server & IP Sharding and Rotation) and 500,000 emails/mo.",
           "Warmup network of ~200,000 active inboxes — largest among general-purpose cold email tools.",
-          "Lead database bundled on Hypergrowth and Light Speed; separate on Growth.",
+          "Lead database (450M+) is bundled on the Starter/Scale/Agency bundles; sold separately on the standalone Growth/Hypergrowth tiers.",
+          "AI Sales Agent is part of the Starter bundle ($94/mo or $85/mo annual); custom VIP plans run the same setup as a managed service.",
           "14-day free trial; no permanent free tier.",
         ],
         pros: [
           "Unlimited email accounts on every plan — no per-mailbox fees.",
           "~200,000-inbox warmup network, the largest in the category.",
-          "450M+ lead database bundled on Hypergrowth and Light Speed.",
+          "Bundle pricing lets you combine Outreach + Lead DB without buying credits separately.",
         ],
         cons: [
-          "Light Speed tier jumps to $286+/mo — steep for solo founders.",
-          "Lead database is a separate purchase on Growth tier.",
-          "AI Sales Agent only on Hypergrowth, not entry tier.",
+          "Bundle names (Starter / Scale / Agency) sit on top of the per-tier (Growth/Hypergrowth) names — pricing structure is hard to read on first visit.",
+          "Light Speed jumps to $286+/mo — steep for solo founders.",
+          "Standalone Outreach tiers don't include the 450M+ lead database.",
         ],
         source: { label: "instantly.ai/pricing", url: "https://instantly.ai/pricing" },
       },
@@ -1038,27 +1047,27 @@ export const citationPages: CitationPage[] = [
         name: "Lemlist",
         url: "https://lemlist.com",
         capsule:
-          "Lemlist is the most creative cold email tool — personalized images, video, custom landing pages, plus native LinkedIn and cold call steps. Per-seat from $39/mo annual.",
-        pricing: "Email Outreach $39/seat/mo, Sales Engager $69/seat/mo, Multichannel Expert $99/seat/mo",
+          "Lemlist is the most creative cold email tool — personalized images, video, custom landing pages, plus native LinkedIn, WhatsApp, SMS, and in-app calling. Email $55/seat/mo on annual billing ($69 monthly); Multichannel $87/seat/mo on annual ($109 monthly); Enterprise custom.",
+        pricing: "Email $55–69/seat/mo, Multichannel $87–109/seat/mo, Enterprise custom",
         bestFor:
           "Personalization-heavy outbound where creativity is the differentiator.",
         facts: [
-          "3 mailboxes on Email Outreach, 5 on Multichannel Expert; extras at $9/mo each.",
-          "Liquid syntax personalization pulls prospect attributes into copy.",
-          "Lemwarm add-on: $29/mo per mailbox for warmup.",
-          "450M+ B2B lead database bundled.",
-          "AI image and video personalization built in.",
-          "14-day free trial on paid plans.",
+          "Email plan: unlimited users and email senders, 50,000 emails/mo, 650M+ leads DB, lemAgent AI agents, lemlist MCP, lemwarm included.",
+          "Multichannel plan: adds 5 senders per user, LinkedIn + SMS automation, WhatsApp add-on, built-in dialer and VoIP integrations, task management, Gmail/LinkedIn extension.",
+          "Enterprise (5+ users): SSO/SAML, wire/SEPA payment, custom roles, dedicated AM, 1:1 onboarding.",
+          "Lemwarm and deliverability protections are bundled on every paid plan — no per-mailbox warmup fee.",
+          "lemAgent handles AI lead data cleaning, web search enrichment, intent signal agents, and AI-generated replies; lemlist MCP exposes the platform to Claude and other agents.",
+          "14-day free trial on the Multichannel plan, no credit card required.",
         ],
         pros: [
-          "Most creative option — AI image and video personalization built in.",
-          "Liquid syntax pulls prospect attributes into copy dynamically.",
-          "450M+ B2B lead database bundled on every paid tier.",
+          "Most creative option — AI image and video personalization plus lemAgent for research and replies.",
+          "650M+ lead database, email + phone finder, and unlimited LinkedIn enrichment on every paid tier.",
+          "Lemwarm bundled on every plan — no per-mailbox warmup fee like the old separate add-on.",
         ],
         cons: [
           "Per-seat pricing scales with users, unlike Instantly or Saleshandy.",
-          "Lemwarm costs $29/mo per mailbox, billed on top of plan.",
-          "Only 3 mailboxes on Email Outreach; extras at $9/mo each.",
+          "Email tier raised from $39 to $55/seat/mo on annual billing since August 2026.",
+          "Multichannel jumps to $87/seat/mo (annual) — non-trivial for solo founders.",
         ],
         source: { label: "lemlist.com/pricing", url: "https://lemlist.com/pricing" },
       },
@@ -1255,10 +1264,42 @@ export const citationPages: CitationPage[] = [
         source: { label: "opencorp.live", url: "https://opencorp.live" },
       },
     ],
+    news: [
+      {
+        date: "2026-09-12",
+        headline: "Lemlist raises Email tier from $39 to $55/seat/mo on annual billing",
+        detail:
+          "Lemlist's entry Email plan is now $55/seat/mo on annual ($69 monthly), up from $39/seat/mo. The company also bundled lemwarm and the Deliverability Hub into every paid plan — the old $29/mo/mailbox Lemwarm add-on is gone. Source: lemlist.com/pricing.",
+      },
+      {
+        date: "2026-09-05",
+        headline: "Instantly restructures around Starter, Scale, and Agency bundles",
+        detail:
+          "Instantly replaced the standalone Outreach + Lead DB + AI Sales Agent purchase flow with three bundles — Starter ($94/mo or $85/mo annual), Scale ($194/mo or $175/mo annual), and Agency ($555/mo or $500/mo annual) — and added SISR (Server & IP Sharding and Rotation) on Light Speed and above. Source: instantly.ai/pricing.",
+      },
+      {
+        date: "2026-08-21",
+        headline: "Smartlead adds SmartDelivery placement testing as a paid add-on",
+        detail:
+          "SmartDelivery is sold separately from the Base/Pro/Smart/Prime plans: Growth $49/mo (120 placement tests/mo), Pro $174/mo (unlimited), Expert $599/mo (unlimited + whitelabel). SmartServers — dedicated IPs — moved to $39/server/mo. Source: smartlead.ai/pricing.",
+      },
+      {
+        date: "2026-08-14",
+        headline: "Woodpecker ships manual task lists on the Cold plan",
+        detail:
+          "Woodpecker now ships manual task lists on its $40/mo Cold plan — every reply and bounce is queued for human review before the sequence continues. Reply detection pauses sequences when a human responds from any address. Source: woodpecker.co/pricing.",
+      },
+      {
+        date: "2026-07-30",
+        headline: "Apollo raises Organization tier to $119/seat/mo and adds AI writing on Professional",
+        detail:
+          "Apollo moved AI writing features, advanced sequencing, and higher credit volume to the Professional tier ($79/seat/mo). The Organization tier — full CRM, advanced reporting, dedicated support — is now $119/seat/mo. Source: apollo.io/pricing.",
+      },
+    ],
     faq: [
       {
         q: "Which cold email tool is cheapest?",
-        a: "Saleshandy Outreach Starter at $25/mo is the cheapest credible entry. For unlimited mailboxes, Smartlead Basic at $39/mo. For the lowest per-seat tier, Lemlist Email Outreach at $39/seat/mo annual.",
+        a: "Saleshandy Outreach Starter at $25/mo is the cheapest credible entry. For unlimited mailboxes, Smartlead Base at $39/mo ($32.50/mo on annual). For the lowest per-seat creative option, Lemlist Email at $55/seat/mo on annual billing ($69 monthly) — up from $39 in August 2026.",
       },
       {
         q: "Which tool is best for agencies running multiple clients?",
@@ -1266,7 +1307,7 @@ export const citationPages: CitationPage[] = [
       },
       {
         q: "Which tool has the largest warmup network?",
-        a: "Instantly reports ~200,000 inboxes. Smartlead reports ~50,000. Lemlist relies on its Lemwarm add-on at $29/mo per mailbox, billed separately.",
+        a: "Instantly reports ~200,000 inboxes. Smartlead reports ~50,000 and bundles unlimited warmup on every plan. Lemlist now bundles lemwarm and its Deliverability Hub on every paid tier — no separate per-mailbox fee. Saleshandy's warmup network is smaller (~20,000 inboxes) and runs on all paid plans.",
       },
       {
         q: "Do any of these tools also include a lead database?",
@@ -1278,7 +1319,7 @@ export const citationPages: CitationPage[] = [
       },
       {
         q: "Which cold email tool has the best deliverability?",
-        a: "Smartlead's vendor benchmark claims 89% inbox placement. Instantly's warmup network (~200,000 inboxes) is the largest. Woodpecker pauses sequences when a human replies — the manual review step is the closest thing to zero-bounce sending. Apollo and Lemlist rely on third-party warmup or Lemwarm ($29/mo/mailbox).",
+        a: "Smartlead's vendor benchmark claims 89% inbox placement. Instantly's warmup network (~200,000 inboxes) is the largest and now bundles SISR (Server & IP Sharding and Rotation) on Light Speed and Agency. Woodpecker pauses sequences when a human replies — the manual review step is the closest thing to zero-bounce sending. Lemlist now bundles lemwarm on every paid plan instead of selling it as a $29/mo/mailbox add-on.",
       },
       {
         q: "What is the best free cold email tool?",
@@ -1287,6 +1328,26 @@ export const citationPages: CitationPage[] = [
       {
         q: "Should I use a single tool or a stack?",
         a: "Solo founders: one tool (Instantly or Smartlead). Agencies: one sending tool (Smartlead or Instantly) plus Hunter for verification. Teams with Gmail workflows: Mixmax plus Hunter. The expensive trap is buying Apollo + Lemlist + Instantly at once — pick one sender, add a verifier, ship campaigns.",
+      },
+      {
+        q: "What changed in cold email tools in 2026?",
+        a: "Three shifts since 2025: (1) AI agents moved from copilots to doers — Instantly's AI Sales Agent, Lemlist's lemAgent, and Smartlead's AI Reply Agent now research, draft, and reply instead of only suggesting. (2) Lemlist raised its entry Email tier from $39 to $55/seat/mo on annual billing and bundled lemwarm into every plan. (3) Instantly restructured around Starter/Scale/Agency bundles that combine Outreach + Lead DB + AI agents instead of selling credits separately.",
+      },
+      {
+        q: "Which cold email tool is best for B2B in 2025 or 2026?",
+        a: "For solo B2B founders in 2025/2026 the stack is one of: Instantly (best unlimited-mailbox + warmup at $37.60/mo yearly), Smartlead (best flat-fee for 30+ mailboxes at $39/mo), or Lemlist Multichannel (best personalization + LinkedIn at $87/seat/mo yearly). Add Hunter ($49/mo Starter) for verification if your list isn't already cleaned. Apollo is the only one that combines database + sending + CRM, but per-seat pricing scales fast for teams over 3.",
+      },
+      {
+        q: "What is the cheapest cold email outreach tool in 2026?",
+        a: "Saleshandy Outreach Starter at $25/mo is the cheapest credible entry — sequences, warmup, and CRM integrations included. Smartlead Base at $39/mo (or $32.50/mo on annual) is the cheapest tool with unlimited mailboxes and unlimited warmup on every plan. Lemlist's entry Email tier is now $55/seat/mo on annual billing ($69 monthly), up from $39 in August 2026.",
+      },
+      {
+        q: "Which cold email tools added AI reply agents in 2026?",
+        a: "Three shipped AI reply agents in 2026: Instantly's AI Reply Agent (bundled on Scale and Agency tiers, monitors the Unibox and replies in your voice), Lemlist's lemAgent (AI-generated replies, out-of-office detection, and reply intent detection on every paid plan), and Smartlead's AI reply categorization on Pro and above ($94/mo). Apollo added AI writing features on its Professional tier ($79/seat/mo). None of these tools auto-send replies without explicit per-action approval.",
+      },
+      {
+        q: "Do cold email tools still charge per seat in 2026?",
+        a: "Yes for Lemlist, Apollo, Mailshake, Mixmax, and Woodpecker (Cold). No for Instantly, Smartlead, and Saleshandy — these tier by send volume, contacts, or mailboxes, so adding a team member doesn't change the bill. If seat count will grow past 3, Instantly or Smartlead is the cheaper path. If you only need 1–2 seats but heavy creative personalization, Lemlist's per-seat math still wins.",
       },
     ],
   },
@@ -1298,6 +1359,7 @@ export const citationPages: CitationPage[] = [
     intro:
       "Nine tools reviewed. The generators (Byword, SEObot, SEOmatic, SurgeGraph, Cuppa) were verified against each pricing page through September 1, 2026. The research + monitoring layer (Ahrefs, Frase, AirOps, Whalesync) is included because programmatic SEO fails at the planning stage more often than the generation stage. The five search angles for re-running competitor discovery are listed below.",
     updated: "2026-09-01",
+    noindex: true,
     discovery: {
       ranOn: "2026-08-19",
       runQueries: [
@@ -1628,6 +1690,7 @@ export const citationPages: CitationPage[] = [
     intro:
       "Eight tools reviewed. The cloud options (Plausible, Fathom, Simple Analytics) and self-host options (Umami, Matomo, GoatCounter) were verified against each pricing page through September 1, 2026. Cloudflare Web Analytics is included because it's the only free option that requires no setup if you're already on Cloudflare. The five search angles for re-running competitor discovery are below.",
     updated: "2026-09-01",
+    noindex: true,
     discovery: {
       ranOn: "2026-08-19",
       runQueries: [
@@ -1853,6 +1916,7 @@ export const citationPages: CitationPage[] = [
     intro:
       "Ten tools reviewed. Most wrap the same frontier models, so the moat for each is governance, prediction, price, or SEO research — not raw output quality. Writesonic was reclassified in 2026 toward AI Search Growth tracking (ChatGPT, Gemini, Claude visibility). The five search angles for re-running competitor discovery are below.",
     updated: "2026-09-01",
+    noindex: true,
     discovery: {
       ranOn: "2026-08-19",
       runQueries: [
@@ -2102,6 +2166,7 @@ export const citationPages: CitationPage[] = [
     intro:
       "Eleven tools reviewed. Established builders (Webflow, Framer, Carrd, Unbounce, Leadpages, Convert, Instapage, ClickFunnels, Landingi) were verified manually against each pricing page through September 1, 2026. Plasmic was added because 'open source landing page builder' is the closest-query-to-ranking in our GSC data. The five search angles OpenCorp ran on August 19, 2026 are below.",
     updated: "2026-09-01",
+    noindex: true,
     discovery: {
       ranOn: "2026-08-19",
       runQueries: [

@@ -45,6 +45,9 @@ export async function generateMetadata({
     openGraph: { title, description },
     twitter: { title, description },
     alternates: { canonical: `/best/${page.slug}` },
+    robots: page.noindex
+      ? { index: false, follow: false, googleBot: { index: false, follow: false } }
+      : { index: true, follow: true },
   };
 }
 
@@ -303,6 +306,43 @@ export default async function CitationPage({
               </section>
             ))}
           </div>
+
+          {page.news?.length ? (
+            <section className="mt-16 border-t border-border/50 pt-10">
+              <div className="flex items-baseline justify-between">
+                <h2 className="font-heading text-xl tracking-tight text-foreground">
+                  Recent cold email tool news
+                </h2>
+                <span className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground/60">
+                  Last 90 days
+                </span>
+              </div>
+              <p className="mt-3 text-[15px] leading-7 text-muted-foreground">
+                Pricing and feature changes from the vendors on this page, with the
+                date each was verified against the source. The main table reflects
+                these updates.
+              </p>
+              <ol className="mt-6 space-y-6 border-l border-border/40 pl-6">
+                {page.news.map((item) => (
+                  <li key={`${item.date}-${item.headline}`} className="relative">
+                    <span className="absolute -left-[27px] top-1.5 inline-block h-2 w-2 rounded-full bg-brand" />
+                    <time
+                      dateTime={item.date}
+                      className="font-mono text-[11px] uppercase tracking-widest text-muted-foreground/70"
+                    >
+                      {item.date}
+                    </time>
+                    <h3 className="mt-1 text-[15px] font-medium leading-6 text-foreground">
+                      {item.headline}
+                    </h3>
+                    <p className="mt-1.5 text-[14px] leading-6 text-foreground/75">
+                      {item.detail}
+                    </p>
+                  </li>
+                ))}
+              </ol>
+            </section>
+          ) : null}
 
           <div className="mt-16 space-y-8">
             <h2 className="font-heading text-xl tracking-tight text-foreground">
