@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { MarketingShell } from "@/components/marketing-shell";
+import { ToolCta, getToolCtaSlugsForCitation } from "@/components/tool-cta";
 import { citationPages, getCitationPage, relatedSlugs } from "@/lib/citation-pages";
 
 const AUTHOR = {
@@ -400,6 +401,13 @@ export default async function CitationPage({
             </Link>
             .
           </p>
+
+          {(() => {
+            const toolSlugs = getToolCtaSlugsForCitation(page.slug);
+            return toolSlugs.length > 0 ? (
+              <ToolCta toolSlugs={toolSlugs} />
+            ) : null;
+          })()}
         </article>
       </main>
     </MarketingShell>

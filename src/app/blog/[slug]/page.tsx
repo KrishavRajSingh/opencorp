@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { MarketingShell } from "@/components/marketing-shell";
+import { ToolCta, getToolCtaSlugsForBlog } from "@/components/tool-cta";
 import { blogPosts, getBlogPost } from "@/lib/blog/posts";
 import { citationPages } from "@/lib/citation-pages";
 
@@ -179,6 +180,13 @@ export default async function BlogPostPage({
             </Link>
             .
           </p>
+
+          {(() => {
+            const toolSlugs = getToolCtaSlugsForBlog(slug);
+            return toolSlugs.length > 0 ? (
+              <ToolCta toolSlugs={toolSlugs} />
+            ) : null;
+          })()}
         </article>
       </main>
     </MarketingShell>

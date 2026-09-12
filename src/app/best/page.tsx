@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { MarketingShell } from "@/components/marketing-shell";
+import { ToolCta } from "@/components/tool-cta";
 import { citationPages } from "@/lib/citation-pages";
 
 const HUB_FAQ = [
@@ -144,6 +145,8 @@ export default function BestIndexPage() {
             </Link>
             .
           </p>
+
+          <ToolCta toolSlugs={["reddit-thread-finder", "hn-thread-finder", "niche-subreddit-finder", "competitor-scraper"]} />
         </article>
       </main>
     </MarketingShell>

@@ -12,6 +12,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { MarketingShell } from "@/components/marketing-shell";
+import { ToolCta } from "@/components/tool-cta";
 import {
   LandingConsole,
   type LandingConsoleData,
@@ -578,6 +579,7 @@ export default function Page() {
 
           <FounderSection />
           <Faq />
+          <ToolCta toolSlugs={["reddit-thread-finder", "hn-thread-finder", "niche-subreddit-finder", "competitor-scraper", "show-hn-drafter"]} />
           <TryItWidget />
         </main>
       </MarketingShell>
