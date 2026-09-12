@@ -194,6 +194,12 @@ function SiteFooter() {
             Field notes
           </Link>
           <Link
+            href="/tools"
+            className="transition-colors hover:text-foreground"
+          >
+            Free tools
+          </Link>
+          <Link
             href="/privacy"
             className="transition-colors hover:text-foreground"
           >

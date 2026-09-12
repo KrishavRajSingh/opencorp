@@ -27,6 +27,12 @@ const urls = [
   `${SITE_URL}/`,
   `${SITE_URL}/best`,
   `${SITE_URL}/blog`,
+  `${SITE_URL}/tools`,
+  `${SITE_URL}/tools/reddit-thread-finder`,
+  `${SITE_URL}/tools/hn-thread-finder`,
+  `${SITE_URL}/tools/niche-subreddit-finder`,
+  `${SITE_URL}/tools/show-hn-drafter`,
+  `${SITE_URL}/tools/competitor-scraper`,
   ...citationPages.map((p) => `${SITE_URL}/best/${p.slug}`),
   ...blogPosts.map((p) => `${SITE_URL}/blog/${p.slug}`),
 ];

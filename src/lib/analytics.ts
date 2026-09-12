@@ -10,7 +10,10 @@ export type AnalyticsEvent =
   | { name: "auth_signin_submit" }
   | { name: "auth_signup_submit" }
   | { name: "cta_signup_unlock_click" }
-  | WithData<"cta_share_research_own", { location: "share_header" | "share_banner" }>;
+  | WithData<"cta_share_research_own", { location: "share_header" | "share_banner" }>
+  | WithData<"tool_run", { tool: string }>
+  | WithData<"tool_thread_click", { tool: string; rank: number }>
+  | WithData<"tool_to_dashboard", { tool: string }>;
 
 type DataFor<E extends AnalyticsEvent["name"]> = Extract<
   AnalyticsEvent,

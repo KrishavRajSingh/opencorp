@@ -2,6 +2,14 @@ import type { MetadataRoute } from "next";
 import { citationPages } from "@/lib/citation-pages";
 import { blogPosts } from "@/lib/blog/posts";
 
+const TOOL_SLUGS = [
+  "reddit-thread-finder",
+  "hn-thread-finder",
+  "niche-subreddit-finder",
+  "show-hn-drafter",
+  "competitor-scraper",
+];
+
 const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL ?? "https://opencorp.live";
 
@@ -40,6 +48,18 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "weekly",
       priority: 0.6,
     },
+    {
+      url: `${SITE_URL}/tools`,
+      lastModified,
+      changeFrequency: "weekly",
+      priority: 0.8,
+    },
+    ...TOOL_SLUGS.map((slug) => ({
+      url: `${SITE_URL}/tools/${slug}`,
+      lastModified,
+      changeFrequency: "monthly" as const,
+      priority: 0.7,
+    })),
     {
       url: `${SITE_URL}/privacy`,
       lastModified,

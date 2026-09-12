@@ -2,6 +2,36 @@
 
 Next.js 16 (App Router) + Mastra AI — an autonomous user-acquisition platform.
 
+## Current state (last touched 2026-09-13)
+
+**Shipped:** 5 zero-login `/tools/*` pages, all live at `opencorp.live/tools/*`:
+- `reddit-thread-finder` — Reddit JSON search, top 25 threads ranked by relevance/top/new/comments, subreddit filter, time filter. ~5min edge cache.
+- `hn-thread-finder` — HN Algolia search, top 25 threads, Show HN / Ask HN / all-stories filter, sort by relevance/points/comments/recency. ~5min edge cache.
+- `niche-subreddit-finder` — Reddit JSON search across all, group by subreddit, rank by post count + score + comments, top post per sub. ~10min edge cache.
+- `show-hn-drafter` — wraps existing `showHNDrafterAgent`. Fetches `bestofshowhn.com` corpus for current year, calls agent, returns title + body, copy button.
+- `competitor-scraper` — wraps `productAnalystAgent` + `competitorAnalystAgent` + `searchExa`. Full pipeline: read product → plan 5 search angles → dedupe by domain → synthesize top 5-10 competitors. ~30-60s, ~$0.05/run.
+
+**Pattern:** `src/app/tools/<slug>/{actions.ts,form.tsx,results.tsx,page.tsx}` + `src/lib/tools/<engine>.ts`. Server actions only. No Supabase persistence (deferred). Each page has JSON-LD `WebApplication` + `FAQPage`, sitemap entry, IndexNow ping on script run.
+
+**Analytics events added** (`src/lib/analytics.ts`):
+- `tool_run` `{ tool }`
+- `tool_thread_click` `{ tool, rank }`
+- `tool_to_dashboard` `{ tool }`
+
+**Validation plan (free, no DMs, no paid channels):**
+- Wait 7 days. Check Vercel for `/tools/*` traffic.
+- 5+ visits/day on any tool page → funnel works, layer pSEO + IndexNow.
+- 0-2 visits/day → fix SEO angle or change the tools. No DMs yet.
+
+**Deliberately NOT done (do not do without asking):**
+- No DMs sent anywhere. No `dm` mode in `x-composer.ts`. No `daily-engagement-followup.ts` task.
+- No outreach automation on Reddit (rdt-cli is personal account `pop6996pop`).
+- No X Premium purchase.
+- No new posts/replies from this session on `opencorpai`.
+- Pre-existing `daily-posts.ts` + `daily-replies.ts` triggers untouched.
+
+**Open decision:** whether to add a 6th tool, ship pSEO scale (3 → 50 `/best/` pages), build the public leaderboard, or do outreach. Pending traffic data.
+
 ## Commands
 
 ```bash
