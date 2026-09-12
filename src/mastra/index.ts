@@ -7,10 +7,11 @@ import { discoveryAgent } from './agents/discovery';
 import { competitorAnalystAgent } from './agents/competitor-analyst';
 import { gtmIntentClassifier } from './agents/gtm-intent-classifier';
 import { showHNDrafterAgent } from './agents/show-hn-drafter';
+import { xComposerAgent } from './agents/x-composer';
 
 export const mastra = new Mastra({
   workflows: { gtmRedditScanWorkflow, competitorDiscoveryWorkflow },
-  agents: { productAnalystAgent, discoveryAgent, competitorAnalystAgent, gtmIntentClassifier, showHNDrafterAgent },
+  agents: { productAnalystAgent, discoveryAgent, competitorAnalystAgent, gtmIntentClassifier, showHNDrafterAgent, xComposerAgent },
   logger: new PinoLogger({
     name: 'Mastra',
     level: process.env.NODE_ENV === 'development' ? 'debug' : 'info',
