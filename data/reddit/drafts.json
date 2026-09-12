@@ -1,0 +1,2702 @@
+[
+  {
+    "thread": {
+      "subreddit": "alphaandbetausers",
+      "post_id": "1weq63e",
+      "author": "Snoo_94813",
+      "title": "Looking for beta feedback — Clearcut (subscription finder + DIY cancel tracker)",
+      "score": "1",
+      "comments": "0",
+      "keyword": "looking for beta",
+      "url": "https://www.reddit.com/r/alphaandbetausers/comments/1weq63e/looking_for_beta_feedback_clearcut_subscription/",
+      "scanned_at": "2026-09-12T22:31:30.332Z"
+    },
+    "variants": [
+      {
+        "variant": "value-only",
+        "intent": "9 of every 10 comments. Pure value, no opencorp mention. The 1 in 9.",
+        "text": "seen this same pattern kill launches. the founders who convert fastest spend a week finding the 3-5 threads where their buyers already describe the problem, then answer them well before pitching anything. takes a week, costs nothing, and the people who click your profile are the ones who'd actually pay."
+      },
+      {
+        "variant": "soft-disclose",
+        "intent": "Reserved for high-fit threads (r/AlphaandBetausers, r/SideProject show-and-tell). One disclosure line at the end.",
+        "text": "same here at $0 MRR. the move that worked: search reddit sorted by new with the exact phrase your customer would type. i wrapped that into a free tool that pulls the threads in 30 sec instead of 30 min, paste any url. disclosure, i built it: opencorp."
+      },
+      {
+        "variant": "with-link",
+        "intent": "Only for the weekly self-promo threads (r/indiehackers Share what you're building, r/EntrepreneurRideAlong Feedback Friday). 1 in 9 across all subs.",
+        "text": "working on opencorp: paste any product url, get the reddit + hn threads where your buyers compare tools. free, no signup. would love beta testers. opencorp.live"
+      }
+    ]
+  },
+  {
+    "thread": {
+      "subreddit": "SaaS",
+      "post_id": "1weq5y3",
+      "author": "Possible_Bid_5146",
+      "title": "I’m thinking of stopping development on my SaaS for 2 months",
+      "score": "1",
+      "comments": "2",
+      "keyword": "distribution",
+      "url": "https://www.reddit.com/r/SaaS/comments/1weq5y3/im_thinking_of_stopping_development_on_my_saas/",
+      "scanned_at": "2026-09-12T22:31:30.332Z"
+    },
+    "variants": [
+      {
+        "variant": "value-only",
+        "intent": "9 of every 10 comments. Pure value, no opencorp mention. The 1 in 9.",
+        "text": "seen this same pattern kill launches. the founders who convert fastest spend a week finding the 3-5 threads where their buyers already describe the problem, then answer them well before pitching anything. takes a week, costs nothing, and the people who click your profile are the ones who'd actually pay."
+      },
+      {
+        "variant": "soft-disclose",
+        "intent": "Reserved for high-fit threads (r/AlphaandBetausers, r/SideProject show-and-tell). One disclosure line at the end.",
+        "text": "same here at $0 MRR. the move that worked: search reddit sorted by new with the exact phrase your customer would type. i wrapped that into a free tool that pulls the threads in 30 sec instead of 30 min, paste any url. disclosure, i built it: opencorp."
+      },
+      {
+        "variant": "with-link",
+        "intent": "Only for the weekly self-promo threads (r/indiehackers Share what you're building, r/EntrepreneurRideAlong Feedback Friday). 1 in 9 across all subs.",
+        "text": "working on opencorp: paste any product url, get the reddit + hn threads where your buyers compare tools. free, no signup. would love beta testers. opencorp.live"
+      }
+    ]
+  },
+  {
+    "thread": {
+      "subreddit": "SideProject",
+      "post_id": "1weq314",
+      "author": "f3n_lie",
+      "title": "I built an eBay & Amazon deals feed right from your toolbar",
+      "score": "1",
+      "comments": "0",
+      "keyword": "looking for testers",
+      "url": "https://chromewebstore.google.com/detail/madkindofdeals/nkfnbfdnjoknggihepkgjdkgmiomocog",
+      "scanned_at": "2026-09-12T22:31:30.332Z"
+    },
+    "variants": [
+      {
+        "variant": "value-only",
+        "intent": "9 of every 10 comments. Pure value, no opencorp mention. The 1 in 9.",
+        "text": "seen this same pattern kill launches. the founders who convert fastest spend a week finding the 3-5 threads where their buyers already describe the problem, then answer them well before pitching anything. takes a week, costs nothing, and the people who click your profile are the ones who'd actually pay."
+      },
+      {
+        "variant": "soft-disclose",
+        "intent": "Reserved for high-fit threads (r/AlphaandBetausers, r/SideProject show-and-tell). One disclosure line at the end.",
+        "text": "same here at $0 MRR. the move that worked: search reddit sorted by new with the exact phrase your customer would type. i wrapped that into a free tool that pulls the threads in 30 sec instead of 30 min, paste any url. disclosure, i built it: opencorp."
+      },
+      {
+        "variant": "with-link",
+        "intent": "Only for the weekly self-promo threads (r/indiehackers Share what you're building, r/EntrepreneurRideAlong Feedback Friday). 1 in 9 across all subs.",
+        "text": "working on opencorp: paste any product url, get the reddit + hn threads where your buyers compare tools. free, no signup. would love beta testers. opencorp.live"
+      }
+    ]
+  },
+  {
+    "thread": {
+      "subreddit": "alphaandbetausers",
+      "post_id": "1wepsd7",
+      "author": "skilledDeveloper",
+      "title": "KnowMeNot: a test for whether your ChatGPT actually knows you, looking for testers",
+      "score": "1",
+      "comments": "0",
+      "keyword": "looking for testers",
+      "url": "https://www.reddit.com/r/alphaandbetausers/comments/1wepsd7/knowmenot_a_test_for_whether_your_chatgpt/",
+      "scanned_at": "2026-09-12T22:31:30.332Z"
+    },
+    "variants": [
+      {
+        "variant": "value-only",
+        "intent": "9 of every 10 comments. Pure value, no opencorp mention. The 1 in 9.",
+        "text": "seen this same pattern kill launches. the founders who convert fastest spend a week finding the 3-5 threads where their buyers already describe the problem, then answer them well before pitching anything. takes a week, costs nothing, and the people who click your profile are the ones who'd actually pay."
+      },
+      {
+        "variant": "soft-disclose",
+        "intent": "Reserved for high-fit threads (r/AlphaandBetausers, r/SideProject show-and-tell). One disclosure line at the end.",
+        "text": "same here at $0 MRR. the move that worked: search reddit sorted by new with the exact phrase your customer would type. i wrapped that into a free tool that pulls the threads in 30 sec instead of 30 min, paste any url. disclosure, i built it: opencorp."
+      },
+      {
+        "variant": "with-link",
+        "intent": "Only for the weekly self-promo threads (r/indiehackers Share what you're building, r/EntrepreneurRideAlong Feedback Friday). 1 in 9 across all subs.",
+        "text": "working on opencorp: paste any product url, get the reddit + hn threads where your buyers compare tools. free, no signup. would love beta testers. opencorp.live"
+      }
+    ]
+  },
+  {
+    "thread": {
+      "subreddit": "SideProject",
+      "post_id": "1wepqy6",
+      "author": "benderbadrobot",
+      "title": "Can you guess which game has more reviews?",
+      "score": "1",
+      "comments": "0",
+      "keyword": "research",
+      "url": "https://v.redd.it/7b5bn1zax5ph1",
+      "scanned_at": "2026-09-12T22:31:30.332Z"
+    },
+    "variants": [
+      {
+        "variant": "value-only",
+        "intent": "9 of every 10 comments. Pure value, no opencorp mention. The 1 in 9.",
+        "text": "seen this same pattern kill launches. the founders who convert fastest spend a week finding the 3-5 threads where their buyers already describe the problem, then answer them well before pitching anything. takes a week, costs nothing, and the people who click your profile are the ones who'd actually pay."
+      },
+      {
+        "variant": "soft-disclose",
+        "intent": "Reserved for high-fit threads (r/AlphaandBetausers, r/SideProject show-and-tell). One disclosure line at the end.",
+        "text": "same here at $0 MRR. the move that worked: search reddit sorted by new with the exact phrase your customer would type. i wrapped that into a free tool that pulls the threads in 30 sec instead of 30 min, paste any url. disclosure, i built it: opencorp."
+      },
+      {
+        "variant": "with-link",
+        "intent": "Only for the weekly self-promo threads (r/indiehackers Share what you're building, r/EntrepreneurRideAlong Feedback Friday). 1 in 9 across all subs.",
+        "text": "working on opencorp: paste any product url, get the reddit + hn threads where your buyers compare tools. free, no signup. would love beta testers. opencorp.live"
+      }
+    ]
+  },
+  {
+    "thread": {
+      "subreddit": "SideProject",
+      "post_id": "1wepqiy",
+      "author": "atc07",
+      "title": "YourTalks: Type any topic and get a 2-voice podcast made just for you",
+      "score": "1",
+      "comments": "1",
+      "keyword": "research",
+      "url": "https://v.redd.it/c74l1ytvq5ph1",
+      "scanned_at": "2026-09-12T22:31:30.332Z"
+    },
+    "variants": [
+      {
+        "variant": "value-only",
+        "intent": "9 of every 10 comments. Pure value, no opencorp mention. The 1 in 9.",
+        "text": "seen this same pattern kill launches. the founders who convert fastest spend a week finding the 3-5 threads where their buyers already describe the problem, then answer them well before pitching anything. takes a week, costs nothing, and the people who click your profile are the ones who'd actually pay."
+      },
+      {
+        "variant": "soft-disclose",
+        "intent": "Reserved for high-fit threads (r/AlphaandBetausers, r/SideProject show-and-tell). One disclosure line at the end.",
+        "text": "same here at $0 MRR. the move that worked: search reddit sorted by new with the exact phrase your customer would type. i wrapped that into a free tool that pulls the threads in 30 sec instead of 30 min, paste any url. disclosure, i built it: opencorp."
+      },
+      {
+        "variant": "with-link",
+        "intent": "Only for the weekly self-promo threads (r/indiehackers Share what you're building, r/EntrepreneurRideAlong Feedback Friday). 1 in 9 across all subs.",
+        "text": "working on opencorp: paste any product url, get the reddit + hn threads where your buyers compare tools. free, no signup. would love beta testers. opencorp.live"
+      }
+    ]
+  },
+  {
+    "thread": {
+      "subreddit": "SideProject",
+      "post_id": "1wepo8z",
+      "author": "Temporary-Body5562",
+      "title": "Sick of 10dollar/mo budgeting apps selling your data? I built a 100% offline expense parser with ZERO internet permissions. Need closed testers (will test your app back!)",
+      "score": "1",
+      "comments": "1",
+      "keyword": "need testers",
+      "url": "https://www.reddit.com/r/SideProject/comments/1wepo8z/sick_of_10dollarmo_budgeting_apps_selling_your/",
+      "scanned_at": "2026-09-12T22:31:30.332Z"
+    },
+    "variants": [
+      {
+        "variant": "value-only",
+        "intent": "9 of every 10 comments. Pure value, no opencorp mention. The 1 in 9.",
+        "text": "seen this same pattern kill launches. the founders who convert fastest spend a week finding the 3-5 threads where their buyers already describe the problem, then answer them well before pitching anything. takes a week, costs nothing, and the people who click your profile are the ones who'd actually pay."
+      },
+      {
+        "variant": "soft-disclose",
+        "intent": "Reserved for high-fit threads (r/AlphaandBetausers, r/SideProject show-and-tell). One disclosure line at the end.",
+        "text": "same here at $0 MRR. the move that worked: search reddit sorted by new with the exact phrase your customer would type. i wrapped that into a free tool that pulls the threads in 30 sec instead of 30 min, paste any url. disclosure, i built it: opencorp."
+      },
+      {
+        "variant": "with-link",
+        "intent": "Only for the weekly self-promo threads (r/indiehackers Share what you're building, r/EntrepreneurRideAlong Feedback Friday). 1 in 9 across all subs.",
+        "text": "working on opencorp: paste any product url, get the reddit + hn threads where your buyers compare tools. free, no signup. would love beta testers. opencorp.live"
+      }
+    ]
+  },
+  {
+    "thread": {
+      "subreddit": "microsaas",
+      "post_id": "1wep5po",
+      "author": "crippler95",
+      "title": "A year building a team app only for rugby clubs. One club pays me €29/month. How do you actually sell to amateur sports clubs?",
+      "score": "1",
+      "comments": "4",
+      "keyword": "how did you get",
+      "url": "https://www.reddit.com/r/microsaas/comments/1wep5po/a_year_building_a_team_app_only_for_rugby_clubs/",
+      "scanned_at": "2026-09-12T22:31:30.332Z"
+    },
+    "variants": [
+      {
+        "variant": "value-only",
+        "intent": "9 of every 10 comments. Pure value, no opencorp mention. The 1 in 9.",
+        "text": "seen this same pattern kill launches. the founders who convert fastest spend a week finding the 3-5 threads where their buyers already describe the problem, then answer them well before pitching anything. takes a week, costs nothing, and the people who click your profile are the ones who'd actually pay."
+      },
+      {
+        "variant": "soft-disclose",
+        "intent": "Reserved for high-fit threads (r/AlphaandBetausers, r/SideProject show-and-tell). One disclosure line at the end.",
+        "text": "same here at $0 MRR. the move that worked: search reddit sorted by new with the exact phrase your customer would type. i wrapped that into a free tool that pulls the threads in 30 sec instead of 30 min, paste any url. disclosure, i built it: opencorp."
+      },
+      {
+        "variant": "with-link",
+        "intent": "Only for the weekly self-promo threads (r/indiehackers Share what you're building, r/EntrepreneurRideAlong Feedback Friday). 1 in 9 across all subs.",
+        "text": "working on opencorp: paste any product url, get the reddit + hn threads where your buyers compare tools. free, no signup. would love beta testers. opencorp.live"
+      }
+    ]
+  },
+  {
+    "thread": {
+      "subreddit": "alphaandbetausers",
+      "post_id": "1weoqez",
+      "author": "ChampionOk4007",
+      "title": "[Beta] Daily Coding, one coding challenge a day, same for everyone. Need testers for the 11-language sandbox",
+      "score": "0",
+      "comments": "0",
+      "keyword": "need testers",
+      "url": "https://www.reddit.com/r/alphaandbetausers/comments/1weoqez/beta_daily_coding_one_coding_challenge_a_day_same/",
+      "scanned_at": "2026-09-12T22:31:30.332Z"
+    },
+    "variants": [
+      {
+        "variant": "value-only",
+        "intent": "9 of every 10 comments. Pure value, no opencorp mention. The 1 in 9.",
+        "text": "seen this same pattern kill launches. the founders who convert fastest spend a week finding the 3-5 threads where their buyers already describe the problem, then answer them well before pitching anything. takes a week, costs nothing, and the people who click your profile are the ones who'd actually pay."
+      },
+      {
+        "variant": "soft-disclose",
+        "intent": "Reserved for high-fit threads (r/AlphaandBetausers, r/SideProject show-and-tell). One disclosure line at the end.",
+        "text": "same here at $0 MRR. the move that worked: search reddit sorted by new with the exact phrase your customer would type. i wrapped that into a free tool that pulls the threads in 30 sec instead of 30 min, paste any url. disclosure, i built it: opencorp."
+      },
+      {
+        "variant": "with-link",
+        "intent": "Only for the weekly self-promo threads (r/indiehackers Share what you're building, r/EntrepreneurRideAlong Feedback Friday). 1 in 9 across all subs.",
+        "text": "working on opencorp: paste any product url, get the reddit + hn threads where your buyers compare tools. free, no signup. would love beta testers. opencorp.live"
+      }
+    ]
+  },
+  {
+    "thread": {
+      "subreddit": "microsaas",
+      "post_id": "1weop1s",
+      "author": "eatsleepdrinkcode",
+      "title": "Terrified of marketing, so I got 5 users the dumbest way possible",
+      "score": "1",
+      "comments": "0",
+      "keyword": "competitor",
+      "url": "https://www.reddit.com/r/microsaas/comments/1weop1s/terrified_of_marketing_so_i_got_5_users_the/",
+      "scanned_at": "2026-09-12T22:31:30.332Z"
+    },
+    "variants": [
+      {
+        "variant": "value-only",
+        "intent": "9 of every 10 comments. Pure value, no opencorp mention. The 1 in 9.",
+        "text": "seen this same pattern kill launches. the founders who convert fastest spend a week finding the 3-5 threads where their buyers already describe the problem, then answer them well before pitching anything. takes a week, costs nothing, and the people who click your profile are the ones who'd actually pay."
+      },
+      {
+        "variant": "soft-disclose",
+        "intent": "Reserved for high-fit threads (r/AlphaandBetausers, r/SideProject show-and-tell). One disclosure line at the end.",
+        "text": "same here at $0 MRR. the move that worked: search reddit sorted by new with the exact phrase your customer would type. i wrapped that into a free tool that pulls the threads in 30 sec instead of 30 min, paste any url. disclosure, i built it: opencorp."
+      },
+      {
+        "variant": "with-link",
+        "intent": "Only for the weekly self-promo threads (r/indiehackers Share what you're building, r/EntrepreneurRideAlong Feedback Friday). 1 in 9 across all subs.",
+        "text": "working on opencorp: paste any product url, get the reddit + hn threads where your buyers compare tools. free, no signup. would love beta testers. opencorp.live"
+      }
+    ]
+  },
+  {
+    "thread": {
+      "subreddit": "alphaandbetausers",
+      "post_id": "1weok61",
+      "author": "d-miller",
+      "title": "[Web] Free browser CAD for 3D printing — looking for testers to find where the first 5 minutes break",
+      "score": "1",
+      "comments": "0",
+      "keyword": "looking for testers",
+      "url": "https://www.reddit.com/r/alphaandbetausers/comments/1weok61/web_free_browser_cad_for_3d_printing_looking_for/",
+      "scanned_at": "2026-09-12T22:31:30.332Z"
+    },
+    "variants": [
+      {
+        "variant": "value-only",
+        "intent": "9 of every 10 comments. Pure value, no opencorp mention. The 1 in 9.",
+        "text": "seen this same pattern kill launches. the founders who convert fastest spend a week finding the 3-5 threads where their buyers already describe the problem, then answer them well before pitching anything. takes a week, costs nothing, and the people who click your profile are the ones who'd actually pay."
+      },
+      {
+        "variant": "soft-disclose",
+        "intent": "Reserved for high-fit threads (r/AlphaandBetausers, r/SideProject show-and-tell). One disclosure line at the end.",
+        "text": "same here at $0 MRR. the move that worked: search reddit sorted by new with the exact phrase your customer would type. i wrapped that into a free tool that pulls the threads in 30 sec instead of 30 min, paste any url. disclosure, i built it: opencorp."
+      },
+      {
+        "variant": "with-link",
+        "intent": "Only for the weekly self-promo threads (r/indiehackers Share what you're building, r/EntrepreneurRideAlong Feedback Friday). 1 in 9 across all subs.",
+        "text": "working on opencorp: paste any product url, get the reddit + hn threads where your buyers compare tools. free, no signup. would love beta testers. opencorp.live"
+      }
+    ]
+  },
+  {
+    "thread": {
+      "subreddit": "SaaS",
+      "post_id": "1wens62",
+      "author": "AsejereDaDeje",
+      "title": "So I built a photoshop alternative using GPT-6",
+      "score": "0",
+      "comments": "0",
+      "keyword": "research",
+      "url": "https://v.redd.it/m8w496tyh5ph1",
+      "scanned_at": "2026-09-12T22:31:30.332Z"
+    },
+    "variants": [
+      {
+        "variant": "value-only",
+        "intent": "9 of every 10 comments. Pure value, no opencorp mention. The 1 in 9.",
+        "text": "seen this same pattern kill launches. the founders who convert fastest spend a week finding the 3-5 threads where their buyers already describe the problem, then answer them well before pitching anything. takes a week, costs nothing, and the people who click your profile are the ones who'd actually pay."
+      },
+      {
+        "variant": "soft-disclose",
+        "intent": "Reserved for high-fit threads (r/AlphaandBetausers, r/SideProject show-and-tell). One disclosure line at the end.",
+        "text": "same here at $0 MRR. the move that worked: search reddit sorted by new with the exact phrase your customer would type. i wrapped that into a free tool that pulls the threads in 30 sec instead of 30 min, paste any url. disclosure, i built it: opencorp."
+      },
+      {
+        "variant": "with-link",
+        "intent": "Only for the weekly self-promo threads (r/indiehackers Share what you're building, r/EntrepreneurRideAlong Feedback Friday). 1 in 9 across all subs.",
+        "text": "working on opencorp: paste any product url, get the reddit + hn threads where your buyers compare tools. free, no signup. would love beta testers. opencorp.live"
+      }
+    ]
+  },
+  {
+    "thread": {
+      "subreddit": "buildinpublic",
+      "post_id": "1wenr1v",
+      "author": "nonneeded",
+      "title": "I built an AI MacOS app for researching crypto - looking for 25 serious beta testers",
+      "score": "0",
+      "comments": "0",
+      "keyword": "research",
+      "url": "https://www.reddit.com/r/buildinpublic/comments/1wenr1v/i_built_an_ai_macos_app_for_researching_crypto/",
+      "scanned_at": "2026-09-12T22:31:30.332Z"
+    },
+    "variants": [
+      {
+        "variant": "value-only",
+        "intent": "9 of every 10 comments. Pure value, no opencorp mention. The 1 in 9.",
+        "text": "seen this same pattern kill launches. the founders who convert fastest spend a week finding the 3-5 threads where their buyers already describe the problem, then answer them well before pitching anything. takes a week, costs nothing, and the people who click your profile are the ones who'd actually pay."
+      },
+      {
+        "variant": "soft-disclose",
+        "intent": "Reserved for high-fit threads (r/AlphaandBetausers, r/SideProject show-and-tell). One disclosure line at the end.",
+        "text": "same here at $0 MRR. the move that worked: search reddit sorted by new with the exact phrase your customer would type. i wrapped that into a free tool that pulls the threads in 30 sec instead of 30 min, paste any url. disclosure, i built it: opencorp."
+      },
+      {
+        "variant": "with-link",
+        "intent": "Only for the weekly self-promo threads (r/indiehackers Share what you're building, r/EntrepreneurRideAlong Feedback Friday). 1 in 9 across all subs.",
+        "text": "working on opencorp: paste any product url, get the reddit + hn threads where your buyers compare tools. free, no signup. would love beta testers. opencorp.live"
+      }
+    ]
+  },
+  {
+    "thread": {
+      "subreddit": "alphaandbetausers",
+      "post_id": "1wenpyt",
+      "author": "nonneeded",
+      "title": "I built an AI MacOS app for researching crypto - looking for 25 serious beta testers",
+      "score": "1",
+      "comments": "0",
+      "keyword": "research",
+      "url": "https://www.reddit.com/r/alphaandbetausers/comments/1wenpyt/i_built_an_ai_macos_app_for_researching_crypto/",
+      "scanned_at": "2026-09-12T22:31:30.332Z"
+    },
+    "variants": [
+      {
+        "variant": "value-only",
+        "intent": "9 of every 10 comments. Pure value, no opencorp mention. The 1 in 9.",
+        "text": "seen this same pattern kill launches. the founders who convert fastest spend a week finding the 3-5 threads where their buyers already describe the problem, then answer them well before pitching anything. takes a week, costs nothing, and the people who click your profile are the ones who'd actually pay."
+      },
+      {
+        "variant": "soft-disclose",
+        "intent": "Reserved for high-fit threads (r/AlphaandBetausers, r/SideProject show-and-tell). One disclosure line at the end.",
+        "text": "same here at $0 MRR. the move that worked: search reddit sorted by new with the exact phrase your customer would type. i wrapped that into a free tool that pulls the threads in 30 sec instead of 30 min, paste any url. disclosure, i built it: opencorp."
+      },
+      {
+        "variant": "with-link",
+        "intent": "Only for the weekly self-promo threads (r/indiehackers Share what you're building, r/EntrepreneurRideAlong Feedback Friday). 1 in 9 across all subs.",
+        "text": "working on opencorp: paste any product url, get the reddit + hn threads where your buyers compare tools. free, no signup. would love beta testers. opencorp.live"
+      }
+    ]
+  },
+  {
+    "thread": {
+      "subreddit": "SaaS",
+      "post_id": "1wenpw4",
+      "author": "eatsleepdrinkcode",
+      "title": "Terrified of marketing, so I got 5 paying users the dumbest way possible",
+      "score": "1",
+      "comments": "2",
+      "keyword": "competitor",
+      "url": "https://www.reddit.com/r/SaaS/comments/1wenpw4/terrified_of_marketing_so_i_got_5_paying_users/",
+      "scanned_at": "2026-09-12T22:31:30.332Z"
+    },
+    "variants": [
+      {
+        "variant": "value-only",
+        "intent": "9 of every 10 comments. Pure value, no opencorp mention. The 1 in 9.",
+        "text": "seen this same pattern kill launches. the founders who convert fastest spend a week finding the 3-5 threads where their buyers already describe the problem, then answer them well before pitching anything. takes a week, costs nothing, and the people who click your profile are the ones who'd actually pay."
+      },
+      {
+        "variant": "soft-disclose",
+        "intent": "Reserved for high-fit threads (r/AlphaandBetausers, r/SideProject show-and-tell). One disclosure line at the end.",
+        "text": "same here at $0 MRR. the move that worked: search reddit sorted by new with the exact phrase your customer would type. i wrapped that into a free tool that pulls the threads in 30 sec instead of 30 min, paste any url. disclosure, i built it: opencorp."
+      },
+      {
+        "variant": "with-link",
+        "intent": "Only for the weekly self-promo threads (r/indiehackers Share what you're building, r/EntrepreneurRideAlong Feedback Friday). 1 in 9 across all subs.",
+        "text": "working on opencorp: paste any product url, get the reddit + hn threads where your buyers compare tools. free, no signup. would love beta testers. opencorp.live"
+      }
+    ]
+  },
+  {
+    "thread": {
+      "subreddit": "SideProject",
+      "post_id": "1wenn22",
+      "author": "Own-Potential4294",
+      "title": "Built a narrow tool for detailers’ before/after handoff",
+      "score": "1",
+      "comments": "2",
+      "keyword": "first 10",
+      "url": "https://www.reddit.com/r/SideProject/comments/1wenn22/built_a_narrow_tool_for_detailers_beforeafter/",
+      "scanned_at": "2026-09-12T22:31:30.332Z"
+    },
+    "variants": [
+      {
+        "variant": "value-only",
+        "intent": "9 of every 10 comments. Pure value, no opencorp mention. The 1 in 9.",
+        "text": "seen this same pattern kill launches. the founders who convert fastest spend a week finding the 3-5 threads where their buyers already describe the problem, then answer them well before pitching anything. takes a week, costs nothing, and the people who click your profile are the ones who'd actually pay."
+      },
+      {
+        "variant": "soft-disclose",
+        "intent": "Reserved for high-fit threads (r/AlphaandBetausers, r/SideProject show-and-tell). One disclosure line at the end.",
+        "text": "same here at $0 MRR. the move that worked: search reddit sorted by new with the exact phrase your customer would type. i wrapped that into a free tool that pulls the threads in 30 sec instead of 30 min, paste any url. disclosure, i built it: opencorp."
+      },
+      {
+        "variant": "with-link",
+        "intent": "Only for the weekly self-promo threads (r/indiehackers Share what you're building, r/EntrepreneurRideAlong Feedback Friday). 1 in 9 across all subs.",
+        "text": "working on opencorp: paste any product url, get the reddit + hn threads where your buyers compare tools. free, no signup. would love beta testers. opencorp.live"
+      }
+    ]
+  },
+  {
+    "thread": {
+      "subreddit": "alphaandbetausers",
+      "post_id": "1wenla8",
+      "author": "Buz123456",
+      "title": "We just launched Glide — an AI-powered fitness app and we're looking for users",
+      "score": "1",
+      "comments": "1",
+      "keyword": "looking for users",
+      "url": "https://www.reddit.com/r/alphaandbetausers/comments/1wenla8/we_just_launched_glide_an_aipowered_fitness_app/",
+      "scanned_at": "2026-09-12T22:31:30.332Z"
+    },
+    "variants": [
+      {
+        "variant": "value-only",
+        "intent": "9 of every 10 comments. Pure value, no opencorp mention. The 1 in 9.",
+        "text": "seen this same pattern kill launches. the founders who convert fastest spend a week finding the 3-5 threads where their buyers already describe the problem, then answer them well before pitching anything. takes a week, costs nothing, and the people who click your profile are the ones who'd actually pay."
+      },
+      {
+        "variant": "soft-disclose",
+        "intent": "Reserved for high-fit threads (r/AlphaandBetausers, r/SideProject show-and-tell). One disclosure line at the end.",
+        "text": "same here at $0 MRR. the move that worked: search reddit sorted by new with the exact phrase your customer would type. i wrapped that into a free tool that pulls the threads in 30 sec instead of 30 min, paste any url. disclosure, i built it: opencorp."
+      },
+      {
+        "variant": "with-link",
+        "intent": "Only for the weekly self-promo threads (r/indiehackers Share what you're building, r/EntrepreneurRideAlong Feedback Friday). 1 in 9 across all subs.",
+        "text": "working on opencorp: paste any product url, get the reddit + hn threads where your buyers compare tools. free, no signup. would love beta testers. opencorp.live"
+      }
+    ]
+  },
+  {
+    "thread": {
+      "subreddit": "buildinpublic",
+      "post_id": "1wenhxk",
+      "author": "Particular-Grocery19",
+      "title": "I built an AI MacOS app for researching crypto - looking for 25 serious beta testers",
+      "score": "1",
+      "comments": "0",
+      "keyword": "research",
+      "url": "https://www.reddit.com/r/buildinpublic/comments/1wenhxk/i_built_an_ai_macos_app_for_researching_crypto/",
+      "scanned_at": "2026-09-12T22:31:30.332Z"
+    },
+    "variants": [
+      {
+        "variant": "value-only",
+        "intent": "9 of every 10 comments. Pure value, no opencorp mention. The 1 in 9.",
+        "text": "seen this same pattern kill launches. the founders who convert fastest spend a week finding the 3-5 threads where their buyers already describe the problem, then answer them well before pitching anything. takes a week, costs nothing, and the people who click your profile are the ones who'd actually pay."
+      },
+      {
+        "variant": "soft-disclose",
+        "intent": "Reserved for high-fit threads (r/AlphaandBetausers, r/SideProject show-and-tell). One disclosure line at the end.",
+        "text": "same here at $0 MRR. the move that worked: search reddit sorted by new with the exact phrase your customer would type. i wrapped that into a free tool that pulls the threads in 30 sec instead of 30 min, paste any url. disclosure, i built it: opencorp."
+      },
+      {
+        "variant": "with-link",
+        "intent": "Only for the weekly self-promo threads (r/indiehackers Share what you're building, r/EntrepreneurRideAlong Feedback Friday). 1 in 9 across all subs.",
+        "text": "working on opencorp: paste any product url, get the reddit + hn threads where your buyers compare tools. free, no signup. would love beta testers. opencorp.live"
+      }
+    ]
+  },
+  {
+    "thread": {
+      "subreddit": "alphaandbetausers",
+      "post_id": "1weng57",
+      "author": "Particular-Grocery19",
+      "title": "I built an AI MacOS app for researching crypto - looking for 25 serious beta testers",
+      "score": "1",
+      "comments": "0",
+      "keyword": "research",
+      "url": "https://www.reddit.com/r/alphaandbetausers/comments/1weng57/i_built_an_ai_macos_app_for_researching_crypto/",
+      "scanned_at": "2026-09-12T22:31:30.332Z"
+    },
+    "variants": [
+      {
+        "variant": "value-only",
+        "intent": "9 of every 10 comments. Pure value, no opencorp mention. The 1 in 9.",
+        "text": "seen this same pattern kill launches. the founders who convert fastest spend a week finding the 3-5 threads where their buyers already describe the problem, then answer them well before pitching anything. takes a week, costs nothing, and the people who click your profile are the ones who'd actually pay."
+      },
+      {
+        "variant": "soft-disclose",
+        "intent": "Reserved for high-fit threads (r/AlphaandBetausers, r/SideProject show-and-tell). One disclosure line at the end.",
+        "text": "same here at $0 MRR. the move that worked: search reddit sorted by new with the exact phrase your customer would type. i wrapped that into a free tool that pulls the threads in 30 sec instead of 30 min, paste any url. disclosure, i built it: opencorp."
+      },
+      {
+        "variant": "with-link",
+        "intent": "Only for the weekly self-promo threads (r/indiehackers Share what you're building, r/EntrepreneurRideAlong Feedback Friday). 1 in 9 across all subs.",
+        "text": "working on opencorp: paste any product url, get the reddit + hn threads where your buyers compare tools. free, no signup. would love beta testers. opencorp.live"
+      }
+    ]
+  },
+  {
+    "thread": {
+      "subreddit": "SaaS",
+      "post_id": "1wen207",
+      "author": "AdQuiet6750",
+      "title": "I am building a diabetes app that's not another glucose tracker, landing page is live, would love brutal feedback",
+      "score": "2",
+      "comments": "5",
+      "keyword": "validation",
+      "url": "https://www.reddit.com/r/SaaS/comments/1wen207/i_am_building_a_diabetes_app_thats_not_another/",
+      "scanned_at": "2026-09-12T22:31:30.332Z"
+    },
+    "variants": [
+      {
+        "variant": "value-only",
+        "intent": "9 of every 10 comments. Pure value, no opencorp mention. The 1 in 9.",
+        "text": "seen this same pattern kill launches. the founders who convert fastest spend a week finding the 3-5 threads where their buyers already describe the problem, then answer them well before pitching anything. takes a week, costs nothing, and the people who click your profile are the ones who'd actually pay."
+      },
+      {
+        "variant": "soft-disclose",
+        "intent": "Reserved for high-fit threads (r/AlphaandBetausers, r/SideProject show-and-tell). One disclosure line at the end.",
+        "text": "same here at $0 MRR. the move that worked: search reddit sorted by new with the exact phrase your customer would type. i wrapped that into a free tool that pulls the threads in 30 sec instead of 30 min, paste any url. disclosure, i built it: opencorp."
+      },
+      {
+        "variant": "with-link",
+        "intent": "Only for the weekly self-promo threads (r/indiehackers Share what you're building, r/EntrepreneurRideAlong Feedback Friday). 1 in 9 across all subs.",
+        "text": "working on opencorp: paste any product url, get the reddit + hn threads where your buyers compare tools. free, no signup. would love beta testers. opencorp.live"
+      }
+    ]
+  },
+  {
+    "thread": {
+      "subreddit": "SaaS",
+      "post_id": "1wemw17",
+      "author": "Fit_Instruction4225",
+      "title": "I started building software products and realized getting the first customer is harder than building the MVP",
+      "score": "3",
+      "comments": "8",
+      "keyword": "first customer",
+      "url": "https://www.reddit.com/r/SaaS/comments/1wemw17/i_started_building_software_products_and_realized/",
+      "scanned_at": "2026-09-12T22:31:30.332Z"
+    },
+    "variants": [
+      {
+        "variant": "value-only",
+        "intent": "9 of every 10 comments. Pure value, no opencorp mention. The 1 in 9.",
+        "text": "seen this same pattern kill launches. the founders who convert fastest spend a week finding the 3-5 threads where their buyers already describe the problem, then answer them well before pitching anything. takes a week, costs nothing, and the people who click your profile are the ones who'd actually pay."
+      },
+      {
+        "variant": "soft-disclose",
+        "intent": "Reserved for high-fit threads (r/AlphaandBetausers, r/SideProject show-and-tell). One disclosure line at the end.",
+        "text": "same here at $0 MRR. the move that worked: search reddit sorted by new with the exact phrase your customer would type. i wrapped that into a free tool that pulls the threads in 30 sec instead of 30 min, paste any url. disclosure, i built it: opencorp."
+      },
+      {
+        "variant": "with-link",
+        "intent": "Only for the weekly self-promo threads (r/indiehackers Share what you're building, r/EntrepreneurRideAlong Feedback Friday). 1 in 9 across all subs.",
+        "text": "working on opencorp: paste any product url, get the reddit + hn threads where your buyers compare tools. free, no signup. would love beta testers. opencorp.live"
+      }
+    ]
+  },
+  {
+    "thread": {
+      "subreddit": "SaaS",
+      "post_id": "1wemqyx",
+      "author": "Spiritual-Juice-8077",
+      "title": "I almost lost a SaaS client because LinkedIn",
+      "score": "2",
+      "comments": "4",
+      "keyword": "research",
+      "url": "https://i.redd.it/3ghgj2khb5ph1.png",
+      "scanned_at": "2026-09-12T22:31:30.332Z"
+    },
+    "variants": [
+      {
+        "variant": "value-only",
+        "intent": "9 of every 10 comments. Pure value, no opencorp mention. The 1 in 9.",
+        "text": "seen this same pattern kill launches. the founders who convert fastest spend a week finding the 3-5 threads where their buyers already describe the problem, then answer them well before pitching anything. takes a week, costs nothing, and the people who click your profile are the ones who'd actually pay."
+      },
+      {
+        "variant": "soft-disclose",
+        "intent": "Reserved for high-fit threads (r/AlphaandBetausers, r/SideProject show-and-tell). One disclosure line at the end.",
+        "text": "same here at $0 MRR. the move that worked: search reddit sorted by new with the exact phrase your customer would type. i wrapped that into a free tool that pulls the threads in 30 sec instead of 30 min, paste any url. disclosure, i built it: opencorp."
+      },
+      {
+        "variant": "with-link",
+        "intent": "Only for the weekly self-promo threads (r/indiehackers Share what you're building, r/EntrepreneurRideAlong Feedback Friday). 1 in 9 across all subs.",
+        "text": "working on opencorp: paste any product url, get the reddit + hn threads where your buyers compare tools. free, no signup. would love beta testers. opencorp.live"
+      }
+    ]
+  },
+  {
+    "thread": {
+      "subreddit": "buildinpublic",
+      "post_id": "1wemo9n",
+      "author": "Round_Description_1",
+      "title": "Building a tool that tells AI automation consultants “don’t quote yet”",
+      "score": "1",
+      "comments": "0",
+      "keyword": "research",
+      "url": "https://www.reddit.com/r/buildinpublic/comments/1wemo9n/building_a_tool_that_tells_ai_automation/",
+      "scanned_at": "2026-09-12T22:31:30.332Z"
+    },
+    "variants": [
+      {
+        "variant": "value-only",
+        "intent": "9 of every 10 comments. Pure value, no opencorp mention. The 1 in 9.",
+        "text": "seen this same pattern kill launches. the founders who convert fastest spend a week finding the 3-5 threads where their buyers already describe the problem, then answer them well before pitching anything. takes a week, costs nothing, and the people who click your profile are the ones who'd actually pay."
+      },
+      {
+        "variant": "soft-disclose",
+        "intent": "Reserved for high-fit threads (r/AlphaandBetausers, r/SideProject show-and-tell). One disclosure line at the end.",
+        "text": "same here at $0 MRR. the move that worked: search reddit sorted by new with the exact phrase your customer would type. i wrapped that into a free tool that pulls the threads in 30 sec instead of 30 min, paste any url. disclosure, i built it: opencorp."
+      },
+      {
+        "variant": "with-link",
+        "intent": "Only for the weekly self-promo threads (r/indiehackers Share what you're building, r/EntrepreneurRideAlong Feedback Friday). 1 in 9 across all subs.",
+        "text": "working on opencorp: paste any product url, get the reddit + hn threads where your buyers compare tools. free, no signup. would love beta testers. opencorp.live"
+      }
+    ]
+  },
+  {
+    "thread": {
+      "subreddit": "buildinpublic",
+      "post_id": "1wemgur",
+      "author": "gigabyte_128",
+      "title": "Finished built my app, but how to sell, also thoughts wanted 😭",
+      "score": "0",
+      "comments": "1",
+      "keyword": "research",
+      "url": "https://www.reddit.com/gallery/1wemgur",
+      "scanned_at": "2026-09-12T22:31:30.332Z"
+    },
+    "variants": [
+      {
+        "variant": "value-only",
+        "intent": "9 of every 10 comments. Pure value, no opencorp mention. The 1 in 9.",
+        "text": "seen this same pattern kill launches. the founders who convert fastest spend a week finding the 3-5 threads where their buyers already describe the problem, then answer them well before pitching anything. takes a week, costs nothing, and the people who click your profile are the ones who'd actually pay."
+      },
+      {
+        "variant": "soft-disclose",
+        "intent": "Reserved for high-fit threads (r/AlphaandBetausers, r/SideProject show-and-tell). One disclosure line at the end.",
+        "text": "same here at $0 MRR. the move that worked: search reddit sorted by new with the exact phrase your customer would type. i wrapped that into a free tool that pulls the threads in 30 sec instead of 30 min, paste any url. disclosure, i built it: opencorp."
+      },
+      {
+        "variant": "with-link",
+        "intent": "Only for the weekly self-promo threads (r/indiehackers Share what you're building, r/EntrepreneurRideAlong Feedback Friday). 1 in 9 across all subs.",
+        "text": "working on opencorp: paste any product url, get the reddit + hn threads where your buyers compare tools. free, no signup. would love beta testers. opencorp.live"
+      }
+    ]
+  },
+  {
+    "thread": {
+      "subreddit": "SideProject",
+      "post_id": "1wem4r6",
+      "author": "gigabyte_128",
+      "title": "Finished built my app, but how to sell, also thoughts wanted 😭",
+      "score": "0",
+      "comments": "6",
+      "keyword": "research",
+      "url": "https://www.reddit.com/r/SideProject/comments/1wem4r6/finished_built_my_app_but_how_to_sell_also/",
+      "scanned_at": "2026-09-12T22:31:30.332Z"
+    },
+    "variants": [
+      {
+        "variant": "value-only",
+        "intent": "9 of every 10 comments. Pure value, no opencorp mention. The 1 in 9.",
+        "text": "seen this same pattern kill launches. the founders who convert fastest spend a week finding the 3-5 threads where their buyers already describe the problem, then answer them well before pitching anything. takes a week, costs nothing, and the people who click your profile are the ones who'd actually pay."
+      },
+      {
+        "variant": "soft-disclose",
+        "intent": "Reserved for high-fit threads (r/AlphaandBetausers, r/SideProject show-and-tell). One disclosure line at the end.",
+        "text": "same here at $0 MRR. the move that worked: search reddit sorted by new with the exact phrase your customer would type. i wrapped that into a free tool that pulls the threads in 30 sec instead of 30 min, paste any url. disclosure, i built it: opencorp."
+      },
+      {
+        "variant": "with-link",
+        "intent": "Only for the weekly self-promo threads (r/indiehackers Share what you're building, r/EntrepreneurRideAlong Feedback Friday). 1 in 9 across all subs.",
+        "text": "working on opencorp: paste any product url, get the reddit + hn threads where your buyers compare tools. free, no signup. would love beta testers. opencorp.live"
+      }
+    ]
+  },
+  {
+    "thread": {
+      "subreddit": "buildinpublic",
+      "post_id": "1wem1k5",
+      "author": "danielabinav",
+      "title": "Day 1 to 82 of the free traffic exchange I built. Here's the data.",
+      "score": "1",
+      "comments": "4",
+      "keyword": "0 users",
+      "url": "https://www.reddit.com/r/buildinpublic/comments/1wem1k5/day_1_to_82_of_the_free_traffic_exchange_i_built/",
+      "scanned_at": "2026-09-12T22:31:30.332Z"
+    },
+    "variants": [
+      {
+        "variant": "value-only",
+        "intent": "9 of every 10 comments. Pure value, no opencorp mention. The 1 in 9.",
+        "text": "seen this same pattern kill launches. the founders who convert fastest spend a week finding the 3-5 threads where their buyers already describe the problem, then answer them well before pitching anything. takes a week, costs nothing, and the people who click your profile are the ones who'd actually pay."
+      },
+      {
+        "variant": "soft-disclose",
+        "intent": "Reserved for high-fit threads (r/AlphaandBetausers, r/SideProject show-and-tell). One disclosure line at the end.",
+        "text": "same here at $0 MRR. the move that worked: search reddit sorted by new with the exact phrase your customer would type. i wrapped that into a free tool that pulls the threads in 30 sec instead of 30 min, paste any url. disclosure, i built it: opencorp."
+      },
+      {
+        "variant": "with-link",
+        "intent": "Only for the weekly self-promo threads (r/indiehackers Share what you're building, r/EntrepreneurRideAlong Feedback Friday). 1 in 9 across all subs.",
+        "text": "working on opencorp: paste any product url, get the reddit + hn threads where your buyers compare tools. free, no signup. would love beta testers. opencorp.live"
+      }
+    ]
+  },
+  {
+    "thread": {
+      "subreddit": "SideProject",
+      "post_id": "1welwfx",
+      "author": "Flashy_Beautiful2848",
+      "title": "I spent six weeks mapping 5,322 electronic artists by who their fans also listen to",
+      "score": "0",
+      "comments": "3",
+      "keyword": "research",
+      "url": "https://www.reddit.com/r/SideProject/comments/1welwfx/i_spent_six_weeks_mapping_5322_electronic_artists/",
+      "scanned_at": "2026-09-12T22:31:30.332Z"
+    },
+    "variants": [
+      {
+        "variant": "value-only",
+        "intent": "9 of every 10 comments. Pure value, no opencorp mention. The 1 in 9.",
+        "text": "seen this same pattern kill launches. the founders who convert fastest spend a week finding the 3-5 threads where their buyers already describe the problem, then answer them well before pitching anything. takes a week, costs nothing, and the people who click your profile are the ones who'd actually pay."
+      },
+      {
+        "variant": "soft-disclose",
+        "intent": "Reserved for high-fit threads (r/AlphaandBetausers, r/SideProject show-and-tell). One disclosure line at the end.",
+        "text": "same here at $0 MRR. the move that worked: search reddit sorted by new with the exact phrase your customer would type. i wrapped that into a free tool that pulls the threads in 30 sec instead of 30 min, paste any url. disclosure, i built it: opencorp."
+      },
+      {
+        "variant": "with-link",
+        "intent": "Only for the weekly self-promo threads (r/indiehackers Share what you're building, r/EntrepreneurRideAlong Feedback Friday). 1 in 9 across all subs.",
+        "text": "working on opencorp: paste any product url, get the reddit + hn threads where your buyers compare tools. free, no signup. would love beta testers. opencorp.live"
+      }
+    ]
+  },
+  {
+    "thread": {
+      "subreddit": "SaaS",
+      "post_id": "1welng2",
+      "author": "Possible_Bid_5146",
+      "title": "Why are custom domains a paid feature on form builders?",
+      "score": "1",
+      "comments": "2",
+      "keyword": "competitor",
+      "url": "https://www.reddit.com/r/SaaS/comments/1welng2/why_are_custom_domains_a_paid_feature_on_form/",
+      "scanned_at": "2026-09-12T22:31:30.332Z"
+    },
+    "variants": [
+      {
+        "variant": "value-only",
+        "intent": "9 of every 10 comments. Pure value, no opencorp mention. The 1 in 9.",
+        "text": "seen this same pattern kill launches. the founders who convert fastest spend a week finding the 3-5 threads where their buyers already describe the problem, then answer them well before pitching anything. takes a week, costs nothing, and the people who click your profile are the ones who'd actually pay."
+      },
+      {
+        "variant": "soft-disclose",
+        "intent": "Reserved for high-fit threads (r/AlphaandBetausers, r/SideProject show-and-tell). One disclosure line at the end.",
+        "text": "same here at $0 MRR. the move that worked: search reddit sorted by new with the exact phrase your customer would type. i wrapped that into a free tool that pulls the threads in 30 sec instead of 30 min, paste any url. disclosure, i built it: opencorp."
+      },
+      {
+        "variant": "with-link",
+        "intent": "Only for the weekly self-promo threads (r/indiehackers Share what you're building, r/EntrepreneurRideAlong Feedback Friday). 1 in 9 across all subs.",
+        "text": "working on opencorp: paste any product url, get the reddit + hn threads where your buyers compare tools. free, no signup. would love beta testers. opencorp.live"
+      }
+    ]
+  },
+  {
+    "thread": {
+      "subreddit": "SaaS",
+      "post_id": "1wellwo",
+      "author": "Due-Employment3446",
+      "title": "How do you market a SaaS when it can be cloned so easily?",
+      "score": "25",
+      "comments": "74",
+      "keyword": "distribution",
+      "url": "https://www.reddit.com/r/SaaS/comments/1wellwo/how_do_you_market_a_saas_when_it_can_be_cloned_so/",
+      "scanned_at": "2026-09-12T22:31:30.332Z"
+    },
+    "variants": [
+      {
+        "variant": "value-only",
+        "intent": "9 of every 10 comments. Pure value, no opencorp mention. The 1 in 9.",
+        "text": "seen this same pattern kill launches. the founders who convert fastest spend a week finding the 3-5 threads where their buyers already describe the problem, then answer them well before pitching anything. takes a week, costs nothing, and the people who click your profile are the ones who'd actually pay."
+      },
+      {
+        "variant": "soft-disclose",
+        "intent": "Reserved for high-fit threads (r/AlphaandBetausers, r/SideProject show-and-tell). One disclosure line at the end.",
+        "text": "same here at $0 MRR. the move that worked: search reddit sorted by new with the exact phrase your customer would type. i wrapped that into a free tool that pulls the threads in 30 sec instead of 30 min, paste any url. disclosure, i built it: opencorp."
+      },
+      {
+        "variant": "with-link",
+        "intent": "Only for the weekly self-promo threads (r/indiehackers Share what you're building, r/EntrepreneurRideAlong Feedback Friday). 1 in 9 across all subs.",
+        "text": "working on opencorp: paste any product url, get the reddit + hn threads where your buyers compare tools. free, no signup. would love beta testers. opencorp.live"
+      }
+    ]
+  },
+  {
+    "thread": {
+      "subreddit": "alphaandbetausers",
+      "post_id": "1welf8g",
+      "author": "NefariousIk",
+      "title": "Looking for testers for HallPass, a convention and cosplay planner on web and Android",
+      "score": "1",
+      "comments": "0",
+      "keyword": "looking for testers",
+      "url": "https://www.reddit.com/r/alphaandbetausers/comments/1welf8g/looking_for_testers_for_hallpass_a_convention_and/",
+      "scanned_at": "2026-09-12T22:31:30.332Z"
+    },
+    "variants": [
+      {
+        "variant": "value-only",
+        "intent": "9 of every 10 comments. Pure value, no opencorp mention. The 1 in 9.",
+        "text": "seen this same pattern kill launches. the founders who convert fastest spend a week finding the 3-5 threads where their buyers already describe the problem, then answer them well before pitching anything. takes a week, costs nothing, and the people who click your profile are the ones who'd actually pay."
+      },
+      {
+        "variant": "soft-disclose",
+        "intent": "Reserved for high-fit threads (r/AlphaandBetausers, r/SideProject show-and-tell). One disclosure line at the end.",
+        "text": "same here at $0 MRR. the move that worked: search reddit sorted by new with the exact phrase your customer would type. i wrapped that into a free tool that pulls the threads in 30 sec instead of 30 min, paste any url. disclosure, i built it: opencorp."
+      },
+      {
+        "variant": "with-link",
+        "intent": "Only for the weekly self-promo threads (r/indiehackers Share what you're building, r/EntrepreneurRideAlong Feedback Friday). 1 in 9 across all subs.",
+        "text": "working on opencorp: paste any product url, get the reddit + hn threads where your buyers compare tools. free, no signup. would love beta testers. opencorp.live"
+      }
+    ]
+  },
+  {
+    "thread": {
+      "subreddit": "microsaas",
+      "post_id": "1welbi5",
+      "author": "Particular_Low8138",
+      "title": "How I Got My First Dollar from a SaaS",
+      "score": "1",
+      "comments": "4",
+      "keyword": "0 users",
+      "url": "https://www.reddit.com/r/microsaas/comments/1welbi5/how_i_got_my_first_dollar_from_a_saas/",
+      "scanned_at": "2026-09-12T22:31:30.332Z"
+    },
+    "variants": [
+      {
+        "variant": "value-only",
+        "intent": "9 of every 10 comments. Pure value, no opencorp mention. The 1 in 9.",
+        "text": "seen this same pattern kill launches. the founders who convert fastest spend a week finding the 3-5 threads where their buyers already describe the problem, then answer them well before pitching anything. takes a week, costs nothing, and the people who click your profile are the ones who'd actually pay."
+      },
+      {
+        "variant": "soft-disclose",
+        "intent": "Reserved for high-fit threads (r/AlphaandBetausers, r/SideProject show-and-tell). One disclosure line at the end.",
+        "text": "same here at $0 MRR. the move that worked: search reddit sorted by new with the exact phrase your customer would type. i wrapped that into a free tool that pulls the threads in 30 sec instead of 30 min, paste any url. disclosure, i built it: opencorp."
+      },
+      {
+        "variant": "with-link",
+        "intent": "Only for the weekly self-promo threads (r/indiehackers Share what you're building, r/EntrepreneurRideAlong Feedback Friday). 1 in 9 across all subs.",
+        "text": "working on opencorp: paste any product url, get the reddit + hn threads where your buyers compare tools. free, no signup. would love beta testers. opencorp.live"
+      }
+    ]
+  },
+  {
+    "thread": {
+      "subreddit": "alphaandbetausers",
+      "post_id": "1wekjhz",
+      "author": "mmanja84",
+      "title": "[iOS] Looking for ChatGPT/Claude users to test Giraffe and give honest feedback",
+      "score": "1",
+      "comments": "0",
+      "keyword": "research",
+      "url": "https://www.reddit.com/r/alphaandbetausers/comments/1wekjhz/ios_looking_for_chatgptclaude_users_to_test/",
+      "scanned_at": "2026-09-12T22:31:30.332Z"
+    },
+    "variants": [
+      {
+        "variant": "value-only",
+        "intent": "9 of every 10 comments. Pure value, no opencorp mention. The 1 in 9.",
+        "text": "seen this same pattern kill launches. the founders who convert fastest spend a week finding the 3-5 threads where their buyers already describe the problem, then answer them well before pitching anything. takes a week, costs nothing, and the people who click your profile are the ones who'd actually pay."
+      },
+      {
+        "variant": "soft-disclose",
+        "intent": "Reserved for high-fit threads (r/AlphaandBetausers, r/SideProject show-and-tell). One disclosure line at the end.",
+        "text": "same here at $0 MRR. the move that worked: search reddit sorted by new with the exact phrase your customer would type. i wrapped that into a free tool that pulls the threads in 30 sec instead of 30 min, paste any url. disclosure, i built it: opencorp."
+      },
+      {
+        "variant": "with-link",
+        "intent": "Only for the weekly self-promo threads (r/indiehackers Share what you're building, r/EntrepreneurRideAlong Feedback Friday). 1 in 9 across all subs.",
+        "text": "working on opencorp: paste any product url, get the reddit + hn threads where your buyers compare tools. free, no signup. would love beta testers. opencorp.live"
+      }
+    ]
+  },
+  {
+    "thread": {
+      "subreddit": "SaaS",
+      "post_id": "1wekgv3",
+      "author": "ash-the-dev",
+      "title": "Anyone here built a web-based product customizer using CAD/3D models?",
+      "score": "1",
+      "comments": "2",
+      "keyword": "pain point",
+      "url": "https://www.reddit.com/r/SaaS/comments/1wekgv3/anyone_here_built_a_webbased_product_customizer/",
+      "scanned_at": "2026-09-12T22:31:30.332Z"
+    },
+    "variants": [
+      {
+        "variant": "value-only",
+        "intent": "9 of every 10 comments. Pure value, no opencorp mention. The 1 in 9.",
+        "text": "seen this same pattern kill launches. the founders who convert fastest spend a week finding the 3-5 threads where their buyers already describe the problem, then answer them well before pitching anything. takes a week, costs nothing, and the people who click your profile are the ones who'd actually pay."
+      },
+      {
+        "variant": "soft-disclose",
+        "intent": "Reserved for high-fit threads (r/AlphaandBetausers, r/SideProject show-and-tell). One disclosure line at the end.",
+        "text": "same here at $0 MRR. the move that worked: search reddit sorted by new with the exact phrase your customer would type. i wrapped that into a free tool that pulls the threads in 30 sec instead of 30 min, paste any url. disclosure, i built it: opencorp."
+      },
+      {
+        "variant": "with-link",
+        "intent": "Only for the weekly self-promo threads (r/indiehackers Share what you're building, r/EntrepreneurRideAlong Feedback Friday). 1 in 9 across all subs.",
+        "text": "working on opencorp: paste any product url, get the reddit + hn threads where your buyers compare tools. free, no signup. would love beta testers. opencorp.live"
+      }
+    ]
+  },
+  {
+    "thread": {
+      "subreddit": "SaaS",
+      "post_id": "1wekayp",
+      "author": "R4FF3RTYreddit",
+      "title": "I'm broke, help?",
+      "score": "0",
+      "comments": "1",
+      "keyword": "cold email",
+      "url": "https://www.reddit.com/r/SaaS/comments/1wekayp/im_broke_help/",
+      "scanned_at": "2026-09-12T22:31:30.332Z"
+    },
+    "variants": [
+      {
+        "variant": "value-only",
+        "intent": "9 of every 10 comments. Pure value, no opencorp mention. The 1 in 9.",
+        "text": "seen this same pattern kill launches. the founders who convert fastest spend a week finding the 3-5 threads where their buyers already describe the problem, then answer them well before pitching anything. takes a week, costs nothing, and the people who click your profile are the ones who'd actually pay."
+      },
+      {
+        "variant": "soft-disclose",
+        "intent": "Reserved for high-fit threads (r/AlphaandBetausers, r/SideProject show-and-tell). One disclosure line at the end.",
+        "text": "same here at $0 MRR. the move that worked: search reddit sorted by new with the exact phrase your customer would type. i wrapped that into a free tool that pulls the threads in 30 sec instead of 30 min, paste any url. disclosure, i built it: opencorp."
+      },
+      {
+        "variant": "with-link",
+        "intent": "Only for the weekly self-promo threads (r/indiehackers Share what you're building, r/EntrepreneurRideAlong Feedback Friday). 1 in 9 across all subs.",
+        "text": "working on opencorp: paste any product url, get the reddit + hn threads where your buyers compare tools. free, no signup. would love beta testers. opencorp.live"
+      }
+    ]
+  },
+  {
+    "thread": {
+      "subreddit": "buildinpublic",
+      "post_id": "1wek6jv",
+      "author": "Electronic-Finger629",
+      "title": "I built a phone blocker with a 72-hour wait for its removal code",
+      "score": "1",
+      "comments": "1",
+      "keyword": "first 10",
+      "url": "https://www.reddit.com/r/buildinpublic/comments/1wek6jv/i_built_a_phone_blocker_with_a_72hour_wait_for/",
+      "scanned_at": "2026-09-12T22:31:30.332Z"
+    },
+    "variants": [
+      {
+        "variant": "value-only",
+        "intent": "9 of every 10 comments. Pure value, no opencorp mention. The 1 in 9.",
+        "text": "seen this same pattern kill launches. the founders who convert fastest spend a week finding the 3-5 threads where their buyers already describe the problem, then answer them well before pitching anything. takes a week, costs nothing, and the people who click your profile are the ones who'd actually pay."
+      },
+      {
+        "variant": "soft-disclose",
+        "intent": "Reserved for high-fit threads (r/AlphaandBetausers, r/SideProject show-and-tell). One disclosure line at the end.",
+        "text": "same here at $0 MRR. the move that worked: search reddit sorted by new with the exact phrase your customer would type. i wrapped that into a free tool that pulls the threads in 30 sec instead of 30 min, paste any url. disclosure, i built it: opencorp."
+      },
+      {
+        "variant": "with-link",
+        "intent": "Only for the weekly self-promo threads (r/indiehackers Share what you're building, r/EntrepreneurRideAlong Feedback Friday). 1 in 9 across all subs.",
+        "text": "working on opencorp: paste any product url, get the reddit + hn threads where your buyers compare tools. free, no signup. would love beta testers. opencorp.live"
+      }
+    ]
+  },
+  {
+    "thread": {
+      "subreddit": "alphaandbetausers",
+      "post_id": "1wejk5h",
+      "author": "OkHeat7909",
+      "title": "[12 TESTERS NEEDED] App for learning languages with flashcards. Happy to test in return",
+      "score": "1",
+      "comments": "0",
+      "keyword": "looking for testers",
+      "url": "https://www.reddit.com/r/alphaandbetausers/comments/1wejk5h/12_testers_needed_app_for_learning_languages_with/",
+      "scanned_at": "2026-09-12T22:31:30.332Z"
+    },
+    "variants": [
+      {
+        "variant": "value-only",
+        "intent": "9 of every 10 comments. Pure value, no opencorp mention. The 1 in 9.",
+        "text": "seen this same pattern kill launches. the founders who convert fastest spend a week finding the 3-5 threads where their buyers already describe the problem, then answer them well before pitching anything. takes a week, costs nothing, and the people who click your profile are the ones who'd actually pay."
+      },
+      {
+        "variant": "soft-disclose",
+        "intent": "Reserved for high-fit threads (r/AlphaandBetausers, r/SideProject show-and-tell). One disclosure line at the end.",
+        "text": "same here at $0 MRR. the move that worked: search reddit sorted by new with the exact phrase your customer would type. i wrapped that into a free tool that pulls the threads in 30 sec instead of 30 min, paste any url. disclosure, i built it: opencorp."
+      },
+      {
+        "variant": "with-link",
+        "intent": "Only for the weekly self-promo threads (r/indiehackers Share what you're building, r/EntrepreneurRideAlong Feedback Friday). 1 in 9 across all subs.",
+        "text": "working on opencorp: paste any product url, get the reddit + hn threads where your buyers compare tools. free, no signup. would love beta testers. opencorp.live"
+      }
+    ]
+  },
+  {
+    "thread": {
+      "subreddit": "alphaandbetausers",
+      "post_id": "1wejffp",
+      "author": "Android_dev10036",
+      "title": "Built an Android app for tracking receipts, return windows, and warranties—looking for beta testers!",
+      "score": "1",
+      "comments": "2",
+      "keyword": "looking for beta",
+      "url": "https://www.reddit.com/r/alphaandbetausers/comments/1wejffp/built_an_android_app_for_tracking_receipts_return/",
+      "scanned_at": "2026-09-12T22:31:30.332Z"
+    },
+    "variants": [
+      {
+        "variant": "value-only",
+        "intent": "9 of every 10 comments. Pure value, no opencorp mention. The 1 in 9.",
+        "text": "seen this same pattern kill launches. the founders who convert fastest spend a week finding the 3-5 threads where their buyers already describe the problem, then answer them well before pitching anything. takes a week, costs nothing, and the people who click your profile are the ones who'd actually pay."
+      },
+      {
+        "variant": "soft-disclose",
+        "intent": "Reserved for high-fit threads (r/AlphaandBetausers, r/SideProject show-and-tell). One disclosure line at the end.",
+        "text": "same here at $0 MRR. the move that worked: search reddit sorted by new with the exact phrase your customer would type. i wrapped that into a free tool that pulls the threads in 30 sec instead of 30 min, paste any url. disclosure, i built it: opencorp."
+      },
+      {
+        "variant": "with-link",
+        "intent": "Only for the weekly self-promo threads (r/indiehackers Share what you're building, r/EntrepreneurRideAlong Feedback Friday). 1 in 9 across all subs.",
+        "text": "working on opencorp: paste any product url, get the reddit + hn threads where your buyers compare tools. free, no signup. would love beta testers. opencorp.live"
+      }
+    ]
+  },
+  {
+    "thread": {
+      "subreddit": "SaaS",
+      "post_id": "1wejarv",
+      "author": "Substantial-Fan1964",
+      "title": "My last post got 56k views and a 1% signup rate! (why??)",
+      "score": "8",
+      "comments": "24",
+      "keyword": "audience",
+      "url": "https://i.redd.it/x074clj4o4ph1.png",
+      "scanned_at": "2026-09-12T22:31:30.332Z"
+    },
+    "variants": [
+      {
+        "variant": "value-only",
+        "intent": "9 of every 10 comments. Pure value, no opencorp mention. The 1 in 9.",
+        "text": "seen this same pattern kill launches. the founders who convert fastest spend a week finding the 3-5 threads where their buyers already describe the problem, then answer them well before pitching anything. takes a week, costs nothing, and the people who click your profile are the ones who'd actually pay."
+      },
+      {
+        "variant": "soft-disclose",
+        "intent": "Reserved for high-fit threads (r/AlphaandBetausers, r/SideProject show-and-tell). One disclosure line at the end.",
+        "text": "same here at $0 MRR. the move that worked: search reddit sorted by new with the exact phrase your customer would type. i wrapped that into a free tool that pulls the threads in 30 sec instead of 30 min, paste any url. disclosure, i built it: opencorp."
+      },
+      {
+        "variant": "with-link",
+        "intent": "Only for the weekly self-promo threads (r/indiehackers Share what you're building, r/EntrepreneurRideAlong Feedback Friday). 1 in 9 across all subs.",
+        "text": "working on opencorp: paste any product url, get the reddit + hn threads where your buyers compare tools. free, no signup. would love beta testers. opencorp.live"
+      }
+    ]
+  },
+  {
+    "thread": {
+      "subreddit": "SaaS",
+      "post_id": "1weiwdb",
+      "author": "Affectionate-Emu4330",
+      "title": "My saas - miine.in",
+      "score": "2",
+      "comments": "1",
+      "keyword": "first user",
+      "url": "http://miine.in",
+      "scanned_at": "2026-09-12T22:31:30.332Z"
+    },
+    "variants": [
+      {
+        "variant": "value-only",
+        "intent": "9 of every 10 comments. Pure value, no opencorp mention. The 1 in 9.",
+        "text": "seen this same pattern kill launches. the founders who convert fastest spend a week finding the 3-5 threads where their buyers already describe the problem, then answer them well before pitching anything. takes a week, costs nothing, and the people who click your profile are the ones who'd actually pay."
+      },
+      {
+        "variant": "soft-disclose",
+        "intent": "Reserved for high-fit threads (r/AlphaandBetausers, r/SideProject show-and-tell). One disclosure line at the end.",
+        "text": "same here at $0 MRR. the move that worked: search reddit sorted by new with the exact phrase your customer would type. i wrapped that into a free tool that pulls the threads in 30 sec instead of 30 min, paste any url. disclosure, i built it: opencorp."
+      },
+      {
+        "variant": "with-link",
+        "intent": "Only for the weekly self-promo threads (r/indiehackers Share what you're building, r/EntrepreneurRideAlong Feedback Friday). 1 in 9 across all subs.",
+        "text": "working on opencorp: paste any product url, get the reddit + hn threads where your buyers compare tools. free, no signup. would love beta testers. opencorp.live"
+      }
+    ]
+  },
+  {
+    "thread": {
+      "subreddit": "buildinpublic",
+      "post_id": "1weithi",
+      "author": "Traditional_Pie_8262",
+      "title": "linkedin lead gen through content - whats your strategy?",
+      "score": "11",
+      "comments": "1",
+      "keyword": "cold email",
+      "url": "https://www.reddit.com/r/buildinpublic/comments/1weithi/linkedin_lead_gen_through_content_whats_your/",
+      "scanned_at": "2026-09-12T22:31:30.332Z"
+    },
+    "variants": [
+      {
+        "variant": "value-only",
+        "intent": "9 of every 10 comments. Pure value, no opencorp mention. The 1 in 9.",
+        "text": "seen this same pattern kill launches. the founders who convert fastest spend a week finding the 3-5 threads where their buyers already describe the problem, then answer them well before pitching anything. takes a week, costs nothing, and the people who click your profile are the ones who'd actually pay."
+      },
+      {
+        "variant": "soft-disclose",
+        "intent": "Reserved for high-fit threads (r/AlphaandBetausers, r/SideProject show-and-tell). One disclosure line at the end.",
+        "text": "same here at $0 MRR. the move that worked: search reddit sorted by new with the exact phrase your customer would type. i wrapped that into a free tool that pulls the threads in 30 sec instead of 30 min, paste any url. disclosure, i built it: opencorp."
+      },
+      {
+        "variant": "with-link",
+        "intent": "Only for the weekly self-promo threads (r/indiehackers Share what you're building, r/EntrepreneurRideAlong Feedback Friday). 1 in 9 across all subs.",
+        "text": "working on opencorp: paste any product url, get the reddit + hn threads where your buyers compare tools. free, no signup. would love beta testers. opencorp.live"
+      }
+    ]
+  },
+  {
+    "thread": {
+      "subreddit": "alphaandbetausers",
+      "post_id": "1weirsl",
+      "author": "WesternGrapefru",
+      "title": "Need testers for ST Deals – Google Play Closed Testing",
+      "score": "1",
+      "comments": "0",
+      "keyword": "need testers",
+      "url": "https://www.reddit.com/r/alphaandbetausers/comments/1weirsl/need_testers_for_st_deals_google_play_closed/",
+      "scanned_at": "2026-09-12T22:31:30.332Z"
+    },
+    "variants": [
+      {
+        "variant": "value-only",
+        "intent": "9 of every 10 comments. Pure value, no opencorp mention. The 1 in 9.",
+        "text": "seen this same pattern kill launches. the founders who convert fastest spend a week finding the 3-5 threads where their buyers already describe the problem, then answer them well before pitching anything. takes a week, costs nothing, and the people who click your profile are the ones who'd actually pay."
+      },
+      {
+        "variant": "soft-disclose",
+        "intent": "Reserved for high-fit threads (r/AlphaandBetausers, r/SideProject show-and-tell). One disclosure line at the end.",
+        "text": "same here at $0 MRR. the move that worked: search reddit sorted by new with the exact phrase your customer would type. i wrapped that into a free tool that pulls the threads in 30 sec instead of 30 min, paste any url. disclosure, i built it: opencorp."
+      },
+      {
+        "variant": "with-link",
+        "intent": "Only for the weekly self-promo threads (r/indiehackers Share what you're building, r/EntrepreneurRideAlong Feedback Friday). 1 in 9 across all subs.",
+        "text": "working on opencorp: paste any product url, get the reddit + hn threads where your buyers compare tools. free, no signup. would love beta testers. opencorp.live"
+      }
+    ]
+  },
+  {
+    "thread": {
+      "subreddit": "buildinpublic",
+      "post_id": "1weimg1",
+      "author": "Daniel-smarktek",
+      "title": "Developing a rank tracker with a lifetime deal (need feedback)",
+      "score": "1",
+      "comments": "0",
+      "keyword": "research",
+      "url": "https://www.reddit.com/r/buildinpublic/comments/1weimg1/developing_a_rank_tracker_with_a_lifetime_deal/",
+      "scanned_at": "2026-09-12T22:31:30.332Z"
+    },
+    "variants": [
+      {
+        "variant": "value-only",
+        "intent": "9 of every 10 comments. Pure value, no opencorp mention. The 1 in 9.",
+        "text": "seen this same pattern kill launches. the founders who convert fastest spend a week finding the 3-5 threads where their buyers already describe the problem, then answer them well before pitching anything. takes a week, costs nothing, and the people who click your profile are the ones who'd actually pay."
+      },
+      {
+        "variant": "soft-disclose",
+        "intent": "Reserved for high-fit threads (r/AlphaandBetausers, r/SideProject show-and-tell). One disclosure line at the end.",
+        "text": "same here at $0 MRR. the move that worked: search reddit sorted by new with the exact phrase your customer would type. i wrapped that into a free tool that pulls the threads in 30 sec instead of 30 min, paste any url. disclosure, i built it: opencorp."
+      },
+      {
+        "variant": "with-link",
+        "intent": "Only for the weekly self-promo threads (r/indiehackers Share what you're building, r/EntrepreneurRideAlong Feedback Friday). 1 in 9 across all subs.",
+        "text": "working on opencorp: paste any product url, get the reddit + hn threads where your buyers compare tools. free, no signup. would love beta testers. opencorp.live"
+      }
+    ]
+  },
+  {
+    "thread": {
+      "subreddit": "alphaandbetausers",
+      "post_id": "1wei9xf",
+      "author": "Exact_Fun_8976",
+      "title": "Free AI macro tracker looking for beta testers- brutal feedback welcome",
+      "score": "1",
+      "comments": "0",
+      "keyword": "looking for beta",
+      "url": "/r/founder/comments/1wei9d9/free_ai_macro_tracker_looking_for_beta_testers/",
+      "scanned_at": "2026-09-12T22:31:30.332Z"
+    },
+    "variants": [
+      {
+        "variant": "value-only",
+        "intent": "9 of every 10 comments. Pure value, no opencorp mention. The 1 in 9.",
+        "text": "seen this same pattern kill launches. the founders who convert fastest spend a week finding the 3-5 threads where their buyers already describe the problem, then answer them well before pitching anything. takes a week, costs nothing, and the people who click your profile are the ones who'd actually pay."
+      },
+      {
+        "variant": "soft-disclose",
+        "intent": "Reserved for high-fit threads (r/AlphaandBetausers, r/SideProject show-and-tell). One disclosure line at the end.",
+        "text": "same here at $0 MRR. the move that worked: search reddit sorted by new with the exact phrase your customer would type. i wrapped that into a free tool that pulls the threads in 30 sec instead of 30 min, paste any url. disclosure, i built it: opencorp."
+      },
+      {
+        "variant": "with-link",
+        "intent": "Only for the weekly self-promo threads (r/indiehackers Share what you're building, r/EntrepreneurRideAlong Feedback Friday). 1 in 9 across all subs.",
+        "text": "working on opencorp: paste any product url, get the reddit + hn threads where your buyers compare tools. free, no signup. would love beta testers. opencorp.live"
+      }
+    ]
+  },
+  {
+    "thread": {
+      "subreddit": "alphaandbetausers",
+      "post_id": "1wei7n9",
+      "author": "LeadershipFluid5894",
+      "title": "Nest — a local-first personal finance tracker for Android, looking for testers",
+      "score": "1",
+      "comments": "0",
+      "keyword": "looking for testers",
+      "url": "https://www.reddit.com/r/alphaandbetausers/comments/1wei7n9/nest_a_localfirst_personal_finance_tracker_for/",
+      "scanned_at": "2026-09-12T22:31:30.332Z"
+    },
+    "variants": [
+      {
+        "variant": "value-only",
+        "intent": "9 of every 10 comments. Pure value, no opencorp mention. The 1 in 9.",
+        "text": "seen this same pattern kill launches. the founders who convert fastest spend a week finding the 3-5 threads where their buyers already describe the problem, then answer them well before pitching anything. takes a week, costs nothing, and the people who click your profile are the ones who'd actually pay."
+      },
+      {
+        "variant": "soft-disclose",
+        "intent": "Reserved for high-fit threads (r/AlphaandBetausers, r/SideProject show-and-tell). One disclosure line at the end.",
+        "text": "same here at $0 MRR. the move that worked: search reddit sorted by new with the exact phrase your customer would type. i wrapped that into a free tool that pulls the threads in 30 sec instead of 30 min, paste any url. disclosure, i built it: opencorp."
+      },
+      {
+        "variant": "with-link",
+        "intent": "Only for the weekly self-promo threads (r/indiehackers Share what you're building, r/EntrepreneurRideAlong Feedback Friday). 1 in 9 across all subs.",
+        "text": "working on opencorp: paste any product url, get the reddit + hn threads where your buyers compare tools. free, no signup. would love beta testers. opencorp.live"
+      }
+    ]
+  },
+  {
+    "thread": {
+      "subreddit": "SaaS",
+      "post_id": "1wei1i4",
+      "author": "RevolutionarySalad89",
+      "title": "I spent 6 months building my first SaaS before properly validating it. Did I screw up?",
+      "score": "2",
+      "comments": "2",
+      "keyword": "competitor",
+      "url": "https://www.reddit.com/r/SaaS/comments/1wei1i4/i_spent_6_months_building_my_first_saas_before/",
+      "scanned_at": "2026-09-12T22:31:30.332Z"
+    },
+    "variants": [
+      {
+        "variant": "value-only",
+        "intent": "9 of every 10 comments. Pure value, no opencorp mention. The 1 in 9.",
+        "text": "seen this same pattern kill launches. the founders who convert fastest spend a week finding the 3-5 threads where their buyers already describe the problem, then answer them well before pitching anything. takes a week, costs nothing, and the people who click your profile are the ones who'd actually pay."
+      },
+      {
+        "variant": "soft-disclose",
+        "intent": "Reserved for high-fit threads (r/AlphaandBetausers, r/SideProject show-and-tell). One disclosure line at the end.",
+        "text": "same here at $0 MRR. the move that worked: search reddit sorted by new with the exact phrase your customer would type. i wrapped that into a free tool that pulls the threads in 30 sec instead of 30 min, paste any url. disclosure, i built it: opencorp."
+      },
+      {
+        "variant": "with-link",
+        "intent": "Only for the weekly self-promo threads (r/indiehackers Share what you're building, r/EntrepreneurRideAlong Feedback Friday). 1 in 9 across all subs.",
+        "text": "working on opencorp: paste any product url, get the reddit + hn threads where your buyers compare tools. free, no signup. would love beta testers. opencorp.live"
+      }
+    ]
+  },
+  {
+    "thread": {
+      "subreddit": "buildinpublic",
+      "post_id": "1wegetw",
+      "author": "Middle_Court_8537",
+      "title": "B2B SaaS founder stuck at ~$80 MRR after cold outreach and content both died. What actually works?",
+      "score": "1",
+      "comments": "5",
+      "keyword": "cold outreach",
+      "url": "https://i.redd.it/fzpqvxc844ph1.png",
+      "scanned_at": "2026-09-12T22:31:30.332Z"
+    },
+    "variants": [
+      {
+        "variant": "value-only",
+        "intent": "9 of every 10 comments. Pure value, no opencorp mention. The 1 in 9.",
+        "text": "seen this same pattern kill launches. the founders who convert fastest spend a week finding the 3-5 threads where their buyers already describe the problem, then answer them well before pitching anything. takes a week, costs nothing, and the people who click your profile are the ones who'd actually pay."
+      },
+      {
+        "variant": "soft-disclose",
+        "intent": "Reserved for high-fit threads (r/AlphaandBetausers, r/SideProject show-and-tell). One disclosure line at the end.",
+        "text": "same here at $0 MRR. the move that worked: search reddit sorted by new with the exact phrase your customer would type. i wrapped that into a free tool that pulls the threads in 30 sec instead of 30 min, paste any url. disclosure, i built it: opencorp."
+      },
+      {
+        "variant": "with-link",
+        "intent": "Only for the weekly self-promo threads (r/indiehackers Share what you're building, r/EntrepreneurRideAlong Feedback Friday). 1 in 9 across all subs.",
+        "text": "working on opencorp: paste any product url, get the reddit + hn threads where your buyers compare tools. free, no signup. would love beta testers. opencorp.live"
+      }
+    ]
+  },
+  {
+    "thread": {
+      "subreddit": "alphaandbetausers",
+      "post_id": "1weeue5",
+      "author": "cognoscene",
+      "title": "do you wanna improve your ONLINE spending habits? if so, read ahead!",
+      "score": "1",
+      "comments": "0",
+      "keyword": "looking for testers",
+      "url": "https://www.reddit.com/r/alphaandbetausers/comments/1weeue5/do_you_wanna_improve_your_online_spending_habits/",
+      "scanned_at": "2026-09-12T22:31:30.332Z"
+    },
+    "variants": [
+      {
+        "variant": "value-only",
+        "intent": "9 of every 10 comments. Pure value, no opencorp mention. The 1 in 9.",
+        "text": "seen this same pattern kill launches. the founders who convert fastest spend a week finding the 3-5 threads where their buyers already describe the problem, then answer them well before pitching anything. takes a week, costs nothing, and the people who click your profile are the ones who'd actually pay."
+      },
+      {
+        "variant": "soft-disclose",
+        "intent": "Reserved for high-fit threads (r/AlphaandBetausers, r/SideProject show-and-tell). One disclosure line at the end.",
+        "text": "same here at $0 MRR. the move that worked: search reddit sorted by new with the exact phrase your customer would type. i wrapped that into a free tool that pulls the threads in 30 sec instead of 30 min, paste any url. disclosure, i built it: opencorp."
+      },
+      {
+        "variant": "with-link",
+        "intent": "Only for the weekly self-promo threads (r/indiehackers Share what you're building, r/EntrepreneurRideAlong Feedback Friday). 1 in 9 across all subs.",
+        "text": "working on opencorp: paste any product url, get the reddit + hn threads where your buyers compare tools. free, no signup. would love beta testers. opencorp.live"
+      }
+    ]
+  },
+  {
+    "thread": {
+      "subreddit": "buildinpublic",
+      "post_id": "1weeito",
+      "author": "Plus_Inspection_4926",
+      "title": "I finally launched my first iOS app. Now I’m trying to get my first 100 users.",
+      "score": "1",
+      "comments": "2",
+      "keyword": "0 users",
+      "url": "https://www.reddit.com/r/buildinpublic/comments/1weeito/i_finally_launched_my_first_ios_app_now_im_trying/",
+      "scanned_at": "2026-09-12T22:31:30.332Z"
+    },
+    "variants": [
+      {
+        "variant": "value-only",
+        "intent": "9 of every 10 comments. Pure value, no opencorp mention. The 1 in 9.",
+        "text": "seen this same pattern kill launches. the founders who convert fastest spend a week finding the 3-5 threads where their buyers already describe the problem, then answer them well before pitching anything. takes a week, costs nothing, and the people who click your profile are the ones who'd actually pay."
+      },
+      {
+        "variant": "soft-disclose",
+        "intent": "Reserved for high-fit threads (r/AlphaandBetausers, r/SideProject show-and-tell). One disclosure line at the end.",
+        "text": "same here at $0 MRR. the move that worked: search reddit sorted by new with the exact phrase your customer would type. i wrapped that into a free tool that pulls the threads in 30 sec instead of 30 min, paste any url. disclosure, i built it: opencorp."
+      },
+      {
+        "variant": "with-link",
+        "intent": "Only for the weekly self-promo threads (r/indiehackers Share what you're building, r/EntrepreneurRideAlong Feedback Friday). 1 in 9 across all subs.",
+        "text": "working on opencorp: paste any product url, get the reddit + hn threads where your buyers compare tools. free, no signup. would love beta testers. opencorp.live"
+      }
+    ]
+  },
+  {
+    "thread": {
+      "subreddit": "buildinpublic",
+      "post_id": "1wecihr",
+      "author": "ShroomyLoomyZoomy",
+      "title": "I built Duolingo, but for a man's inner life",
+      "score": "4",
+      "comments": "0",
+      "keyword": "research",
+      "url": "https://www.reddit.com/r/buildinpublic/comments/1wecihr/i_built_duolingo_but_for_a_mans_inner_life/",
+      "scanned_at": "2026-09-12T22:31:30.332Z"
+    },
+    "variants": [
+      {
+        "variant": "value-only",
+        "intent": "9 of every 10 comments. Pure value, no opencorp mention. The 1 in 9.",
+        "text": "seen this same pattern kill launches. the founders who convert fastest spend a week finding the 3-5 threads where their buyers already describe the problem, then answer them well before pitching anything. takes a week, costs nothing, and the people who click your profile are the ones who'd actually pay."
+      },
+      {
+        "variant": "soft-disclose",
+        "intent": "Reserved for high-fit threads (r/AlphaandBetausers, r/SideProject show-and-tell). One disclosure line at the end.",
+        "text": "same here at $0 MRR. the move that worked: search reddit sorted by new with the exact phrase your customer would type. i wrapped that into a free tool that pulls the threads in 30 sec instead of 30 min, paste any url. disclosure, i built it: opencorp."
+      },
+      {
+        "variant": "with-link",
+        "intent": "Only for the weekly self-promo threads (r/indiehackers Share what you're building, r/EntrepreneurRideAlong Feedback Friday). 1 in 9 across all subs.",
+        "text": "working on opencorp: paste any product url, get the reddit + hn threads where your buyers compare tools. free, no signup. would love beta testers. opencorp.live"
+      }
+    ]
+  },
+  {
+    "thread": {
+      "subreddit": "buildinpublic",
+      "post_id": "1wec4ge",
+      "author": "ldhoax",
+      "title": "How are you currently finding your first customers?",
+      "score": "1",
+      "comments": "0",
+      "keyword": "first customer",
+      "url": "https://i.redd.it/q641agof83ph1.png",
+      "scanned_at": "2026-09-12T22:31:30.332Z"
+    },
+    "variants": [
+      {
+        "variant": "value-only",
+        "intent": "9 of every 10 comments. Pure value, no opencorp mention. The 1 in 9.",
+        "text": "seen this same pattern kill launches. the founders who convert fastest spend a week finding the 3-5 threads where their buyers already describe the problem, then answer them well before pitching anything. takes a week, costs nothing, and the people who click your profile are the ones who'd actually pay."
+      },
+      {
+        "variant": "soft-disclose",
+        "intent": "Reserved for high-fit threads (r/AlphaandBetausers, r/SideProject show-and-tell). One disclosure line at the end.",
+        "text": "same here at $0 MRR. the move that worked: search reddit sorted by new with the exact phrase your customer would type. i wrapped that into a free tool that pulls the threads in 30 sec instead of 30 min, paste any url. disclosure, i built it: opencorp."
+      },
+      {
+        "variant": "with-link",
+        "intent": "Only for the weekly self-promo threads (r/indiehackers Share what you're building, r/EntrepreneurRideAlong Feedback Friday). 1 in 9 across all subs.",
+        "text": "working on opencorp: paste any product url, get the reddit + hn threads where your buyers compare tools. free, no signup. would love beta testers. opencorp.live"
+      }
+    ]
+  },
+  {
+    "thread": {
+      "subreddit": "microsaas",
+      "post_id": "1we4ooa",
+      "author": "richocolate",
+      "title": "I built an open-source API reliability tool — can this become a SaaS business?",
+      "score": "2",
+      "comments": "9",
+      "keyword": "validation",
+      "url": "https://www.reddit.com/r/microsaas/comments/1we4ooa/i_built_an_opensource_api_reliability_tool_can/",
+      "scanned_at": "2026-09-12T22:31:30.332Z"
+    },
+    "variants": [
+      {
+        "variant": "value-only",
+        "intent": "9 of every 10 comments. Pure value, no opencorp mention. The 1 in 9.",
+        "text": "seen this same pattern kill launches. the founders who convert fastest spend a week finding the 3-5 threads where their buyers already describe the problem, then answer them well before pitching anything. takes a week, costs nothing, and the people who click your profile are the ones who'd actually pay."
+      },
+      {
+        "variant": "soft-disclose",
+        "intent": "Reserved for high-fit threads (r/AlphaandBetausers, r/SideProject show-and-tell). One disclosure line at the end.",
+        "text": "same here at $0 MRR. the move that worked: search reddit sorted by new with the exact phrase your customer would type. i wrapped that into a free tool that pulls the threads in 30 sec instead of 30 min, paste any url. disclosure, i built it: opencorp."
+      },
+      {
+        "variant": "with-link",
+        "intent": "Only for the weekly self-promo threads (r/indiehackers Share what you're building, r/EntrepreneurRideAlong Feedback Friday). 1 in 9 across all subs.",
+        "text": "working on opencorp: paste any product url, get the reddit + hn threads where your buyers compare tools. free, no signup. would love beta testers. opencorp.live"
+      }
+    ]
+  },
+  {
+    "thread": {
+      "subreddit": "microsaas",
+      "post_id": "1we461g",
+      "author": "abhishvekc",
+      "title": "I spent 2 months making my site citable by AI and it increase my sales by 55%, Here's how you can do it too...",
+      "score": "20",
+      "comments": "5",
+      "keyword": "reddit thread",
+      "url": "https://www.reddit.com/r/microsaas/comments/1we461g/i_spent_2_months_making_my_site_citable_by_ai_and/",
+      "scanned_at": "2026-09-12T22:31:30.332Z"
+    },
+    "variants": [
+      {
+        "variant": "value-only",
+        "intent": "9 of every 10 comments. Pure value, no opencorp mention. The 1 in 9.",
+        "text": "seen this same pattern kill launches. the founders who convert fastest spend a week finding the 3-5 threads where their buyers already describe the problem, then answer them well before pitching anything. takes a week, costs nothing, and the people who click your profile are the ones who'd actually pay."
+      },
+      {
+        "variant": "soft-disclose",
+        "intent": "Reserved for high-fit threads (r/AlphaandBetausers, r/SideProject show-and-tell). One disclosure line at the end.",
+        "text": "same here at $0 MRR. the move that worked: search reddit sorted by new with the exact phrase your customer would type. i wrapped that into a free tool that pulls the threads in 30 sec instead of 30 min, paste any url. disclosure, i built it: opencorp."
+      },
+      {
+        "variant": "with-link",
+        "intent": "Only for the weekly self-promo threads (r/indiehackers Share what you're building, r/EntrepreneurRideAlong Feedback Friday). 1 in 9 across all subs.",
+        "text": "working on opencorp: paste any product url, get the reddit + hn threads where your buyers compare tools. free, no signup. would love beta testers. opencorp.live"
+      }
+    ]
+  },
+  {
+    "thread": {
+      "subreddit": "EntrepreneurRideAlong",
+      "post_id": "1wdl02u",
+      "author": "Personal-Garbage3462",
+      "title": "Is this just the beginning or all this idea was good for?",
+      "score": "4",
+      "comments": "5",
+      "keyword": "validate",
+      "url": "https://www.reddit.com/r/EntrepreneurRideAlong/comments/1wdl02u/is_this_just_the_beginning_or_all_this_idea_was/",
+      "scanned_at": "2026-09-12T22:31:30.332Z"
+    },
+    "variants": [
+      {
+        "variant": "value-only",
+        "intent": "9 of every 10 comments. Pure value, no opencorp mention. The 1 in 9.",
+        "text": "seen this same pattern kill launches. the founders who convert fastest spend a week finding the 3-5 threads where their buyers already describe the problem, then answer them well before pitching anything. takes a week, costs nothing, and the people who click your profile are the ones who'd actually pay."
+      },
+      {
+        "variant": "soft-disclose",
+        "intent": "Reserved for high-fit threads (r/AlphaandBetausers, r/SideProject show-and-tell). One disclosure line at the end.",
+        "text": "same here at $0 MRR. the move that worked: search reddit sorted by new with the exact phrase your customer would type. i wrapped that into a free tool that pulls the threads in 30 sec instead of 30 min, paste any url. disclosure, i built it: opencorp."
+      },
+      {
+        "variant": "with-link",
+        "intent": "Only for the weekly self-promo threads (r/indiehackers Share what you're building, r/EntrepreneurRideAlong Feedback Friday). 1 in 9 across all subs.",
+        "text": "working on opencorp: paste any product url, get the reddit + hn threads where your buyers compare tools. free, no signup. would love beta testers. opencorp.live"
+      }
+    ]
+  },
+  {
+    "thread": {
+      "subreddit": "microsaas",
+      "post_id": "1wde0wz",
+      "author": "Mashqur1166",
+      "title": "My first paying customer used my app to clean up years of duplicate photos and files from his phone",
+      "score": "4",
+      "comments": "4",
+      "keyword": "first paying",
+      "url": "https://www.reddit.com/r/microsaas/comments/1wde0wz/my_first_paying_customer_used_my_app_to_clean_up/",
+      "scanned_at": "2026-09-12T22:31:30.332Z"
+    },
+    "variants": [
+      {
+        "variant": "value-only",
+        "intent": "9 of every 10 comments. Pure value, no opencorp mention. The 1 in 9.",
+        "text": "seen this same pattern kill launches. the founders who convert fastest spend a week finding the 3-5 threads where their buyers already describe the problem, then answer them well before pitching anything. takes a week, costs nothing, and the people who click your profile are the ones who'd actually pay."
+      },
+      {
+        "variant": "soft-disclose",
+        "intent": "Reserved for high-fit threads (r/AlphaandBetausers, r/SideProject show-and-tell). One disclosure line at the end.",
+        "text": "same here at $0 MRR. the move that worked: search reddit sorted by new with the exact phrase your customer would type. i wrapped that into a free tool that pulls the threads in 30 sec instead of 30 min, paste any url. disclosure, i built it: opencorp."
+      },
+      {
+        "variant": "with-link",
+        "intent": "Only for the weekly self-promo threads (r/indiehackers Share what you're building, r/EntrepreneurRideAlong Feedback Friday). 1 in 9 across all subs.",
+        "text": "working on opencorp: paste any product url, get the reddit + hn threads where your buyers compare tools. free, no signup. would love beta testers. opencorp.live"
+      }
+    ]
+  },
+  {
+    "thread": {
+      "subreddit": "microsaas",
+      "post_id": "1wddb8j",
+      "author": "smithshelke",
+      "title": "Help needed: I’m building a SAAS which does global payouts. What global payouts platform do you use?",
+      "score": "2",
+      "comments": "5",
+      "keyword": "research",
+      "url": "https://www.reddit.com/r/microsaas/comments/1wddb8j/help_needed_im_building_a_saas_which_does_global/",
+      "scanned_at": "2026-09-12T22:31:30.332Z"
+    },
+    "variants": [
+      {
+        "variant": "value-only",
+        "intent": "9 of every 10 comments. Pure value, no opencorp mention. The 1 in 9.",
+        "text": "seen this same pattern kill launches. the founders who convert fastest spend a week finding the 3-5 threads where their buyers already describe the problem, then answer them well before pitching anything. takes a week, costs nothing, and the people who click your profile are the ones who'd actually pay."
+      },
+      {
+        "variant": "soft-disclose",
+        "intent": "Reserved for high-fit threads (r/AlphaandBetausers, r/SideProject show-and-tell). One disclosure line at the end.",
+        "text": "same here at $0 MRR. the move that worked: search reddit sorted by new with the exact phrase your customer would type. i wrapped that into a free tool that pulls the threads in 30 sec instead of 30 min, paste any url. disclosure, i built it: opencorp."
+      },
+      {
+        "variant": "with-link",
+        "intent": "Only for the weekly self-promo threads (r/indiehackers Share what you're building, r/EntrepreneurRideAlong Feedback Friday). 1 in 9 across all subs.",
+        "text": "working on opencorp: paste any product url, get the reddit + hn threads where your buyers compare tools. free, no signup. would love beta testers. opencorp.live"
+      }
+    ]
+  },
+  {
+    "thread": {
+      "subreddit": "microsaas",
+      "post_id": "1wd9gsz",
+      "author": "Eldi17",
+      "title": "Launched my first micro-SaaS at 18 (subscription app), first conversion just came in — sharing the honest early numbers",
+      "score": "1",
+      "comments": "7",
+      "keyword": "cold outreach",
+      "url": "https://www.reddit.com/r/microsaas/comments/1wd9gsz/launched_my_first_microsaas_at_18_subscription/",
+      "scanned_at": "2026-09-12T22:31:30.332Z"
+    },
+    "variants": [
+      {
+        "variant": "value-only",
+        "intent": "9 of every 10 comments. Pure value, no opencorp mention. The 1 in 9.",
+        "text": "seen this same pattern kill launches. the founders who convert fastest spend a week finding the 3-5 threads where their buyers already describe the problem, then answer them well before pitching anything. takes a week, costs nothing, and the people who click your profile are the ones who'd actually pay."
+      },
+      {
+        "variant": "soft-disclose",
+        "intent": "Reserved for high-fit threads (r/AlphaandBetausers, r/SideProject show-and-tell). One disclosure line at the end.",
+        "text": "same here at $0 MRR. the move that worked: search reddit sorted by new with the exact phrase your customer would type. i wrapped that into a free tool that pulls the threads in 30 sec instead of 30 min, paste any url. disclosure, i built it: opencorp."
+      },
+      {
+        "variant": "with-link",
+        "intent": "Only for the weekly self-promo threads (r/indiehackers Share what you're building, r/EntrepreneurRideAlong Feedback Friday). 1 in 9 across all subs.",
+        "text": "working on opencorp: paste any product url, get the reddit + hn threads where your buyers compare tools. free, no signup. would love beta testers. opencorp.live"
+      }
+    ]
+  },
+  {
+    "thread": {
+      "subreddit": "microsaas",
+      "post_id": "1wd6izs",
+      "author": "sebastien_db",
+      "title": "I wired my lifetime deal's price ladder directly to Stripe - when the counter says 28 seats left, it's really 28. Setup + first week of honest numbers.",
+      "score": "1",
+      "comments": "2",
+      "keyword": "distribution",
+      "url": "https://www.reddit.com/r/microsaas/comments/1wd6izs/i_wired_my_lifetime_deals_price_ladder_directly/",
+      "scanned_at": "2026-09-12T22:31:30.332Z"
+    },
+    "variants": [
+      {
+        "variant": "value-only",
+        "intent": "9 of every 10 comments. Pure value, no opencorp mention. The 1 in 9.",
+        "text": "seen this same pattern kill launches. the founders who convert fastest spend a week finding the 3-5 threads where their buyers already describe the problem, then answer them well before pitching anything. takes a week, costs nothing, and the people who click your profile are the ones who'd actually pay."
+      },
+      {
+        "variant": "soft-disclose",
+        "intent": "Reserved for high-fit threads (r/AlphaandBetausers, r/SideProject show-and-tell). One disclosure line at the end.",
+        "text": "same here at $0 MRR. the move that worked: search reddit sorted by new with the exact phrase your customer would type. i wrapped that into a free tool that pulls the threads in 30 sec instead of 30 min, paste any url. disclosure, i built it: opencorp."
+      },
+      {
+        "variant": "with-link",
+        "intent": "Only for the weekly self-promo threads (r/indiehackers Share what you're building, r/EntrepreneurRideAlong Feedback Friday). 1 in 9 across all subs.",
+        "text": "working on opencorp: paste any product url, get the reddit + hn threads where your buyers compare tools. free, no signup. would love beta testers. opencorp.live"
+      }
+    ]
+  },
+  {
+    "thread": {
+      "subreddit": "indiehackers",
+      "post_id": "1wd6h5t",
+      "author": "Common_Dream9420",
+      "title": "Can't believe a rough one-pager turned into a real agent verification engine people actually use",
+      "score": "16",
+      "comments": "107",
+      "keyword": "distribution",
+      "url": "https://www.reddit.com/r/indiehackers/comments/1wd6h5t/cant_believe_a_rough_onepager_turned_into_a_real/",
+      "scanned_at": "2026-09-12T22:31:30.332Z"
+    },
+    "variants": [
+      {
+        "variant": "value-only",
+        "intent": "9 of every 10 comments. Pure value, no opencorp mention. The 1 in 9.",
+        "text": "seen this same pattern kill launches. the founders who convert fastest spend a week finding the 3-5 threads where their buyers already describe the problem, then answer them well before pitching anything. takes a week, costs nothing, and the people who click your profile are the ones who'd actually pay."
+      },
+      {
+        "variant": "soft-disclose",
+        "intent": "Reserved for high-fit threads (r/AlphaandBetausers, r/SideProject show-and-tell). One disclosure line at the end.",
+        "text": "same here at $0 MRR. the move that worked: search reddit sorted by new with the exact phrase your customer would type. i wrapped that into a free tool that pulls the threads in 30 sec instead of 30 min, paste any url. disclosure, i built it: opencorp."
+      },
+      {
+        "variant": "with-link",
+        "intent": "Only for the weekly self-promo threads (r/indiehackers Share what you're building, r/EntrepreneurRideAlong Feedback Friday). 1 in 9 across all subs.",
+        "text": "working on opencorp: paste any product url, get the reddit + hn threads where your buyers compare tools. free, no signup. would love beta testers. opencorp.live"
+      }
+    ]
+  },
+  {
+    "thread": {
+      "subreddit": "microsaas",
+      "post_id": "1wd3rqw",
+      "author": "ts-saas",
+      "title": "How much infrastructure should a Micro SaaS founder actually build themselves?",
+      "score": "7",
+      "comments": "24",
+      "keyword": "first customer",
+      "url": "https://www.reddit.com/r/microsaas/comments/1wd3rqw/how_much_infrastructure_should_a_micro_saas/",
+      "scanned_at": "2026-09-12T22:31:30.332Z"
+    },
+    "variants": [
+      {
+        "variant": "value-only",
+        "intent": "9 of every 10 comments. Pure value, no opencorp mention. The 1 in 9.",
+        "text": "seen this same pattern kill launches. the founders who convert fastest spend a week finding the 3-5 threads where their buyers already describe the problem, then answer them well before pitching anything. takes a week, costs nothing, and the people who click your profile are the ones who'd actually pay."
+      },
+      {
+        "variant": "soft-disclose",
+        "intent": "Reserved for high-fit threads (r/AlphaandBetausers, r/SideProject show-and-tell). One disclosure line at the end.",
+        "text": "same here at $0 MRR. the move that worked: search reddit sorted by new with the exact phrase your customer would type. i wrapped that into a free tool that pulls the threads in 30 sec instead of 30 min, paste any url. disclosure, i built it: opencorp."
+      },
+      {
+        "variant": "with-link",
+        "intent": "Only for the weekly self-promo threads (r/indiehackers Share what you're building, r/EntrepreneurRideAlong Feedback Friday). 1 in 9 across all subs.",
+        "text": "working on opencorp: paste any product url, get the reddit + hn threads where your buyers compare tools. free, no signup. would love beta testers. opencorp.live"
+      }
+    ]
+  },
+  {
+    "thread": {
+      "subreddit": "microsaas",
+      "post_id": "1wd1iqu",
+      "author": "Cultural-Republic191",
+      "title": "Building an AI research assurance product taught me that “more AI” is not always the answer",
+      "score": "2",
+      "comments": "8",
+      "keyword": "research",
+      "url": "https://www.reddit.com/r/microsaas/comments/1wd1iqu/building_an_ai_research_assurance_product_taught/",
+      "scanned_at": "2026-09-12T22:31:30.332Z"
+    },
+    "variants": [
+      {
+        "variant": "value-only",
+        "intent": "9 of every 10 comments. Pure value, no opencorp mention. The 1 in 9.",
+        "text": "seen this same pattern kill launches. the founders who convert fastest spend a week finding the 3-5 threads where their buyers already describe the problem, then answer them well before pitching anything. takes a week, costs nothing, and the people who click your profile are the ones who'd actually pay."
+      },
+      {
+        "variant": "soft-disclose",
+        "intent": "Reserved for high-fit threads (r/AlphaandBetausers, r/SideProject show-and-tell). One disclosure line at the end.",
+        "text": "same here at $0 MRR. the move that worked: search reddit sorted by new with the exact phrase your customer would type. i wrapped that into a free tool that pulls the threads in 30 sec instead of 30 min, paste any url. disclosure, i built it: opencorp."
+      },
+      {
+        "variant": "with-link",
+        "intent": "Only for the weekly self-promo threads (r/indiehackers Share what you're building, r/EntrepreneurRideAlong Feedback Friday). 1 in 9 across all subs.",
+        "text": "working on opencorp: paste any product url, get the reddit + hn threads where your buyers compare tools. free, no signup. would love beta testers. opencorp.live"
+      }
+    ]
+  },
+  {
+    "thread": {
+      "subreddit": "EntrepreneurRideAlong",
+      "post_id": "1wcpk16",
+      "author": "petiosaa",
+      "title": "I built a simple Excel tool to figure out if a product is actually profitable — looking for feedback",
+      "score": "2",
+      "comments": "4",
+      "keyword": "validate",
+      "url": "https://www.reddit.com/r/EntrepreneurRideAlong/comments/1wcpk16/i_built_a_simple_excel_tool_to_figure_out_if_a/",
+      "scanned_at": "2026-09-12T22:31:30.332Z"
+    },
+    "variants": [
+      {
+        "variant": "value-only",
+        "intent": "9 of every 10 comments. Pure value, no opencorp mention. The 1 in 9.",
+        "text": "seen this same pattern kill launches. the founders who convert fastest spend a week finding the 3-5 threads where their buyers already describe the problem, then answer them well before pitching anything. takes a week, costs nothing, and the people who click your profile are the ones who'd actually pay."
+      },
+      {
+        "variant": "soft-disclose",
+        "intent": "Reserved for high-fit threads (r/AlphaandBetausers, r/SideProject show-and-tell). One disclosure line at the end.",
+        "text": "same here at $0 MRR. the move that worked: search reddit sorted by new with the exact phrase your customer would type. i wrapped that into a free tool that pulls the threads in 30 sec instead of 30 min, paste any url. disclosure, i built it: opencorp."
+      },
+      {
+        "variant": "with-link",
+        "intent": "Only for the weekly self-promo threads (r/indiehackers Share what you're building, r/EntrepreneurRideAlong Feedback Friday). 1 in 9 across all subs.",
+        "text": "working on opencorp: paste any product url, get the reddit + hn threads where your buyers compare tools. free, no signup. would love beta testers. opencorp.live"
+      }
+    ]
+  },
+  {
+    "thread": {
+      "subreddit": "EntrepreneurRideAlong",
+      "post_id": "1wcdst5",
+      "author": "Individual_Rest_8951",
+      "title": "Any lesser known but effective way of generating leads (Context Provided)",
+      "score": "5",
+      "comments": "14",
+      "keyword": "audience",
+      "url": "https://www.reddit.com/r/EntrepreneurRideAlong/comments/1wcdst5/any_lesser_known_but_effective_way_of_generating/",
+      "scanned_at": "2026-09-12T22:31:30.332Z"
+    },
+    "variants": [
+      {
+        "variant": "value-only",
+        "intent": "9 of every 10 comments. Pure value, no opencorp mention. The 1 in 9.",
+        "text": "seen this same pattern kill launches. the founders who convert fastest spend a week finding the 3-5 threads where their buyers already describe the problem, then answer them well before pitching anything. takes a week, costs nothing, and the people who click your profile are the ones who'd actually pay."
+      },
+      {
+        "variant": "soft-disclose",
+        "intent": "Reserved for high-fit threads (r/AlphaandBetausers, r/SideProject show-and-tell). One disclosure line at the end.",
+        "text": "same here at $0 MRR. the move that worked: search reddit sorted by new with the exact phrase your customer would type. i wrapped that into a free tool that pulls the threads in 30 sec instead of 30 min, paste any url. disclosure, i built it: opencorp."
+      },
+      {
+        "variant": "with-link",
+        "intent": "Only for the weekly self-promo threads (r/indiehackers Share what you're building, r/EntrepreneurRideAlong Feedback Friday). 1 in 9 across all subs.",
+        "text": "working on opencorp: paste any product url, get the reddit + hn threads where your buyers compare tools. free, no signup. would love beta testers. opencorp.live"
+      }
+    ]
+  },
+  {
+    "thread": {
+      "subreddit": "EntrepreneurRideAlong",
+      "post_id": "1wbx21s",
+      "author": "NewLifeNewAcct",
+      "title": "I built a product for my local government, they love it. It's been in use for a year. How do I start branching out?",
+      "score": "4",
+      "comments": "24",
+      "keyword": "competitor",
+      "url": "https://www.reddit.com/r/EntrepreneurRideAlong/comments/1wbx21s/i_built_a_product_for_my_local_government_they/",
+      "scanned_at": "2026-09-12T22:31:30.332Z"
+    },
+    "variants": [
+      {
+        "variant": "value-only",
+        "intent": "9 of every 10 comments. Pure value, no opencorp mention. The 1 in 9.",
+        "text": "seen this same pattern kill launches. the founders who convert fastest spend a week finding the 3-5 threads where their buyers already describe the problem, then answer them well before pitching anything. takes a week, costs nothing, and the people who click your profile are the ones who'd actually pay."
+      },
+      {
+        "variant": "soft-disclose",
+        "intent": "Reserved for high-fit threads (r/AlphaandBetausers, r/SideProject show-and-tell). One disclosure line at the end.",
+        "text": "same here at $0 MRR. the move that worked: search reddit sorted by new with the exact phrase your customer would type. i wrapped that into a free tool that pulls the threads in 30 sec instead of 30 min, paste any url. disclosure, i built it: opencorp."
+      },
+      {
+        "variant": "with-link",
+        "intent": "Only for the weekly self-promo threads (r/indiehackers Share what you're building, r/EntrepreneurRideAlong Feedback Friday). 1 in 9 across all subs.",
+        "text": "working on opencorp: paste any product url, get the reddit + hn threads where your buyers compare tools. free, no signup. would love beta testers. opencorp.live"
+      }
+    ]
+  },
+  {
+    "thread": {
+      "subreddit": "EntrepreneurRideAlong",
+      "post_id": "1wbw7ef",
+      "author": "ifeelanime",
+      "title": "How to scale short form content editing agency beyond $1k/MRR",
+      "score": "5",
+      "comments": "7",
+      "keyword": "cold email",
+      "url": "https://www.reddit.com/r/EntrepreneurRideAlong/comments/1wbw7ef/how_to_scale_short_form_content_editing_agency/",
+      "scanned_at": "2026-09-12T22:31:30.332Z"
+    },
+    "variants": [
+      {
+        "variant": "value-only",
+        "intent": "9 of every 10 comments. Pure value, no opencorp mention. The 1 in 9.",
+        "text": "seen this same pattern kill launches. the founders who convert fastest spend a week finding the 3-5 threads where their buyers already describe the problem, then answer them well before pitching anything. takes a week, costs nothing, and the people who click your profile are the ones who'd actually pay."
+      },
+      {
+        "variant": "soft-disclose",
+        "intent": "Reserved for high-fit threads (r/AlphaandBetausers, r/SideProject show-and-tell). One disclosure line at the end.",
+        "text": "same here at $0 MRR. the move that worked: search reddit sorted by new with the exact phrase your customer would type. i wrapped that into a free tool that pulls the threads in 30 sec instead of 30 min, paste any url. disclosure, i built it: opencorp."
+      },
+      {
+        "variant": "with-link",
+        "intent": "Only for the weekly self-promo threads (r/indiehackers Share what you're building, r/EntrepreneurRideAlong Feedback Friday). 1 in 9 across all subs.",
+        "text": "working on opencorp: paste any product url, get the reddit + hn threads where your buyers compare tools. free, no signup. would love beta testers. opencorp.live"
+      }
+    ]
+  },
+  {
+    "thread": {
+      "subreddit": "EntrepreneurRideAlong",
+      "post_id": "1wbvabt",
+      "author": "noice-job",
+      "title": "Ten days building, five days launching, $10. Then Product Hunt made more in one morning. Here are the numbers",
+      "score": "0",
+      "comments": "10",
+      "keyword": "distribution",
+      "url": "https://www.reddit.com/r/EntrepreneurRideAlong/comments/1wbvabt/ten_days_building_five_days_launching_10_then/",
+      "scanned_at": "2026-09-12T22:31:30.332Z"
+    },
+    "variants": [
+      {
+        "variant": "value-only",
+        "intent": "9 of every 10 comments. Pure value, no opencorp mention. The 1 in 9.",
+        "text": "seen this same pattern kill launches. the founders who convert fastest spend a week finding the 3-5 threads where their buyers already describe the problem, then answer them well before pitching anything. takes a week, costs nothing, and the people who click your profile are the ones who'd actually pay."
+      },
+      {
+        "variant": "soft-disclose",
+        "intent": "Reserved for high-fit threads (r/AlphaandBetausers, r/SideProject show-and-tell). One disclosure line at the end.",
+        "text": "same here at $0 MRR. the move that worked: search reddit sorted by new with the exact phrase your customer would type. i wrapped that into a free tool that pulls the threads in 30 sec instead of 30 min, paste any url. disclosure, i built it: opencorp."
+      },
+      {
+        "variant": "with-link",
+        "intent": "Only for the weekly self-promo threads (r/indiehackers Share what you're building, r/EntrepreneurRideAlong Feedback Friday). 1 in 9 across all subs.",
+        "text": "working on opencorp: paste any product url, get the reddit + hn threads where your buyers compare tools. free, no signup. would love beta testers. opencorp.live"
+      }
+    ]
+  },
+  {
+    "thread": {
+      "subreddit": "EntrepreneurRideAlong",
+      "post_id": "1wbaeut",
+      "author": "Consistent-Being1593",
+      "title": "How many ideas did you try before the one that worked?",
+      "score": "21",
+      "comments": "54",
+      "keyword": "research",
+      "url": "https://www.reddit.com/r/EntrepreneurRideAlong/comments/1wbaeut/how_many_ideas_did_you_try_before_the_one_that/",
+      "scanned_at": "2026-09-12T22:31:30.332Z"
+    },
+    "variants": [
+      {
+        "variant": "value-only",
+        "intent": "9 of every 10 comments. Pure value, no opencorp mention. The 1 in 9.",
+        "text": "seen this same pattern kill launches. the founders who convert fastest spend a week finding the 3-5 threads where their buyers already describe the problem, then answer them well before pitching anything. takes a week, costs nothing, and the people who click your profile are the ones who'd actually pay."
+      },
+      {
+        "variant": "soft-disclose",
+        "intent": "Reserved for high-fit threads (r/AlphaandBetausers, r/SideProject show-and-tell). One disclosure line at the end.",
+        "text": "same here at $0 MRR. the move that worked: search reddit sorted by new with the exact phrase your customer would type. i wrapped that into a free tool that pulls the threads in 30 sec instead of 30 min, paste any url. disclosure, i built it: opencorp."
+      },
+      {
+        "variant": "with-link",
+        "intent": "Only for the weekly self-promo threads (r/indiehackers Share what you're building, r/EntrepreneurRideAlong Feedback Friday). 1 in 9 across all subs.",
+        "text": "working on opencorp: paste any product url, get the reddit + hn threads where your buyers compare tools. free, no signup. would love beta testers. opencorp.live"
+      }
+    ]
+  },
+  {
+    "thread": {
+      "subreddit": "EntrepreneurRideAlong",
+      "post_id": "1waz312",
+      "author": "8byzz",
+      "title": "He had 500M views across his pages and had made almost nothing from them, so we ran a 15 day experiment",
+      "score": "2",
+      "comments": "8",
+      "keyword": "distribution",
+      "url": "https://www.reddit.com/r/EntrepreneurRideAlong/comments/1waz312/he_had_500m_views_across_his_pages_and_had_made/",
+      "scanned_at": "2026-09-12T22:31:30.332Z"
+    },
+    "variants": [
+      {
+        "variant": "value-only",
+        "intent": "9 of every 10 comments. Pure value, no opencorp mention. The 1 in 9.",
+        "text": "seen this same pattern kill launches. the founders who convert fastest spend a week finding the 3-5 threads where their buyers already describe the problem, then answer them well before pitching anything. takes a week, costs nothing, and the people who click your profile are the ones who'd actually pay."
+      },
+      {
+        "variant": "soft-disclose",
+        "intent": "Reserved for high-fit threads (r/AlphaandBetausers, r/SideProject show-and-tell). One disclosure line at the end.",
+        "text": "same here at $0 MRR. the move that worked: search reddit sorted by new with the exact phrase your customer would type. i wrapped that into a free tool that pulls the threads in 30 sec instead of 30 min, paste any url. disclosure, i built it: opencorp."
+      },
+      {
+        "variant": "with-link",
+        "intent": "Only for the weekly self-promo threads (r/indiehackers Share what you're building, r/EntrepreneurRideAlong Feedback Friday). 1 in 9 across all subs.",
+        "text": "working on opencorp: paste any product url, get the reddit + hn threads where your buyers compare tools. free, no signup. would love beta testers. opencorp.live"
+      }
+    ]
+  },
+  {
+    "thread": {
+      "subreddit": "EntrepreneurRideAlong",
+      "post_id": "1waqt8a",
+      "author": "ImplementMiserable74",
+      "title": "what I learned doing lead gen for 4 different marketing agencies",
+      "score": "8",
+      "comments": "5",
+      "keyword": "icp",
+      "url": "https://www.reddit.com/r/EntrepreneurRideAlong/comments/1waqt8a/what_i_learned_doing_lead_gen_for_4_different/",
+      "scanned_at": "2026-09-12T22:31:30.332Z"
+    },
+    "variants": [
+      {
+        "variant": "value-only",
+        "intent": "9 of every 10 comments. Pure value, no opencorp mention. The 1 in 9.",
+        "text": "seen this same pattern kill launches. the founders who convert fastest spend a week finding the 3-5 threads where their buyers already describe the problem, then answer them well before pitching anything. takes a week, costs nothing, and the people who click your profile are the ones who'd actually pay."
+      },
+      {
+        "variant": "soft-disclose",
+        "intent": "Reserved for high-fit threads (r/AlphaandBetausers, r/SideProject show-and-tell). One disclosure line at the end.",
+        "text": "same here at $0 MRR. the move that worked: search reddit sorted by new with the exact phrase your customer would type. i wrapped that into a free tool that pulls the threads in 30 sec instead of 30 min, paste any url. disclosure, i built it: opencorp."
+      },
+      {
+        "variant": "with-link",
+        "intent": "Only for the weekly self-promo threads (r/indiehackers Share what you're building, r/EntrepreneurRideAlong Feedback Friday). 1 in 9 across all subs.",
+        "text": "working on opencorp: paste any product url, get the reddit + hn threads where your buyers compare tools. free, no signup. would love beta testers. opencorp.live"
+      }
+    ]
+  },
+  {
+    "thread": {
+      "subreddit": "EntrepreneurRideAlong",
+      "post_id": "1wanxpq",
+      "author": "JohnJohnnySopreso_II",
+      "title": "My best clients in the last quarter all came from LinkedIn comments",
+      "score": "19",
+      "comments": "25",
+      "keyword": "icp",
+      "url": "https://www.reddit.com/r/EntrepreneurRideAlong/comments/1wanxpq/my_best_clients_in_the_last_quarter_all_came_from/",
+      "scanned_at": "2026-09-12T22:31:30.332Z"
+    },
+    "variants": [
+      {
+        "variant": "value-only",
+        "intent": "9 of every 10 comments. Pure value, no opencorp mention. The 1 in 9.",
+        "text": "seen this same pattern kill launches. the founders who convert fastest spend a week finding the 3-5 threads where their buyers already describe the problem, then answer them well before pitching anything. takes a week, costs nothing, and the people who click your profile are the ones who'd actually pay."
+      },
+      {
+        "variant": "soft-disclose",
+        "intent": "Reserved for high-fit threads (r/AlphaandBetausers, r/SideProject show-and-tell). One disclosure line at the end.",
+        "text": "same here at $0 MRR. the move that worked: search reddit sorted by new with the exact phrase your customer would type. i wrapped that into a free tool that pulls the threads in 30 sec instead of 30 min, paste any url. disclosure, i built it: opencorp."
+      },
+      {
+        "variant": "with-link",
+        "intent": "Only for the weekly self-promo threads (r/indiehackers Share what you're building, r/EntrepreneurRideAlong Feedback Friday). 1 in 9 across all subs.",
+        "text": "working on opencorp: paste any product url, get the reddit + hn threads where your buyers compare tools. free, no signup. would love beta testers. opencorp.live"
+      }
+    ]
+  },
+  {
+    "thread": {
+      "subreddit": "EntrepreneurRideAlong",
+      "post_id": "1waluu7",
+      "author": "Firm_Substance_8124",
+      "title": "I built an Excel toolkit to solve the product decision chaos e-commerce sellers face",
+      "score": "1",
+      "comments": "0",
+      "keyword": "research",
+      "url": "https://www.reddit.com/r/EntrepreneurRideAlong/comments/1waluu7/i_built_an_excel_toolkit_to_solve_the_product/",
+      "scanned_at": "2026-09-12T22:31:30.332Z"
+    },
+    "variants": [
+      {
+        "variant": "value-only",
+        "intent": "9 of every 10 comments. Pure value, no opencorp mention. The 1 in 9.",
+        "text": "seen this same pattern kill launches. the founders who convert fastest spend a week finding the 3-5 threads where their buyers already describe the problem, then answer them well before pitching anything. takes a week, costs nothing, and the people who click your profile are the ones who'd actually pay."
+      },
+      {
+        "variant": "soft-disclose",
+        "intent": "Reserved for high-fit threads (r/AlphaandBetausers, r/SideProject show-and-tell). One disclosure line at the end.",
+        "text": "same here at $0 MRR. the move that worked: search reddit sorted by new with the exact phrase your customer would type. i wrapped that into a free tool that pulls the threads in 30 sec instead of 30 min, paste any url. disclosure, i built it: opencorp."
+      },
+      {
+        "variant": "with-link",
+        "intent": "Only for the weekly self-promo threads (r/indiehackers Share what you're building, r/EntrepreneurRideAlong Feedback Friday). 1 in 9 across all subs.",
+        "text": "working on opencorp: paste any product url, get the reddit + hn threads where your buyers compare tools. free, no signup. would love beta testers. opencorp.live"
+      }
+    ]
+  },
+  {
+    "thread": {
+      "subreddit": "EntrepreneurRideAlong",
+      "post_id": "1w9hai6",
+      "author": "AnAlmostLivelyPotato",
+      "title": "I'm trying 100 different ways to make $100. Here's what happened with the first 12.",
+      "score": "20",
+      "comments": "37",
+      "keyword": "audience",
+      "url": "https://www.reddit.com/r/EntrepreneurRideAlong/comments/1w9hai6/im_trying_100_different_ways_to_make_100_heres/",
+      "scanned_at": "2026-09-12T22:31:30.332Z"
+    },
+    "variants": [
+      {
+        "variant": "value-only",
+        "intent": "9 of every 10 comments. Pure value, no opencorp mention. The 1 in 9.",
+        "text": "seen this same pattern kill launches. the founders who convert fastest spend a week finding the 3-5 threads where their buyers already describe the problem, then answer them well before pitching anything. takes a week, costs nothing, and the people who click your profile are the ones who'd actually pay."
+      },
+      {
+        "variant": "soft-disclose",
+        "intent": "Reserved for high-fit threads (r/AlphaandBetausers, r/SideProject show-and-tell). One disclosure line at the end.",
+        "text": "same here at $0 MRR. the move that worked: search reddit sorted by new with the exact phrase your customer would type. i wrapped that into a free tool that pulls the threads in 30 sec instead of 30 min, paste any url. disclosure, i built it: opencorp."
+      },
+      {
+        "variant": "with-link",
+        "intent": "Only for the weekly self-promo threads (r/indiehackers Share what you're building, r/EntrepreneurRideAlong Feedback Friday). 1 in 9 across all subs.",
+        "text": "working on opencorp: paste any product url, get the reddit + hn threads where your buyers compare tools. free, no signup. would love beta testers. opencorp.live"
+      }
+    ]
+  },
+  {
+    "thread": {
+      "subreddit": "EntrepreneurRideAlong",
+      "post_id": "1w9g048",
+      "author": "ComprehensiveWay3179",
+      "title": "Seeking advice and awareness",
+      "score": "5",
+      "comments": "7",
+      "keyword": "audience",
+      "url": "https://www.reddit.com/r/EntrepreneurRideAlong/comments/1w9g048/seeking_advice_and_awareness/",
+      "scanned_at": "2026-09-12T22:31:30.332Z"
+    },
+    "variants": [
+      {
+        "variant": "value-only",
+        "intent": "9 of every 10 comments. Pure value, no opencorp mention. The 1 in 9.",
+        "text": "seen this same pattern kill launches. the founders who convert fastest spend a week finding the 3-5 threads where their buyers already describe the problem, then answer them well before pitching anything. takes a week, costs nothing, and the people who click your profile are the ones who'd actually pay."
+      },
+      {
+        "variant": "soft-disclose",
+        "intent": "Reserved for high-fit threads (r/AlphaandBetausers, r/SideProject show-and-tell). One disclosure line at the end.",
+        "text": "same here at $0 MRR. the move that worked: search reddit sorted by new with the exact phrase your customer would type. i wrapped that into a free tool that pulls the threads in 30 sec instead of 30 min, paste any url. disclosure, i built it: opencorp."
+      },
+      {
+        "variant": "with-link",
+        "intent": "Only for the weekly self-promo threads (r/indiehackers Share what you're building, r/EntrepreneurRideAlong Feedback Friday). 1 in 9 across all subs.",
+        "text": "working on opencorp: paste any product url, get the reddit + hn threads where your buyers compare tools. free, no signup. would love beta testers. opencorp.live"
+      }
+    ]
+  },
+  {
+    "thread": {
+      "subreddit": "indiehackers",
+      "post_id": "1w999w1",
+      "author": "dang64",
+      "title": "UGC creators piss me off so god damn much I built my own platform out of hatred",
+      "score": "9",
+      "comments": "46",
+      "keyword": "audience",
+      "url": "https://www.reddit.com/r/indiehackers/comments/1w999w1/ugc_creators_piss_me_off_so_god_damn_much_i_built/",
+      "scanned_at": "2026-09-12T22:31:30.332Z"
+    },
+    "variants": [
+      {
+        "variant": "value-only",
+        "intent": "9 of every 10 comments. Pure value, no opencorp mention. The 1 in 9.",
+        "text": "seen this same pattern kill launches. the founders who convert fastest spend a week finding the 3-5 threads where their buyers already describe the problem, then answer them well before pitching anything. takes a week, costs nothing, and the people who click your profile are the ones who'd actually pay."
+      },
+      {
+        "variant": "soft-disclose",
+        "intent": "Reserved for high-fit threads (r/AlphaandBetausers, r/SideProject show-and-tell). One disclosure line at the end.",
+        "text": "same here at $0 MRR. the move that worked: search reddit sorted by new with the exact phrase your customer would type. i wrapped that into a free tool that pulls the threads in 30 sec instead of 30 min, paste any url. disclosure, i built it: opencorp."
+      },
+      {
+        "variant": "with-link",
+        "intent": "Only for the weekly self-promo threads (r/indiehackers Share what you're building, r/EntrepreneurRideAlong Feedback Friday). 1 in 9 across all subs.",
+        "text": "working on opencorp: paste any product url, get the reddit + hn threads where your buyers compare tools. free, no signup. would love beta testers. opencorp.live"
+      }
+    ]
+  },
+  {
+    "thread": {
+      "subreddit": "EntrepreneurRideAlong",
+      "post_id": "1w8wslf",
+      "author": "Warm-Reaction-456",
+      "title": "What an AI automation actually is, how it works under the hood and what one looks like end to end (For business owners who keep getting pitched them)",
+      "score": "5",
+      "comments": "6",
+      "keyword": "research",
+      "url": "https://www.reddit.com/r/EntrepreneurRideAlong/comments/1w8wslf/what_an_ai_automation_actually_is_how_it_works/",
+      "scanned_at": "2026-09-12T22:31:30.332Z"
+    },
+    "variants": [
+      {
+        "variant": "value-only",
+        "intent": "9 of every 10 comments. Pure value, no opencorp mention. The 1 in 9.",
+        "text": "seen this same pattern kill launches. the founders who convert fastest spend a week finding the 3-5 threads where their buyers already describe the problem, then answer them well before pitching anything. takes a week, costs nothing, and the people who click your profile are the ones who'd actually pay."
+      },
+      {
+        "variant": "soft-disclose",
+        "intent": "Reserved for high-fit threads (r/AlphaandBetausers, r/SideProject show-and-tell). One disclosure line at the end.",
+        "text": "same here at $0 MRR. the move that worked: search reddit sorted by new with the exact phrase your customer would type. i wrapped that into a free tool that pulls the threads in 30 sec instead of 30 min, paste any url. disclosure, i built it: opencorp."
+      },
+      {
+        "variant": "with-link",
+        "intent": "Only for the weekly self-promo threads (r/indiehackers Share what you're building, r/EntrepreneurRideAlong Feedback Friday). 1 in 9 across all subs.",
+        "text": "working on opencorp: paste any product url, get the reddit + hn threads where your buyers compare tools. free, no signup. would love beta testers. opencorp.live"
+      }
+    ]
+  },
+  {
+    "thread": {
+      "subreddit": "indiehackers",
+      "post_id": "1w6habm",
+      "author": "Mojowhale",
+      "title": "16 conversations with indie AI builders later, here's what I got wrong about distribution",
+      "score": "32",
+      "comments": "154",
+      "keyword": "0 users",
+      "url": "https://www.reddit.com/r/indiehackers/comments/1w6habm/16_conversations_with_indie_ai_builders_later/",
+      "scanned_at": "2026-09-12T22:31:30.332Z"
+    },
+    "variants": [
+      {
+        "variant": "value-only",
+        "intent": "9 of every 10 comments. Pure value, no opencorp mention. The 1 in 9.",
+        "text": "seen this same pattern kill launches. the founders who convert fastest spend a week finding the 3-5 threads where their buyers already describe the problem, then answer them well before pitching anything. takes a week, costs nothing, and the people who click your profile are the ones who'd actually pay."
+      },
+      {
+        "variant": "soft-disclose",
+        "intent": "Reserved for high-fit threads (r/AlphaandBetausers, r/SideProject show-and-tell). One disclosure line at the end.",
+        "text": "same here at $0 MRR. the move that worked: search reddit sorted by new with the exact phrase your customer would type. i wrapped that into a free tool that pulls the threads in 30 sec instead of 30 min, paste any url. disclosure, i built it: opencorp."
+      },
+      {
+        "variant": "with-link",
+        "intent": "Only for the weekly self-promo threads (r/indiehackers Share what you're building, r/EntrepreneurRideAlong Feedback Friday). 1 in 9 across all subs.",
+        "text": "working on opencorp: paste any product url, get the reddit + hn threads where your buyers compare tools. free, no signup. would love beta testers. opencorp.live"
+      }
+    ]
+  },
+  {
+    "thread": {
+      "subreddit": "indiehackers",
+      "post_id": "1w6cy1h",
+      "author": "BatsAapje",
+      "title": "Most startup directories are useless for traffic. Here's what I built to fix it",
+      "score": "10",
+      "comments": "67",
+      "keyword": "distribution",
+      "url": "https://www.reddit.com/r/indiehackers/comments/1w6cy1h/most_startup_directories_are_useless_for_traffic/",
+      "scanned_at": "2026-09-12T22:31:30.332Z"
+    },
+    "variants": [
+      {
+        "variant": "value-only",
+        "intent": "9 of every 10 comments. Pure value, no opencorp mention. The 1 in 9.",
+        "text": "seen this same pattern kill launches. the founders who convert fastest spend a week finding the 3-5 threads where their buyers already describe the problem, then answer them well before pitching anything. takes a week, costs nothing, and the people who click your profile are the ones who'd actually pay."
+      },
+      {
+        "variant": "soft-disclose",
+        "intent": "Reserved for high-fit threads (r/AlphaandBetausers, r/SideProject show-and-tell). One disclosure line at the end.",
+        "text": "same here at $0 MRR. the move that worked: search reddit sorted by new with the exact phrase your customer would type. i wrapped that into a free tool that pulls the threads in 30 sec instead of 30 min, paste any url. disclosure, i built it: opencorp."
+      },
+      {
+        "variant": "with-link",
+        "intent": "Only for the weekly self-promo threads (r/indiehackers Share what you're building, r/EntrepreneurRideAlong Feedback Friday). 1 in 9 across all subs.",
+        "text": "working on opencorp: paste any product url, get the reddit + hn threads where your buyers compare tools. free, no signup. would love beta testers. opencorp.live"
+      }
+    ]
+  },
+  {
+    "thread": {
+      "subreddit": "indiehackers",
+      "post_id": "1w43i7u",
+      "author": "Ancient-Lead8914",
+      "title": "Need 12 Android testers for my health education app — happy to test yours in return",
+      "score": "17",
+      "comments": "33",
+      "keyword": "validate",
+      "url": "https://www.reddit.com/r/indiehackers/comments/1w43i7u/need_12_android_testers_for_my_health_education/",
+      "scanned_at": "2026-09-12T22:31:30.332Z"
+    },
+    "variants": [
+      {
+        "variant": "value-only",
+        "intent": "9 of every 10 comments. Pure value, no opencorp mention. The 1 in 9.",
+        "text": "seen this same pattern kill launches. the founders who convert fastest spend a week finding the 3-5 threads where their buyers already describe the problem, then answer them well before pitching anything. takes a week, costs nothing, and the people who click your profile are the ones who'd actually pay."
+      },
+      {
+        "variant": "soft-disclose",
+        "intent": "Reserved for high-fit threads (r/AlphaandBetausers, r/SideProject show-and-tell). One disclosure line at the end.",
+        "text": "same here at $0 MRR. the move that worked: search reddit sorted by new with the exact phrase your customer would type. i wrapped that into a free tool that pulls the threads in 30 sec instead of 30 min, paste any url. disclosure, i built it: opencorp."
+      },
+      {
+        "variant": "with-link",
+        "intent": "Only for the weekly self-promo threads (r/indiehackers Share what you're building, r/EntrepreneurRideAlong Feedback Friday). 1 in 9 across all subs.",
+        "text": "working on opencorp: paste any product url, get the reddit + hn threads where your buyers compare tools. free, no signup. would love beta testers. opencorp.live"
+      }
+    ]
+  },
+  {
+    "thread": {
+      "subreddit": "indiehackers",
+      "post_id": "1w2ho6x",
+      "author": "holub_ua",
+      "title": "Two weeks ago I asked for feedback on Scinta, our screenshots-to-actions Mac app. We just launched",
+      "score": "36",
+      "comments": "137",
+      "keyword": "first user",
+      "url": "https://www.reddit.com/r/indiehackers/comments/1w2ho6x/two_weeks_ago_i_asked_for_feedback_on_scinta_our/",
+      "scanned_at": "2026-09-12T22:31:30.332Z"
+    },
+    "variants": [
+      {
+        "variant": "value-only",
+        "intent": "9 of every 10 comments. Pure value, no opencorp mention. The 1 in 9.",
+        "text": "seen this same pattern kill launches. the founders who convert fastest spend a week finding the 3-5 threads where their buyers already describe the problem, then answer them well before pitching anything. takes a week, costs nothing, and the people who click your profile are the ones who'd actually pay."
+      },
+      {
+        "variant": "soft-disclose",
+        "intent": "Reserved for high-fit threads (r/AlphaandBetausers, r/SideProject show-and-tell). One disclosure line at the end.",
+        "text": "same here at $0 MRR. the move that worked: search reddit sorted by new with the exact phrase your customer would type. i wrapped that into a free tool that pulls the threads in 30 sec instead of 30 min, paste any url. disclosure, i built it: opencorp."
+      },
+      {
+        "variant": "with-link",
+        "intent": "Only for the weekly self-promo threads (r/indiehackers Share what you're building, r/EntrepreneurRideAlong Feedback Friday). 1 in 9 across all subs.",
+        "text": "working on opencorp: paste any product url, get the reddit + hn threads where your buyers compare tools. free, no signup. would love beta testers. opencorp.live"
+      }
+    ]
+  },
+  {
+    "thread": {
+      "subreddit": "indiehackers",
+      "post_id": "1w12wnz",
+      "author": "BatsAapje",
+      "title": "I launched my first tool in April. Now I have over 1,000 users and $5K+ in revenue.",
+      "score": "72",
+      "comments": "206",
+      "keyword": "0 users",
+      "url": "https://www.reddit.com/r/indiehackers/comments/1w12wnz/i_launched_my_first_tool_in_april_now_i_have_over/",
+      "scanned_at": "2026-09-12T22:31:30.332Z"
+    },
+    "variants": [
+      {
+        "variant": "value-only",
+        "intent": "9 of every 10 comments. Pure value, no opencorp mention. The 1 in 9.",
+        "text": "seen this same pattern kill launches. the founders who convert fastest spend a week finding the 3-5 threads where their buyers already describe the problem, then answer them well before pitching anything. takes a week, costs nothing, and the people who click your profile are the ones who'd actually pay."
+      },
+      {
+        "variant": "soft-disclose",
+        "intent": "Reserved for high-fit threads (r/AlphaandBetausers, r/SideProject show-and-tell). One disclosure line at the end.",
+        "text": "same here at $0 MRR. the move that worked: search reddit sorted by new with the exact phrase your customer would type. i wrapped that into a free tool that pulls the threads in 30 sec instead of 30 min, paste any url. disclosure, i built it: opencorp."
+      },
+      {
+        "variant": "with-link",
+        "intent": "Only for the weekly self-promo threads (r/indiehackers Share what you're building, r/EntrepreneurRideAlong Feedback Friday). 1 in 9 across all subs.",
+        "text": "working on opencorp: paste any product url, get the reddit + hn threads where your buyers compare tools. free, no signup. would love beta testers. opencorp.live"
+      }
+    ]
+  },
+  {
+    "thread": {
+      "subreddit": "indiehackers",
+      "post_id": "1w08om3",
+      "author": "Michele_Alvera",
+      "title": "Everyone's cloning Outbid. The wrong people are.",
+      "score": "11",
+      "comments": "49",
+      "keyword": "audience",
+      "url": "https://www.reddit.com/r/indiehackers/comments/1w08om3/everyones_cloning_outbid_the_wrong_people_are/",
+      "scanned_at": "2026-09-12T22:31:30.332Z"
+    },
+    "variants": [
+      {
+        "variant": "value-only",
+        "intent": "9 of every 10 comments. Pure value, no opencorp mention. The 1 in 9.",
+        "text": "seen this same pattern kill launches. the founders who convert fastest spend a week finding the 3-5 threads where their buyers already describe the problem, then answer them well before pitching anything. takes a week, costs nothing, and the people who click your profile are the ones who'd actually pay."
+      },
+      {
+        "variant": "soft-disclose",
+        "intent": "Reserved for high-fit threads (r/AlphaandBetausers, r/SideProject show-and-tell). One disclosure line at the end.",
+        "text": "same here at $0 MRR. the move that worked: search reddit sorted by new with the exact phrase your customer would type. i wrapped that into a free tool that pulls the threads in 30 sec instead of 30 min, paste any url. disclosure, i built it: opencorp."
+      },
+      {
+        "variant": "with-link",
+        "intent": "Only for the weekly self-promo threads (r/indiehackers Share what you're building, r/EntrepreneurRideAlong Feedback Friday). 1 in 9 across all subs.",
+        "text": "working on opencorp: paste any product url, get the reddit + hn threads where your buyers compare tools. free, no signup. would love beta testers. opencorp.live"
+      }
+    ]
+  },
+  {
+    "thread": {
+      "subreddit": "indiehackers",
+      "post_id": "1vxwc77",
+      "author": "sky-builder",
+      "title": "My study mobile app got to $1k , this is what took us there",
+      "score": "66",
+      "comments": "93",
+      "keyword": "distribution",
+      "url": "https://i.redd.it/pgdqvovw3ilh1.jpeg",
+      "scanned_at": "2026-09-12T22:31:30.332Z"
+    },
+    "variants": [
+      {
+        "variant": "value-only",
+        "intent": "9 of every 10 comments. Pure value, no opencorp mention. The 1 in 9.",
+        "text": "seen this same pattern kill launches. the founders who convert fastest spend a week finding the 3-5 threads where their buyers already describe the problem, then answer them well before pitching anything. takes a week, costs nothing, and the people who click your profile are the ones who'd actually pay."
+      },
+      {
+        "variant": "soft-disclose",
+        "intent": "Reserved for high-fit threads (r/AlphaandBetausers, r/SideProject show-and-tell). One disclosure line at the end.",
+        "text": "same here at $0 MRR. the move that worked: search reddit sorted by new with the exact phrase your customer would type. i wrapped that into a free tool that pulls the threads in 30 sec instead of 30 min, paste any url. disclosure, i built it: opencorp."
+      },
+      {
+        "variant": "with-link",
+        "intent": "Only for the weekly self-promo threads (r/indiehackers Share what you're building, r/EntrepreneurRideAlong Feedback Friday). 1 in 9 across all subs.",
+        "text": "working on opencorp: paste any product url, get the reddit + hn threads where your buyers compare tools. free, no signup. would love beta testers. opencorp.live"
+      }
+    ]
+  },
+  {
+    "thread": {
+      "subreddit": "indiehackers",
+      "post_id": "1vwwvoj",
+      "author": "TimelyRepeat4517",
+      "title": "Launching on Windows after 6 months on Mac. Here's what I'm testing.",
+      "score": "26",
+      "comments": "118",
+      "keyword": "audience",
+      "url": "https://www.reddit.com/r/indiehackers/comments/1vwwvoj/launching_on_windows_after_6_months_on_mac_heres/",
+      "scanned_at": "2026-09-12T22:31:30.332Z"
+    },
+    "variants": [
+      {
+        "variant": "value-only",
+        "intent": "9 of every 10 comments. Pure value, no opencorp mention. The 1 in 9.",
+        "text": "seen this same pattern kill launches. the founders who convert fastest spend a week finding the 3-5 threads where their buyers already describe the problem, then answer them well before pitching anything. takes a week, costs nothing, and the people who click your profile are the ones who'd actually pay."
+      },
+      {
+        "variant": "soft-disclose",
+        "intent": "Reserved for high-fit threads (r/AlphaandBetausers, r/SideProject show-and-tell). One disclosure line at the end.",
+        "text": "same here at $0 MRR. the move that worked: search reddit sorted by new with the exact phrase your customer would type. i wrapped that into a free tool that pulls the threads in 30 sec instead of 30 min, paste any url. disclosure, i built it: opencorp."
+      },
+      {
+        "variant": "with-link",
+        "intent": "Only for the weekly self-promo threads (r/indiehackers Share what you're building, r/EntrepreneurRideAlong Feedback Friday). 1 in 9 across all subs.",
+        "text": "working on opencorp: paste any product url, get the reddit + hn threads where your buyers compare tools. free, no signup. would love beta testers. opencorp.live"
+      }
+    ]
+  },
+  {
+    "thread": {
+      "subreddit": "indiehackers",
+      "post_id": "1vwhfxk",
+      "author": "BarracudaMean9308",
+      "title": "The real launch killer isn't a code bug",
+      "score": "22",
+      "comments": "45",
+      "keyword": "distribution",
+      "url": "https://www.reddit.com/r/indiehackers/comments/1vwhfxk/the_real_launch_killer_isnt_a_code_bug/",
+      "scanned_at": "2026-09-12T22:31:30.332Z"
+    },
+    "variants": [
+      {
+        "variant": "value-only",
+        "intent": "9 of every 10 comments. Pure value, no opencorp mention. The 1 in 9.",
+        "text": "seen this same pattern kill launches. the founders who convert fastest spend a week finding the 3-5 threads where their buyers already describe the problem, then answer them well before pitching anything. takes a week, costs nothing, and the people who click your profile are the ones who'd actually pay."
+      },
+      {
+        "variant": "soft-disclose",
+        "intent": "Reserved for high-fit threads (r/AlphaandBetausers, r/SideProject show-and-tell). One disclosure line at the end.",
+        "text": "same here at $0 MRR. the move that worked: search reddit sorted by new with the exact phrase your customer would type. i wrapped that into a free tool that pulls the threads in 30 sec instead of 30 min, paste any url. disclosure, i built it: opencorp."
+      },
+      {
+        "variant": "with-link",
+        "intent": "Only for the weekly self-promo threads (r/indiehackers Share what you're building, r/EntrepreneurRideAlong Feedback Friday). 1 in 9 across all subs.",
+        "text": "working on opencorp: paste any product url, get the reddit + hn threads where your buyers compare tools. free, no signup. would love beta testers. opencorp.live"
+      }
+    ]
+  },
+  {
+    "thread": {
+      "subreddit": "indiehackers",
+      "post_id": "1vw7tk9",
+      "author": "Common_Dream9420",
+      "title": "I launched on Product Hunt tonight and accidentally threw away 709 followers",
+      "score": "19",
+      "comments": "75",
+      "keyword": "audience",
+      "url": "https://www.reddit.com/r/indiehackers/comments/1vw7tk9/i_launched_on_product_hunt_tonight_and/",
+      "scanned_at": "2026-09-12T22:31:30.332Z"
+    },
+    "variants": [
+      {
+        "variant": "value-only",
+        "intent": "9 of every 10 comments. Pure value, no opencorp mention. The 1 in 9.",
+        "text": "seen this same pattern kill launches. the founders who convert fastest spend a week finding the 3-5 threads where their buyers already describe the problem, then answer them well before pitching anything. takes a week, costs nothing, and the people who click your profile are the ones who'd actually pay."
+      },
+      {
+        "variant": "soft-disclose",
+        "intent": "Reserved for high-fit threads (r/AlphaandBetausers, r/SideProject show-and-tell). One disclosure line at the end.",
+        "text": "same here at $0 MRR. the move that worked: search reddit sorted by new with the exact phrase your customer would type. i wrapped that into a free tool that pulls the threads in 30 sec instead of 30 min, paste any url. disclosure, i built it: opencorp."
+      },
+      {
+        "variant": "with-link",
+        "intent": "Only for the weekly self-promo threads (r/indiehackers Share what you're building, r/EntrepreneurRideAlong Feedback Friday). 1 in 9 across all subs.",
+        "text": "working on opencorp: paste any product url, get the reddit + hn threads where your buyers compare tools. free, no signup. would love beta testers. opencorp.live"
+      }
+    ]
+  },
+  {
+    "thread": {
+      "subreddit": "indiehackers",
+      "post_id": "1vvhpli",
+      "author": "contralai",
+      "title": "I'll build your outbound strategy for free if you're an indie hacker with a real offer",
+      "score": "20",
+      "comments": "60",
+      "keyword": "competitor",
+      "url": "https://www.reddit.com/r/indiehackers/comments/1vvhpli/ill_build_your_outbound_strategy_for_free_if/",
+      "scanned_at": "2026-09-12T22:31:30.332Z"
+    },
+    "variants": [
+      {
+        "variant": "value-only",
+        "intent": "9 of every 10 comments. Pure value, no opencorp mention. The 1 in 9.",
+        "text": "seen this same pattern kill launches. the founders who convert fastest spend a week finding the 3-5 threads where their buyers already describe the problem, then answer them well before pitching anything. takes a week, costs nothing, and the people who click your profile are the ones who'd actually pay."
+      },
+      {
+        "variant": "soft-disclose",
+        "intent": "Reserved for high-fit threads (r/AlphaandBetausers, r/SideProject show-and-tell). One disclosure line at the end.",
+        "text": "same here at $0 MRR. the move that worked: search reddit sorted by new with the exact phrase your customer would type. i wrapped that into a free tool that pulls the threads in 30 sec instead of 30 min, paste any url. disclosure, i built it: opencorp."
+      },
+      {
+        "variant": "with-link",
+        "intent": "Only for the weekly self-promo threads (r/indiehackers Share what you're building, r/EntrepreneurRideAlong Feedback Friday). 1 in 9 across all subs.",
+        "text": "working on opencorp: paste any product url, get the reddit + hn threads where your buyers compare tools. free, no signup. would love beta testers. opencorp.live"
+      }
+    ]
+  },
+  {
+    "thread": {
+      "subreddit": "indiehackers",
+      "post_id": "1vrbe6m",
+      "author": "Common_Dream9420",
+      "title": "AI made code cheap to write, not cheap to verify!!!",
+      "score": "33",
+      "comments": "174",
+      "keyword": "validation",
+      "url": "https://www.reddit.com/r/indiehackers/comments/1vrbe6m/ai_made_code_cheap_to_write_not_cheap_to_verify/",
+      "scanned_at": "2026-09-12T22:31:30.332Z"
+    },
+    "variants": [
+      {
+        "variant": "value-only",
+        "intent": "9 of every 10 comments. Pure value, no opencorp mention. The 1 in 9.",
+        "text": "seen this same pattern kill launches. the founders who convert fastest spend a week finding the 3-5 threads where their buyers already describe the problem, then answer them well before pitching anything. takes a week, costs nothing, and the people who click your profile are the ones who'd actually pay."
+      },
+      {
+        "variant": "soft-disclose",
+        "intent": "Reserved for high-fit threads (r/AlphaandBetausers, r/SideProject show-and-tell). One disclosure line at the end.",
+        "text": "same here at $0 MRR. the move that worked: search reddit sorted by new with the exact phrase your customer would type. i wrapped that into a free tool that pulls the threads in 30 sec instead of 30 min, paste any url. disclosure, i built it: opencorp."
+      },
+      {
+        "variant": "with-link",
+        "intent": "Only for the weekly self-promo threads (r/indiehackers Share what you're building, r/EntrepreneurRideAlong Feedback Friday). 1 in 9 across all subs.",
+        "text": "working on opencorp: paste any product url, get the reddit + hn threads where your buyers compare tools. free, no signup. would love beta testers. opencorp.live"
+      }
+    ]
+  },
+  {
+    "thread": {
+      "subreddit": "indiehackers",
+      "post_id": "1vqz8qm",
+      "author": "player__piano",
+      "title": "Looking for advice on the perils & pratfalls of running ads on my pro-sumer auction aggregator",
+      "score": "14",
+      "comments": "31",
+      "keyword": "audience",
+      "url": "https://www.reddit.com/r/indiehackers/comments/1vqz8qm/looking_for_advice_on_the_perils_pratfalls_of/",
+      "scanned_at": "2026-09-12T22:31:30.332Z"
+    },
+    "variants": [
+      {
+        "variant": "value-only",
+        "intent": "9 of every 10 comments. Pure value, no opencorp mention. The 1 in 9.",
+        "text": "seen this same pattern kill launches. the founders who convert fastest spend a week finding the 3-5 threads where their buyers already describe the problem, then answer them well before pitching anything. takes a week, costs nothing, and the people who click your profile are the ones who'd actually pay."
+      },
+      {
+        "variant": "soft-disclose",
+        "intent": "Reserved for high-fit threads (r/AlphaandBetausers, r/SideProject show-and-tell). One disclosure line at the end.",
+        "text": "same here at $0 MRR. the move that worked: search reddit sorted by new with the exact phrase your customer would type. i wrapped that into a free tool that pulls the threads in 30 sec instead of 30 min, paste any url. disclosure, i built it: opencorp."
+      },
+      {
+        "variant": "with-link",
+        "intent": "Only for the weekly self-promo threads (r/indiehackers Share what you're building, r/EntrepreneurRideAlong Feedback Friday). 1 in 9 across all subs.",
+        "text": "working on opencorp: paste any product url, get the reddit + hn threads where your buyers compare tools. free, no signup. would love beta testers. opencorp.live"
+      }
+    ]
+  },
+  {
+    "thread": {
+      "subreddit": "indiehackers",
+      "post_id": "1vqcrsz",
+      "author": "kev_habits",
+      "title": "2 Months, 90 Users. Here’s what I’ve learned",
+      "score": "43",
+      "comments": "117",
+      "keyword": "0 users",
+      "url": "https://www.reddit.com/r/indiehackers/comments/1vqcrsz/2_months_90_users_heres_what_ive_learned/",
+      "scanned_at": "2026-09-12T22:31:30.332Z"
+    },
+    "variants": [
+      {
+        "variant": "value-only",
+        "intent": "9 of every 10 comments. Pure value, no opencorp mention. The 1 in 9.",
+        "text": "seen this same pattern kill launches. the founders who convert fastest spend a week finding the 3-5 threads where their buyers already describe the problem, then answer them well before pitching anything. takes a week, costs nothing, and the people who click your profile are the ones who'd actually pay."
+      },
+      {
+        "variant": "soft-disclose",
+        "intent": "Reserved for high-fit threads (r/AlphaandBetausers, r/SideProject show-and-tell). One disclosure line at the end.",
+        "text": "same here at $0 MRR. the move that worked: search reddit sorted by new with the exact phrase your customer would type. i wrapped that into a free tool that pulls the threads in 30 sec instead of 30 min, paste any url. disclosure, i built it: opencorp."
+      },
+      {
+        "variant": "with-link",
+        "intent": "Only for the weekly self-promo threads (r/indiehackers Share what you're building, r/EntrepreneurRideAlong Feedback Friday). 1 in 9 across all subs.",
+        "text": "working on opencorp: paste any product url, get the reddit + hn threads where your buyers compare tools. free, no signup. would love beta testers. opencorp.live"
+      }
+    ]
+  },
+  {
+    "thread": {
+      "subreddit": "indiehackers",
+      "post_id": "1vq8mcf",
+      "author": "visibite",
+      "title": "I got fed up with calorie trackers locking barcode scanning behind paywalls, so I built Visibite. We just launched!",
+      "score": "13",
+      "comments": "45",
+      "keyword": "validation",
+      "url": "https://www.reddit.com/r/indiehackers/comments/1vq8mcf/i_got_fed_up_with_calorie_trackers_locking/",
+      "scanned_at": "2026-09-12T22:31:30.332Z"
+    },
+    "variants": [
+      {
+        "variant": "value-only",
+        "intent": "9 of every 10 comments. Pure value, no opencorp mention. The 1 in 9.",
+        "text": "seen this same pattern kill launches. the founders who convert fastest spend a week finding the 3-5 threads where their buyers already describe the problem, then answer them well before pitching anything. takes a week, costs nothing, and the people who click your profile are the ones who'd actually pay."
+      },
+      {
+        "variant": "soft-disclose",
+        "intent": "Reserved for high-fit threads (r/AlphaandBetausers, r/SideProject show-and-tell). One disclosure line at the end.",
+        "text": "same here at $0 MRR. the move that worked: search reddit sorted by new with the exact phrase your customer would type. i wrapped that into a free tool that pulls the threads in 30 sec instead of 30 min, paste any url. disclosure, i built it: opencorp."
+      },
+      {
+        "variant": "with-link",
+        "intent": "Only for the weekly self-promo threads (r/indiehackers Share what you're building, r/EntrepreneurRideAlong Feedback Friday). 1 in 9 across all subs.",
+        "text": "working on opencorp: paste any product url, get the reddit + hn threads where your buyers compare tools. free, no signup. would love beta testers. opencorp.live"
+      }
+    ]
+  },
+  {
+    "thread": {
+      "subreddit": "indiehackers",
+      "post_id": "1vo0s0e",
+      "author": "prdmkr",
+      "title": "Session replay for humans & machines",
+      "score": "11",
+      "comments": "35",
+      "keyword": "validation",
+      "url": "https://www.reddit.com/r/indiehackers/comments/1vo0s0e/session_replay_for_humans_machines/",
+      "scanned_at": "2026-09-12T22:31:30.332Z"
+    },
+    "variants": [
+      {
+        "variant": "value-only",
+        "intent": "9 of every 10 comments. Pure value, no opencorp mention. The 1 in 9.",
+        "text": "seen this same pattern kill launches. the founders who convert fastest spend a week finding the 3-5 threads where their buyers already describe the problem, then answer them well before pitching anything. takes a week, costs nothing, and the people who click your profile are the ones who'd actually pay."
+      },
+      {
+        "variant": "soft-disclose",
+        "intent": "Reserved for high-fit threads (r/AlphaandBetausers, r/SideProject show-and-tell). One disclosure line at the end.",
+        "text": "same here at $0 MRR. the move that worked: search reddit sorted by new with the exact phrase your customer would type. i wrapped that into a free tool that pulls the threads in 30 sec instead of 30 min, paste any url. disclosure, i built it: opencorp."
+      },
+      {
+        "variant": "with-link",
+        "intent": "Only for the weekly self-promo threads (r/indiehackers Share what you're building, r/EntrepreneurRideAlong Feedback Friday). 1 in 9 across all subs.",
+        "text": "working on opencorp: paste any product url, get the reddit + hn threads where your buyers compare tools. free, no signup. would love beta testers. opencorp.live"
+      }
+    ]
+  }
+]
