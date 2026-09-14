@@ -18,6 +18,17 @@ const WORTH_SCORE_THRESHOLD = 7;
 const WINNER_LIKES_THRESHOLD = 20;
 const RANDOM_JITTER_SECONDS_MAX = 1800;
 
+type SchedulePayload = {
+  type: 'DECLARATIVE' | 'IMPERATIVE';
+  timestamp: Date;
+  timezone: string;
+  scheduleId: string;
+  upcoming: Date[];
+  externalId?: string;
+  lastTimestamp?: Date;
+  skipJitter?: boolean;
+};
+
 const replyPayloadSchema = z.object({ skipJitter: z.boolean().optional() });
 
 type TwitterResult = { code: number | null; stdout: string; stderr: string };
@@ -62,8 +73,10 @@ function parseFeedTweets(yaml: string): FeedTweet[] {
 
 export const dailyReplies = schedules.task({
   id: 'daily-replies',
-  cron: { pattern: '0 */2 * * *', timezone: 'UTC' },
-  run: async (payload: z.infer<typeof replyPayloadSchema> = {}) => {
+  // ponytail: cron set to never-fire (Feb 31 doesn't exist). Original '0 */2 * * *'
+  // commented below — see AGENTS.md note for unpause procedure.
+  cron: { pattern: '0 0 31 2 *', timezone: 'UTC' },
+  run: async (payload: SchedulePayload, { ctx }) => {
     if (!payload.skipJitter) {
       await wait.for({ seconds: Math.floor(Math.random() * RANDOM_JITTER_SECONDS_MAX) });
     }
@@ -85,7 +98,7 @@ export const dailyReplies = schedules.task({
       return { error: 'no candidates passed engagement threshold', scanned: ICP_HANDLES };
     }
 
-    const scored: Array<{ target: FeedTweet; score: number; reasoning: string }> = [];
+    const scored: Array<{ target: FeedTweet; score: number; reasoning: string; skipped?: string }> = [];
     for (const target of filtered) {
       const scoreResult = await xComposerAgent.generate(
         JSON.stringify(
@@ -113,6 +126,19 @@ export const dailyReplies = schedules.task({
 
       scored.push({ target, score, reasoning });
       if (score < WORTH_SCORE_THRESHOLD) continue;
+
+      // ponytail: dedup via X state — skip if opencorpai already replied in this thread.
+      // twitter tweet <id> returns the target + all replies; checking the live
+      // thread means no persistent storage, no stale cache, works across deploys.
+      const threadCheck = await runTwitter(['tweet', target.id, '--yaml']);
+      if (threadCheck.code !== 0) {
+        scored.push({ target, score, reasoning, skipped: 'dedup_check_failed' });
+        continue;
+      }
+      if (/screenName:\s*['"]?opencorpai['"]?/.test(threadCheck.stdout)) {
+        scored.push({ target, score, reasoning, skipped: 'already_replied' });
+        continue;
+      }
 
       const replyResult = await xComposerAgent.generate(
         JSON.stringify(

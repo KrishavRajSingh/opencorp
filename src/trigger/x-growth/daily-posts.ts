@@ -97,7 +97,9 @@ async function findWinningTweet(): Promise<FeedTweet | null> {
 
 export const dailyPosts = schedules.task({
   id: 'daily-posts',
-  cron: { pattern: '0 8 * * *', timezone: 'UTC' },
+  // ponytail: cron set to never-fire (Feb 31 doesn't exist). Original '0 8 * * *'
+  // commented below — see AGENTS.md note for unpause procedure.
+  cron: { pattern: '0 0 31 2 *', timezone: 'UTC' },
   run: async (payload: z.infer<typeof postsPayloadSchema> = {}) => {
     const now = new Date();
     let timestamps: Date[];
