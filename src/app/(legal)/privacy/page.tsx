@@ -167,13 +167,15 @@ export default function PrivacyPage() {
               </p>
               <ul className="list-disc space-y-2 pl-6 text-foreground/80">
                 <li>
-                  <span className="text-foreground">What we access:</span> the
+                  <span className="text-foreground">What we access:</span>{" "}
+                  the
                   connected channel&rsquo;s ID and title, its videos&rsquo;
                   metadata and public statistics, and permission to upload and
                   edit videos on that channel.
                 </li>
                 <li>
-                  <span className="text-foreground">How we store it:</span> the
+                  <span className="text-foreground">How we store it:</span>{" "}
+                  the
                   OAuth token is stored only on the machine that runs the
                   autopilot, readable only by its owner. Video statistics are
                   kept in our run logs to measure what works. We do not share
