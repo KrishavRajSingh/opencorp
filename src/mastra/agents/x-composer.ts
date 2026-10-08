@@ -122,6 +122,7 @@ mode=post (with optional reference)
 - No link in body. No hashtags.`;
 
 export const xComposerAgent = new Agent({
+  id: 'x-composer',
   name: 'x-composer',
   instructions: SYSTEM_PROMPT,
   model: 'openrouter/deepseek/deepseek-v4-flash',
