@@ -20,7 +20,7 @@ export default function TermsPage() {
               Terms of Service
             </h1>
             <p className="mt-3 text-sm text-muted-foreground">
-              Last updated: June 30, 2026
+              Last updated: October 9, 2026
             </p>
           </header>
 
@@ -121,7 +121,27 @@ export default function TermsPage() {
               </p>
             </Section>
 
-            <Section number="7" title="Termination">
+            <Section number="7" title="YouTube">
+              <p>
+                OpenCorp&rsquo;s marketing autopilot uses YouTube API Services
+                to upload and manage videos on channels you connect. By
+                connecting a YouTube channel, you agree to be bound by the 
+                <a href="https://www.youtube.com/t/terms" className="text-foreground underline decoration-brand/60 underline-offset-4 hover:decoration-brand">
+                  YouTube Terms of Service
+                </a>
+                . How we handle YouTube data is described in our 
+                <a href="/privacy" className="text-foreground underline decoration-brand/60 underline-offset-4 hover:decoration-brand">
+                  Privacy Policy
+                </a> 
+                and in the 
+                <a href="https://policies.google.com/privacy" className="text-foreground underline decoration-brand/60 underline-offset-4 hover:decoration-brand">
+                  Google Privacy Policy
+                </a>
+                .
+              </p>
+            </Section>
+
+            <Section number="8" title="Termination">
               <p>
                 You can stop using OpenCorp at any time and close your account
                 by emailing{" "}
@@ -136,7 +156,7 @@ export default function TermsPage() {
               </p>
             </Section>
 
-            <Section number="8" title="No warranty; limitation of liability">
+            <Section number="9" title="No warranty; limitation of liability">
               <p>
                 The service is provided{" "}
                 <span className="text-foreground">&ldquo;as is&rdquo;</span>{" "}
@@ -157,7 +177,7 @@ export default function TermsPage() {
               </p>
             </Section>
 
-            <Section number="9" title="Changes to these terms">
+            <Section number="10" title="Changes to these terms">
               <p>
                 We may update these terms from time to time. We&rsquo;ll post
                 the updated version here and revise the date at the top.
@@ -166,7 +186,7 @@ export default function TermsPage() {
               </p>
             </Section>
 
-            <Section number="10" title="Contact">
+            <Section number="11" title="Contact">
               <p>
                 Questions about these terms:{" "}
                 <a

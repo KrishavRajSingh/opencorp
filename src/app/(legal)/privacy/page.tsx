@@ -20,7 +20,7 @@ export default function PrivacyPage() {
               Privacy Policy
             </h1>
             <p className="mt-3 text-sm text-muted-foreground">
-              Last updated: June 30, 2026
+              Last updated: October 9, 2026
             </p>
           </header>
 
@@ -148,7 +148,53 @@ export default function PrivacyPage() {
               </p>
             </Section>
 
-            <Section number="7" title="Storage and retention">
+            <Section number="7" title="YouTube API Services">
+              <p>
+                OpenCorp&rsquo;s marketing autopilot uses 
+                <span className="text-foreground">YouTube API Services</span> 
+                to upload videos, update video titles and descriptions, and
+                read video and channel statistics for YouTube channels whose
+                owners have authorized it. By connecting a YouTube channel, you
+                agree to be bound by the 
+                <a href="https://www.youtube.com/t/terms" className="text-foreground underline decoration-brand/60 underline-offset-4 hover:decoration-brand">
+                  YouTube Terms of Service
+                </a>
+                , and Google&rsquo;s handling of that data is covered by the 
+                <a href="https://policies.google.com/privacy" className="text-foreground underline decoration-brand/60 underline-offset-4 hover:decoration-brand">
+                  Google Privacy Policy
+                </a>
+                .
+              </p>
+              <ul className="list-disc space-y-2 pl-6 text-foreground/80">
+                <li>
+                  <span className="text-foreground">What we access:</span> the
+                  connected channel&rsquo;s ID and title, its videos&rsquo;
+                  metadata and public statistics, and permission to upload and
+                  edit videos on that channel.
+                </li>
+                <li>
+                  <span className="text-foreground">How we store it:</span> the
+                  OAuth token is stored only on the machine that runs the
+                  autopilot, readable only by its owner. Video statistics are
+                  kept in our run logs to measure what works. We do not share
+                  YouTube data with third parties.
+                </li>
+                <li>
+                  <span className="text-foreground">How to revoke access:</span> 
+                  remove OpenCorp from your Google account at 
+                  <a href="https://security.google.com/settings/security/permissions" className="text-foreground underline decoration-brand/60 underline-offset-4 hover:decoration-brand">
+                    security.google.com/settings/security/permissions
+                  </a>
+                  . To have the stored statistics deleted, email 
+                  <a href="mailto:krishavrajsingh@gmail.com" className="text-foreground underline decoration-brand/60 underline-offset-4 hover:decoration-brand">
+                    krishavrajsingh@gmail.com
+                  </a> 
+                  and we will remove them within 7 days.
+                </li>
+              </ul>
+            </Section>
+
+            <Section number="8" title="Storage and retention">
               <p>
                 Research sessions and account data are stored in{" "}
                 <span className="text-foreground">Supabase</span> (managed
@@ -164,7 +210,7 @@ export default function PrivacyPage() {
               </p>
             </Section>
 
-            <Section number="8" title="Your rights">
+            <Section number="9" title="Your rights">
               <p>You can:</p>
               <ul className="list-disc space-y-2 pl-6 text-foreground/80">
                 <li>Access the data we hold about you.</li>
@@ -184,7 +230,7 @@ export default function PrivacyPage() {
               </p>
             </Section>
 
-            <Section number="9" title="Third parties we use">
+            <Section number="10" title="Third parties we use">
               <ul className="list-disc space-y-2 pl-6 text-foreground/80">
                 <li>
                   <span className="text-foreground">Supabase</span> — auth and
@@ -203,13 +249,17 @@ export default function PrivacyPage() {
                   News search (via the public HN/Algolia index).
                 </li>
                 <li>
+                  <span className="text-foreground">YouTube API Services</span>{" "}
+                  — uploading and managing videos on channels you connect.
+                </li>
+                <li>
                   <span className="text-foreground">Umami</span> — privacy
                   analytics (optional).
                 </li>
               </ul>
             </Section>
 
-            <Section number="10" title="Changes to this policy">
+            <Section number="11" title="Changes to this policy">
               <p>
                 If we make material changes, we&rsquo;ll update the date at
                 the top of this page. Continued use of OpenCorp after a change
@@ -217,7 +267,7 @@ export default function PrivacyPage() {
               </p>
             </Section>
 
-            <Section number="11" title="Contact">
+            <Section number="12" title="Contact">
               <p>
                 Questions, concerns, or data requests:{" "}
                 <a
