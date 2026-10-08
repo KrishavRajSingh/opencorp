@@ -150,16 +150,16 @@ export default function PrivacyPage() {
 
             <Section number="7" title="YouTube API Services">
               <p>
-                OpenCorp&rsquo;s marketing autopilot uses 
-                <span className="text-foreground">YouTube API Services</span> 
+                OpenCorp&rsquo;s marketing autopilot uses{" "}
+                <span className="text-foreground">YouTube API Services</span>{" "}
                 to upload videos, update video titles and descriptions, and
                 read video and channel statistics for YouTube channels whose
                 owners have authorized it. By connecting a YouTube channel, you
-                agree to be bound by the 
+                agree to be bound by the{" "}
                 <a href="https://www.youtube.com/t/terms" className="text-foreground underline decoration-brand/60 underline-offset-4 hover:decoration-brand">
                   YouTube Terms of Service
                 </a>
-                , and Google&rsquo;s handling of that data is covered by the 
+                , and Google&rsquo;s handling of that data is covered by the{" "}
                 <a href="https://policies.google.com/privacy" className="text-foreground underline decoration-brand/60 underline-offset-4 hover:decoration-brand">
                   Google Privacy Policy
                 </a>
@@ -180,15 +180,15 @@ export default function PrivacyPage() {
                   YouTube data with third parties.
                 </li>
                 <li>
-                  <span className="text-foreground">How to revoke access:</span> 
-                  remove OpenCorp from your Google account at 
+                  <span className="text-foreground">How to revoke access:</span>{" "}
+                  remove OpenCorp from your Google account at{" "}
                   <a href="https://security.google.com/settings/security/permissions" className="text-foreground underline decoration-brand/60 underline-offset-4 hover:decoration-brand">
                     security.google.com/settings/security/permissions
                   </a>
-                  . To have the stored statistics deleted, email 
+                  . To have the stored statistics deleted, email{" "}
                   <a href="mailto:krishavrajsingh@gmail.com" className="text-foreground underline decoration-brand/60 underline-offset-4 hover:decoration-brand">
                     krishavrajsingh@gmail.com
-                  </a> 
+                  </a>{" "}
                   and we will remove them within 7 days.
                 </li>
               </ul>

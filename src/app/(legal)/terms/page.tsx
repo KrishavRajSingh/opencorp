@@ -125,15 +125,15 @@ export default function TermsPage() {
               <p>
                 OpenCorp&rsquo;s marketing autopilot uses YouTube API Services
                 to upload and manage videos on channels you connect. By
-                connecting a YouTube channel, you agree to be bound by the 
+                connecting a YouTube channel, you agree to be bound by the{" "}
                 <a href="https://www.youtube.com/t/terms" className="text-foreground underline decoration-brand/60 underline-offset-4 hover:decoration-brand">
                   YouTube Terms of Service
                 </a>
-                . How we handle YouTube data is described in our 
+                . How we handle YouTube data is described in our{" "}
                 <a href="/privacy" className="text-foreground underline decoration-brand/60 underline-offset-4 hover:decoration-brand">
                   Privacy Policy
-                </a> 
-                and in the 
+                </a>{" "}
+                and in the{" "}
                 <a href="https://policies.google.com/privacy" className="text-foreground underline decoration-brand/60 underline-offset-4 hover:decoration-brand">
                   Google Privacy Policy
                 </a>
